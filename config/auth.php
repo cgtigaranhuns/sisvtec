@@ -60,16 +60,40 @@ return [
     */
 
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class,
-        ],
+        // ...
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
-    ],
+        'users' => [
+            'driver' => 'ldap',
+            'model' => LdapRecord\Models\ActiveDirectory\User::class,
+            'rules' => [],
+            'scopes' => [],
+            'database' => [
+                'model' => App\Models\User::class,
+                'sync_passwords' => false,
+                'sync_attributes' => [
+                    'name' => 'displayname',
+                    'username' => 'samaccountname',
+                    'email' => 'mail',
+                ],
+            ],
+        ], 
+
+        'labs' => [
+            'driver' => 'ldap',
+            'model' => App\Ldap\labs\User::class,
+            'rules' => [],
+            'scopes' => [],
+            'database' => [
+                'model' => App\Models\Discente::class,
+                'sync_passwords' => false,
+                'sync_attributes' => [
+                    'name' => 'displayname',
+                    'username' => 'cn',
+                    'mail' => 'mail',
+                ], 
+            ], 
+        ], 
+    ], 
 
     /*
     |--------------------------------------------------------------------------

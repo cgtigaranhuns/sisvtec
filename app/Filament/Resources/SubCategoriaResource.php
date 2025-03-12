@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CargoResource\Pages;
-use App\Filament\Resources\CargoResource\RelationManagers;
-use App\Models\Cargo;
+use App\Filament\Resources\SubCategoriaResource\Pages;
+use App\Filament\Resources\SubCategoriaResource\RelationManagers;
+use App\Models\SubCategoria;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,20 +13,24 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CargoResource extends Resource
+class SubCategoriaResource extends Resource
 {
-    protected static ?string $model = Cargo::class;
+    protected static ?string $model = SubCategoria::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
+
+    protected static ?string $label = 'SubCategoria';
 
     protected static ?string $navigationGroup = 'Cadastros';
-
-    protected static ?string $navigationIcon = 'heroicon-s-arrows-pointing-in';
-
-    protected static ?string $navigationLabel = 'Cargos';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('categoria_id')
+                    ->label('Categoria')
+                    ->relationship('categoria', 'nome')
+                    ->required(),                    
                 Forms\Components\TextInput::make('nome')
                     ->required()
                     ->maxLength(50),
@@ -37,7 +41,11 @@ class CargoResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('categoria.nome')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('nome')
+                    ->label('SubCategoria')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -65,7 +73,7 @@ class CargoResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageCargos::route('/'),
+            'index' => Pages\ManageSubCategorias::route('/'),
         ];
     }
 }

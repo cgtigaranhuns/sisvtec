@@ -9,7 +9,7 @@ class DadosUser extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id','matricula','tipo_servidor','cargo_id'];
+    protected $fillable = ['user_id','tipo_servidor','cargo_id'];
 
     public function user()
     {

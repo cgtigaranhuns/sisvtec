@@ -19,7 +19,9 @@ class ConfigResource extends Resource
 
     protected static ?string $navigationGroup = 'Parâmetros';
 
-    protected static ?string $navigationIcon = 'heroicon-s-banknotes';
+    protected static ?string $navigationIcon = 'heroicon-s-wrench-screwdriver';
+
+    protected static ?string $navigationLabel = 'Configurações';
 
     public static function form(Form $form): Form
     {

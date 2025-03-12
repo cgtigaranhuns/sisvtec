@@ -17,7 +17,11 @@ class TurmaResource extends Resource
 {
     protected static ?string $model = Turma::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-user-group';
+
+    protected static ?string $navigationLabel = 'Turmas';
+
+    protected static ?string $navigationGroup = 'Cadastros';
 
     public static function form(Form $form): Form
     {

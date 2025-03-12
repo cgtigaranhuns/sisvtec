@@ -10,10 +10,13 @@ class ManageConfigs extends ManageRecords
 {
     protected static string $resource = ConfigResource::class;
 
+    protected static null|string $title = 'Configurações';
+
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make()
+                ->modalHeading('Criar Configuração')
                 ->label('Nova Configuração'),
         ];
     }

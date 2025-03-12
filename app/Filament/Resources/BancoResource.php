@@ -19,8 +19,11 @@ class BancoResource extends Resource
 
     protected static ?string $navigationGroup = 'Cadastros';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-banknotes';
 
+    protected static ?string $navigationLabel = 'Bancos';
+
+    
     public static function form(Form $form): Form
     {
         return $form

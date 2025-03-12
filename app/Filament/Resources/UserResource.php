@@ -20,8 +20,8 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationIcon = 'heroicon-s-user-circle';
 
     protected static ?string $navigationLabel = 'Usuários';
 
@@ -33,58 +33,59 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                
+
                 Tabs::make('Básico')
                     ->columnSpanFull()
-                    ->tabs([                        
+                    ->tabs([
                         Tab::make('Básico')
                             ->columns(null)
-                            ->icon('heroicon-s-user-circle')  
+                            ->icon('heroicon-s-user-circle')
                             ->columns(2)
                             ->schema([
                                 Forms\Components\TextInput::make('name')
                                     ->required()
                                     ->maxLength(255),
+                                Forms\Components\TextInput::make('username')
+                                    ->label('Matrícula')
+                                    ->required()
+                                    ->maxLength(255),
                                 Forms\Components\TextInput::make('email')
                                     ->email()
                                     ->required()
-                                    ->maxLength(255),                            
+                                    ->maxLength(255),
                                 // Forms\Components\DateTimePicker::make('email_verified_at'),
                                 // Forms\Components\TextInput::make('password')
                                 //     ->password()
                                 //     ->required()
                                 //     ->maxLength(255),
-                                
+
                             ]),
                         Tab::make('Detalhes')
                             ->columns(null)
-                            ->icon('heroicon-o-information-circle')                           
+                            ->icon('heroicon-o-information-circle')
                             ->schema([
                                 Group::make([
-                                    Forms\Components\TextInput::make('matricula')
-                                    ->required()
-                                    ->maxLength(11),
-                                Forms\Components\Select::make('tipo_servidor')
-                                    ->label('Tipo de Servidor')
-                                    ->required()
-                                    ->options([
-                                        '1' => 'Professor',
-                                        '2' => 'Técnico Administrativo',
-                                        
-                                    ]),
-                                   
-                                Forms\Components\Select::make('cargo_id')
-                                    ->label('Cargo')
-                                    ->required()
-                                    ->relationship('cargo', 'nome'),
-                                  
-                                   
-                                    
+                                    Forms\Components\Select::make('tipo_servidor')
+                                        ->label('Tipo de Servidor')
+                                        ->required()
+                                        ->options([
+                                            '1' => 'Professor',
+                                            '2' => 'Técnico Administrativo',
+
+                                        ]),
+
+                                    Forms\Components\Select::make('cargo_id')
+                                        ->label('Cargo')
+                                        ->required()
+                                        ->relationship('cargo', 'nome'),
+
+
+
                                 ])
-                                ->columns(3)
-                                ->relationship('dadosUser')
-                                
-                                
+                                    ->columns(2)
+                                    ->relationship('dadosUser')
+
+
                             ]),
                     ]),
             ]);
@@ -102,10 +103,10 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('dadosUser.matricula')
+                Tables\Columns\TextColumn::make('username')
                     ->label('Matrícula')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('dadosUser.tipo_servidor')  
+                Tables\Columns\TextColumn::make('dadosUser.tipo_servidor')
                     ->label('Tipo de Servidor')
                     ->badge()
                     ->alignCenter()
