@@ -10,4 +10,9 @@ class Disciplina extends Model
     use HasFactory;
 
     protected $fillable = ['nome'];
+
+    public function visitaTecnica()
+    {
+        return $this->hasMany(VisitaTecnica::class);
+    }
 }

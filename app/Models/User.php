@@ -49,7 +49,7 @@ class User extends Authenticatable implements LdapAuthenticatable
 
     public function dadosUser()
     {
-        return $this->hasOne(DadosUser::class);
+        return $this->hasMany(DadosUser::class);
     }
 
     

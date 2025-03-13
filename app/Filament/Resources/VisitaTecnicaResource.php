@@ -4,16 +4,22 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\VisitaTecnicaResource\Pages;
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers;
+use App\Models\DadosUser;
+use App\Models\SubCategoria;
+use App\Models\User;
 use App\Models\VisitaTecnica;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 
 class VisitaTecnicaResource extends Resource
 {
@@ -32,15 +38,18 @@ class VisitaTecnicaResource extends Resource
                             Grid::make([
                                 'xl' => 2,
                                 '2xl' => 2,
-                            ])->schema([                                
+                            ])->schema([
                                 Forms\Components\Select::make('categoria_id')
                                     ->label('Categoria')
                                     ->relationship('categoria', 'nome')
+                                    ->live()
                                     ->required(),
 
                                 Forms\Components\Select::make('sub_categoria_id')
                                     ->label('Sub Categoria')
-                                    ->relationship('subCategoria', 'nome')
+                                    ->options(fn(Get $get): Collection => SubCategoria::query()
+                                        ->where('categoria_id', $get('categoria_id'))
+                                        ->pluck('nome', 'id'))
                                     ->required(),
                                 Forms\Components\ToggleButtons::make('custo')
                                     ->label('Haverá Custo?')
@@ -62,30 +71,95 @@ class VisitaTecnicaResource extends Resource
                                     ->required()
                                     ->maxLength(255),
                             ]),
-                        
-                            
+
+
                         ]),
                     Wizard\Step::make('Participantes')
                         ->schema([
-                            Forms\Components\TextInput::make('coordenacao_id')
-                                ->required()
-                                ->numeric(),
-                            Forms\Components\TextInput::make('curso_id')
-                                ->required()
-                                ->numeric(),
-                            Forms\Components\TextInput::make('turma_id')
-                                ->required()
-                                ->numeric(),
-                            Forms\Components\TextInput::make('comp_curriculares')
-                                ->required(),
-                            Forms\Components\TextInput::make('professor_id')
-                                ->required()
-                                ->numeric(),
-                            Forms\Components\TextInput::make('srv_participante_id')
-                                ->required()
-                                ->numeric(),
-                            Forms\Components\TextInput::make('justificativa_servidores')
-                                ->maxLength(150),
+                            Grid::make([
+                                'xl' => 3,
+                                '2xl' => 3,
+                            ])->schema([
+                                Forms\Components\Select::make('coordenacao_id')
+                                    ->label('Coordenação')
+                                    ->searchable()
+                                    ->relationship('coordenacao', 'nome')
+                                    ->required(),
+                                Forms\Components\Select::make('curso_id')
+                                    ->label('Curso')
+                                    ->searchable()
+                                    ->relationship('curso', 'nome')
+                                    ->required(),
+                                Forms\Components\Select::make('turma_id')
+                                    ->label('Turma')
+                                    ->searchable()
+                                    ->relationship('turma', 'nome')
+                                    ->required(),
+                                Forms\Components\Select::make('disciplina_id')
+                                    ->label('Componentes Curriculares')
+                                    ->relationship('disciplina', 'nome')
+                                    ->searchable()
+                                    ->live()
+                                    ->multiple()
+                                    ->required(),
+                                Forms\Components\Select::make('professor_id')
+                                    ->label('Professor Responsável')
+                                    ->default(function () {
+                                        return  auth()->user()->id;
+                                    })
+                                    ->searchable()
+                                    ->relationship('professor', 'name')
+                                    ->required(),
+                                Forms\Components\Select::make('srv_participante_id')
+                                    ->label('Servidores Participantes')
+                                    ->relationship('srvParticipante', 'name')
+                                    ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->username} - {$record->name}")
+                                    ->searchable(['username', 'name'])
+                                    ->multiple()                                    
+                                    ->required(),
+                                // Forms\Components\Select::make('srv_participante_id')
+                                //     ->relationship(
+                                //         name: 'srvParticipante',
+                                //         modifyQueryUsing: fn(Builder $query) => $query->orderBy('name'),
+                                //     )
+                                //     ->getOptionLabelFromRecordUsing(function($record) {
+                                //       //  dd($record->id);
+                                //          $nome = $record->name;
+                                //          $cargo = DadosUser::where('user_id', $record->id)->first();
+
+                                //         // dd($cargo);
+                                         
+                                //          return "{$nome} - {$cargo->cargo->nome}";
+                                //     })
+                                //     ->label('Servidores Participantes')
+                                //     ->preload()
+                                //     ->searchable(['nome']),
+
+
+                                Forms\Components\Fieldset::make('Justificativas')
+                                    ->schema([
+                                        Grid::make([
+                                            'xl' => 2,
+                                            '2xl' => 2,
+                                        ])->schema([
+                                            Forms\Components\Textarea::make('justificativa_servidores')
+                                                ->label('Justificar Outros Servidores')
+                                                ->hidden(fn(Get $get) => !$get('srv_participante_id'))
+                                                ->required(fn(Get $get) => $get('srv_participante_id'))
+                                                ->autosize()
+                                                ->required()
+                                                ->maxLength(150),
+                                            Forms\Components\Textarea::make('just_outra_disciplina')
+                                                ->label('Justificar Outras Disciplinas')
+                                                ->hidden(fn(Get $get) => count($get('disciplina_id') ?? []) <= 1)
+                                                ->required(fn(Get $get) => count($get('disciplina_id') ?? []) > 1)
+                                                ->autosize()
+                                                ->maxLength(150),
+                                        ]),
+                                    ]),
+
+
+                            ]),
                         ]),
                     Wizard\Step::make('Local e Data')
                         ->schema([
@@ -123,8 +197,7 @@ class VisitaTecnicaResource extends Resource
                             Forms\Components\Textarea::make('justificativa')
                                 ->required()
                                 ->columnSpanFull(),
-                            Forms\Components\Textarea::make('just_outra_disciplina')
-                                ->columnSpanFull(),
+
                             Forms\Components\Textarea::make('objetivos')
                                 ->required()
                                 ->columnSpanFull(),

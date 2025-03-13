@@ -19,7 +19,7 @@ class VisitaTecnica extends Model
         'coordenacao_id',
         'curso_id',
         'turma_id',
-        'comp_curriculares',
+        'disciplina_id',
         'professor_id',
         'srv_participante_id',
         'justificativa_servidores',
@@ -40,6 +40,11 @@ class VisitaTecnica extends Model
         'motodologia',
         'form_avalia_aprend'
 
+    ];
+
+    protected $casts = [
+        'comp_curriculares' => 'array',
+        'srv_participante_id' => 'array'
     ];
 
     public function categoria()
@@ -87,6 +92,16 @@ class VisitaTecnica extends Model
         return $this->belongsTo(User::class);
     }
 
-    
+    public function disciplina()
+    {
+        return $this->belongsTo(Disciplina::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+
+
 
 }
