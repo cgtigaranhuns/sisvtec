@@ -11,8 +11,8 @@ class Cargo extends Model
 
     protected $fillable = ['nome'];
 
-    public function dadosUser()
+    public function user()
     {
-        return $this->hasMany(DadosUser::class);
+        return $this->hasMany(User::class);
     }
 }

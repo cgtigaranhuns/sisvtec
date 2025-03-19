@@ -29,7 +29,7 @@ return new class extends Migration
             $table->foreignId('cidade_id')->constrained('cidades');
             $table->dateTime('data_hora_saida');
             $table->dateTime('data_hora_retorno');
-            $table->time('carga_horaria_total');
+            $table->string('carga_horaria_total');
             $table->longText('conteudo_programatico');
             $table->decimal('custo_total',10,2)->nullable();
             $table->integer('qtd_estudantes')->nullable();

@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('username')->unique();
+            $table->foreignId('cargo_id')->constrained();
+            $table->string('tipo_servidor');
             $table->rememberToken();
             $table->timestamps();
         });

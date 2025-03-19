@@ -25,6 +25,8 @@ class User extends Authenticatable implements LdapAuthenticatable
         'username',
         'email',
         'password',
+        'cargo_id',
+        'tipo_servidor',
     ];
 
     /**
@@ -47,10 +49,12 @@ class User extends Authenticatable implements LdapAuthenticatable
         'password' => 'hashed',
     ];
 
-    public function dadosUser()
+    public function cargo()
     {
-        return $this->hasMany(DadosUser::class);
+        return $this->belongsTo(Cargo::class);
     }
+
+    
 
     
 }

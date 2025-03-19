@@ -54,11 +54,6 @@ class UserResource extends Resource
                                     ->email()
                                     ->required()
                                     ->maxLength(255),
-                                // Forms\Components\DateTimePicker::make('email_verified_at'),
-                                // Forms\Components\TextInput::make('password')
-                                //     ->password()
-                                //     ->required()
-                                //     ->maxLength(255),
                                 Forms\Components\TextInput::make('password')
                                     ->password()
                                     ->dehydrateStateUsing(fn($state) => Hash::make($state))
@@ -89,7 +84,7 @@ class UserResource extends Resource
 
                                 ])
                                     ->columns(2)
-                                    ->relationship('dadosUser')
+                                    
 
 
                             ]),
@@ -112,10 +107,10 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('username')
                     ->label('Matrícula')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('dadosUser.cargo.nome')
+                Tables\Columns\TextColumn::make('cargo.nome')
                     ->label('Cargo')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('dadosUser.tipo_servidor')
+                Tables\Columns\TextColumn::make('tipo_servidor')
                     ->label('Tipo de Servidor')
                     ->badge()
                     ->alignCenter()

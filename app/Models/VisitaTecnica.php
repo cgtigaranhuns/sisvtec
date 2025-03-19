@@ -28,10 +28,14 @@ class VisitaTecnica extends Model
         'data_hora_saida',
         'data_hora_retorno',
         'carga_horaria_total',
+        'carga_horaria_visita',
         'conteudo_programatico',
-        'custo_total',
         'qtd_estudantes',
         'hospedagem',
+        'cotacao_hospedagem',
+        'menor_valor_hospedagem',
+        'valor_total_diarias',
+        'custo_total',
         'justificativa_hospedagem',
         'status',
         'justificativa',
@@ -44,7 +48,9 @@ class VisitaTecnica extends Model
 
     protected $casts = [
         'comp_curriculares' => 'array',
-        'srv_participante_id' => 'array'
+        'srv_participante_id' => 'array',
+        'cotacao_hospedagem' => 'array',
+
     ];
 
     public function categoria()
