@@ -10,9 +10,13 @@ use App\Models\DadosUser;
 use App\Models\SubCategoria;
 use App\Models\User;
 use App\Models\VisitaTecnica;
+use App\Traits\CalculaValorDiarias;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Split;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -27,9 +31,17 @@ use Illuminate\Support\Collection;
 
 class VisitaTecnicaResource extends Resource
 {
+    use CalculaValorDiarias;
+
     protected static ?string $model = VisitaTecnica::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationLabel = 'Visitas Técnica';
+
+    protected static ?string $navigationGroup = 'Propostas';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -38,6 +50,7 @@ class VisitaTecnicaResource extends Resource
             ->schema([
                 Wizard::make([
                     Wizard\Step::make('Tipo de Visita')
+                        ->completedIcon('heroicon-m-hand-thumb-up')
                         ->schema([
                             Grid::make([
                                 'xl' => 2,
@@ -60,7 +73,7 @@ class VisitaTecnicaResource extends Resource
                                     ->required()
                                     ->boolean()
                                     ->grouped(),
-                                Forms\Components\ToggleButtons::make('compesacao')
+                                Forms\Components\ToggleButtons::make('compensacao')
                                     ->label('Haverá Compensação?')
                                     ->required()
                                     ->boolean()
@@ -79,6 +92,7 @@ class VisitaTecnicaResource extends Resource
 
                         ]),
                     Wizard\Step::make('Participantes')
+                        ->completedIcon('heroicon-m-hand-thumb-up')
                         ->schema([
                             Grid::make([
                                 'xl' => 3,
@@ -120,7 +134,7 @@ class VisitaTecnicaResource extends Resource
                                     ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->username} - {$record->name} - {$record->cargo->nome}")
                                     ->searchable(['username', 'name'])
                                     ->multiple()
-                                    ->required(),
+                                    ->required(false),
                                 Forms\Components\Fieldset::make('Justificativas')
                                     ->schema([
                                         Grid::make([
@@ -132,7 +146,6 @@ class VisitaTecnicaResource extends Resource
                                                 ->hidden(fn(Get $get) => !$get('srv_participante_id'))
                                                 ->required(fn(Get $get) => $get('srv_participante_id'))
                                                 ->autosize()
-                                                ->required()
                                                 ->maxLength(150),
                                             Forms\Components\Textarea::make('just_outra_disciplina')
                                                 ->label('Justificar Outras Disciplinas')
@@ -147,6 +160,12 @@ class VisitaTecnicaResource extends Resource
                             ]),
                         ]),
                     Wizard\Step::make('Local e Data')
+                        ->completedIcon('heroicon-m-hand-thumb-up')
+                        ->beforeValidation(function ($state, $get, $set) {
+                            if ($get('qtd_estudantes') != '') {
+                                Self::calculaValorDiarias($state, $get, $set);
+                            }
+                        })
                         ->schema([
                             Grid::make([
                                 'xl' => 3,
@@ -167,9 +186,13 @@ class VisitaTecnicaResource extends Resource
                                     ->required(),
                                 Forms\Components\DateTimePicker::make('data_hora_saida')
                                     ->label('Data e Hora de Saída')
+                                    ->seconds(false)
+                                    // ->format('DD/MM/YYYY HH:mm')
                                     ->required(),
                                 Forms\Components\DateTimePicker::make('data_hora_retorno')
                                     ->label('Data e Hora de Retorno')
+                                    ->seconds(false)
+                                    //->format('d/m/y HH:mm')
                                     ->live()
                                     ->afterStateUpdated(function (callable $set, $state, $get) {
                                         $dataHoraSaida = $get('data_hora_saida');
@@ -193,11 +216,13 @@ class VisitaTecnicaResource extends Resource
                                     ->required(),
                                 Forms\Components\TimePicker::make('carga_horaria_visita')
                                     ->label('Carga Horária Total da Visita')
+                                    ->seconds(false)
                                     ->required(),
                             ]),
 
                         ]),
                     Wizard\Step::make('Custos e Estudantes')
+                        ->completedIcon('heroicon-m-hand-thumb-up')
                         ->schema([
                             Grid::make([
                                 'xl' => 3,
@@ -205,45 +230,45 @@ class VisitaTecnicaResource extends Resource
                             ])->schema([
                                 Forms\Components\TextInput::make('qtd_estudantes')
                                     ->label('Quantidade de Estudantes')
-                                    ->live(onBlur:true)
+                                    ->live(onBlur: true)
                                     ->afterStateUpdated(function (callable $set, $state, $get) {
 
-                                        // VARIAVEIS
-                                        $qtdEstudantes =  $state;
-                                        $valorMeiaDiaria = Config::all()->first()->valor_meia_diaria;
+                                        Self::calculaValorDiarias($state, $get, $set);
 
-                                        $dataHoraSaida = $get('data_hora_saida');
-                                        $dataHoraRetorno = $get('data_hora_retorno');                                        
-                                        
-                                        // CALCULA DIAS DE VIAGEM
-                                        $saida = Carbon::parse($dataHoraSaida)->format('Y-m-d');
-                                        $retorno = Carbon::parse($dataHoraRetorno)->format('Y-m-d');
-                                        $totalHoras = Carbon::parse($retorno)->diffInHours(Carbon::parse($saida)->startOfDay());
-                                        $days = floor($totalHoras / 24);
-                                        
-                                        if($days < 1){
-                                            $valorDiarias =  $qtdEstudantes * $valorMeiaDiaria;
-                                        }
-                                        elseif($days >= 1){
-                                            $valorDiarias =  $qtdEstudantes * ($valorMeiaDiaria * 3);
-                                        }
-                                        elseif($days >= 2){
-                                            $valorDiarias =  $qtdEstudantes * (($valorMeiaDiaria * 3) * $days);
-                                        }
-                                      //  dd($valorDiarias);
-                                        $set('valor_total_diarias', $valorDiarias);
-                                        $set('custo_total', ($valorDiarias + $get('menor_valor_hospedagem')));
-                                       
-                                       
+                                        // // VARIAVEIS
+                                        // $qtdEstudantes =  $state;
+                                        // $valorMeiaDiaria = Config::all()->first()->valor_meia_diaria;
 
-                                          
-                                        
+                                        // $dataHoraSaida = $get('data_hora_saida');
+                                        // $dataHoraRetorno = $get('data_hora_retorno');
+
+                                        // // CALCULA DIAS DE VIAGEM
+                                        // $saida = Carbon::parse($dataHoraSaida)->format('Y-m-d');
+                                        // $retorno = Carbon::parse($dataHoraRetorno)->format('Y-m-d');
+                                        // $totalHoras = Carbon::parse($retorno)->diffInHours(Carbon::parse($saida)->startOfDay());
+                                        // $days = floor($totalHoras / 24);
+
+                                        // if ($days < 1) {
+                                        //     $valorDiarias =  ($qtdEstudantes * $valorMeiaDiaria);
+                                        // } elseif ($days >= 1 && $days < 2) {
+                                        //     $valorDiarias =  ($qtdEstudantes * ($valorMeiaDiaria * 3));
+                                        // } elseif ($days >= 2) {
+                                        //     $valorDiarias =  ($qtdEstudantes * ((($valorMeiaDiaria * 2) * $days) + $valorMeiaDiaria));
+                                        // }
+                                        // // dd($qtdEstudantes, $valorMeiaDiaria, $days,' = ', $valorDiarias);
+                                        // $set('valor_total_diarias', $valorDiarias);
+                                        // $set('custo_total', ($valorDiarias + $get('menor_valor_hospedagem')));
                                     })
                                     ->numeric()
                                     ->required(),
                                 Forms\Components\ToggleButtons::make('hospedagem')
                                     ->label('Haverá Hospedagem?')
                                     ->live()
+                                    ->afterStateUpdated(function (callable $set, $state, $get) {
+                                        $set('menor_valor_hospedagem', 0);
+                                        $set('custo_total', ($get('valor_total_diarias') + 0));
+                                        $set('cotacoes_hospedagem', []);
+                                    })
                                     ->required()
                                     ->boolean()
                                     ->grouped(),
@@ -254,8 +279,13 @@ class VisitaTecnicaResource extends Resource
                                     ->autosize()
                                     ->maxLength(255),
 
-                                Forms\Components\Repeater::make('cotacoes_hospedagem')
-                                    ->columnSpan(3)
+                                Forms\Components\Repeater::make('cotacao_hospedagem')
+                                    ->columnSpan(
+                                        [
+                                            'xl' => 3,
+                                            '2xl' => 3,
+                                        ]
+                                    )
                                     ->live(onBlur: true)
                                     ->minItems(1)
                                     ->maxItems(1)
@@ -287,57 +317,91 @@ class VisitaTecnicaResource extends Resource
                                             ->required()
                                             ->numeric(),
                                     ]),
-                                    Forms\Components\Fieldset::make('Custos')
-                                        ->schema([
-                                            Grid::make([
-                                                'xl' => 3,
-                                                '2xl' => 3,
-                                            ])->schema([
-                                                Forms\Components\TextInput::make('valor_total_diarias')
-                                                    ->label('Valor Total das Diárias')
-                                                    ->readOnly()
-                                                    ->prefix('R$')
-                                                    ->numeric()
-                                                    ->required(),
-                                                Forms\Components\TextInput::make('menor_valor_hospedagem')
-                                                    ->label('Menor Valor de Hospedagem')
-                                                    ->hidden(fn(Get $get) => !$get('hospedagem'))
-                                                    ->prefix('R$')
-                                                    ->readOnly()
-                                                    ->numeric()
-                                                    ->required(),
-                                                Forms\Components\TextInput::make('custo_total')
-                                                    ->label('Custo Total da Visita')
-                                                    ->prefix('R$')
-                                                    ->numeric()
-                                                    ->readOnly()
-                                                    ->required(),
-                                            ]),
-                                        ])                                
+                                Forms\Components\Fieldset::make('Custos')
+                                    ->schema([
+                                        Grid::make([
+                                            'xl' => 3,
+                                            '2xl' => 3,
+                                        ])->schema([
+                                            Forms\Components\TextInput::make('valor_total_diarias')
+                                                ->label('Valor Total das Diárias')
+                                                ->readOnly()
+                                                ->prefix('R$')
+                                                ->numeric()
+                                                ->required(),
+                                            Forms\Components\TextInput::make('menor_valor_hospedagem')
+                                                ->label('Menor Valor de Hospedagem')
+                                                ->hidden(fn(Get $get) => !$get('hospedagem'))
+                                                ->prefix('R$')
+                                                ->readOnly()
+                                                ->numeric()
+                                                ->required(),
+                                            Forms\Components\TextInput::make('custo_total')
+                                                ->label('Custo Total da Visita')
+                                                ->prefix('R$')
+                                                ->numeric()
+                                                ->readOnly()
+                                                ->required(),
+                                        ]),
+                                    ])
                             ]),
                         ]),
                     Wizard\Step::make('Justificativa e Objetivos')
+                        ->completedIcon('heroicon-m-hand-thumb-up')
                         ->schema([
-                            Forms\Components\Textarea::make('conteudo_programatico')
-                                ->required()
-                                ->columnSpanFull(),
-                            Forms\Components\Toggle::make('status')
-                                ->required(),
-                            Forms\Components\Textarea::make('justificativa')
-                                ->required()
-                                ->columnSpanFull(),
+                            Split::make([
+                                Section::make([
+                                    Forms\Components\Textarea::make('conteudo_programatico')
+                                        ->label('Conteúdo Programático')
+                                        ->autosize()
+                                        ->required()
+                                        ->columnSpanFull(),
+                                    Forms\Components\Textarea::make('justificativa')
+                                        ->label('Justificativa')
+                                        ->autosize()
+                                        ->required()
+                                        ->columnSpanFull(),
+                                    Forms\Components\Textarea::make('objetivos')
+                                        ->label('Objetivos')
+                                        ->autosize()
+                                        ->required()
+                                        ->columnSpanFull(),
+                                    Forms\Components\Textarea::make('motodologia')
+                                        ->label('Metodologia')
+                                        ->required()
+                                        ->columnSpanFull(),
+                                    Forms\Components\Textarea::make('form_avalia_aprend')
+                                        ->label('Forma de Avaliação da Aprendizagem')
+                                        ->autosize()
+                                        ->required()
+                                        ->columnSpanFull(),
+                                ]),
+                                Section::make([
+                                    ToggleButtons::make('status')
+                                        ->label('Status')
+                                        ->required()
+                                        ->default('0')
+                                        ->inline(false)
+                                        ->options([
+                                            '0' => 'Submetida',
+                                            '1' => 'Autorizada',
+                                            '2' => 'Finalizada'
+                                        ])
+                                        ->colors([
+                                            '0' => 'danger',
+                                            '1' => 'success',
+                                            '2' => 'info',
+                                        ])
+                                        ->icons([
+                                            '0' => 'heroicon-o-pencil',
+                                            '1' => 'heroicon-o-clock',
+                                            '2' => 'heroicon-o-check-circle',
+                                        ])
+                                ])->grow(false),
+                            ])->from('md')
 
-                            Forms\Components\Textarea::make('objetivos')
-                                ->required()
-                                ->columnSpanFull(),
-                            Forms\Components\Textarea::make('motodologia')
-                                ->required()
-                                ->columnSpanFull(),
-                            Forms\Components\Textarea::make('form_avalia_aprend')
-                                ->required()
-                                ->columnSpanFull(),
                         ]),
-                    ])
+                ])
             ]);
     }
 
@@ -345,58 +409,57 @@ class VisitaTecnicaResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('categoria_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('sub_categoria_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('custo')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('compensacao')
-                    ->boolean(),
+                Tables\Columns\TextColumn::make('status')
+                    ->Label('Status')
+                    ->badge()
+                    ->alignCenter()
+                    ->color(fn(string $state): string => match ($state) {
+                        '0' => 'danger',
+                        '1' => 'success',
+                        '2' => 'info',
+                    })
+                    ->formatStateUsing(function ($state) {
+                        if ($state == 0) {
+                            return 'Submetida';
+                        }
+                        if ($state == 1) {
+                            return 'Autorizada';
+                        }
+                        if ($state == 3) {
+                            return 'Finalizada';
+                        }
+                    }),
                 Tables\Columns\TextColumn::make('emp_evento')
+                    ->label('Empresa/Evento')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('coordenacao_id')
+                Tables\Columns\TextColumn::make('categoria.nome')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('subCategoria.nome')
+                    ->label('Sub Categoria')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('professor.name')
+                    ->label('Professor Responsável')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('turma.nome')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('curso_id')
+
+                Tables\Columns\TextColumn::make('estado.nome')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('turma_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('professor_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('srv_participante_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('justificativa_servidores')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('estado_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('cidade_id')
+                Tables\Columns\TextColumn::make('cidade.nome')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('data_hora_saida')
-                    ->dateTime()
+                    ->label('Data e Hora de Saída')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('data_hora_retorno')
-                    ->dateTime()
+                    ->label('Data e Hora de Retorno')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('carga_horaria_total'),
-                Tables\Columns\TextColumn::make('custo_total')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('qtd_estudantes')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('hospedagem')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('status')
-                    ->boolean(),
+
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

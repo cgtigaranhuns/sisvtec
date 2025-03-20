@@ -23,6 +23,8 @@ class BancoResource extends Resource
 
     protected static ?string $navigationLabel = 'Bancos';
 
+    protected static ?int $navigationSort = 2;
+
     
     public static function form(Form $form): Form
     {

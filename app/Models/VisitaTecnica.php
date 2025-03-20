@@ -47,7 +47,7 @@ class VisitaTecnica extends Model
     ];
 
     protected $casts = [
-        'comp_curriculares' => 'array',
+        'disciplina_id' => 'array',
         'srv_participante_id' => 'array',
         'cotacao_hospedagem' => 'array',
 

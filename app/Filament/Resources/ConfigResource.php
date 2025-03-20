@@ -23,6 +23,8 @@ class ConfigResource extends Resource
 
     protected static ?string $navigationLabel = 'Configurações';
 
+    protected static ?int $navigationSort = 11;
+
     public static function form(Form $form): Form
     {
         return $form
