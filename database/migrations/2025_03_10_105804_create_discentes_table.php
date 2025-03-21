@@ -27,8 +27,8 @@ return new class extends Migration
             $table->string('tipo_conta', 5);
             $table->string('curso_id', 10);
             $table->string('turma_id', 10);
-            $table->boolean('situacao');
             $table->boolean('status');
+            $table->string('foto');
 
             $table->timestamps();
         });

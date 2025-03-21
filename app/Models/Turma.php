@@ -11,7 +11,7 @@ class Turma extends Model
 
     protected $fillable = ['nome'];
 
-    public function discente()
+    public function discentes()
     {
         return $this->hasMany(Discente::class);
     }

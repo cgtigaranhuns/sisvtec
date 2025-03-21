@@ -25,8 +25,8 @@ class Discente extends Model
            'tipo_conta',
            'curso_id',
            'turma_id',
-           'situacao',
-           'status'
+           'status',
+           'foto',
     ];
 
     public function curso()
@@ -42,6 +42,11 @@ class Discente extends Model
     public function banco()
     {
         return $this->belongsTo(Banco::class);
+    }
+
+    public function discenteVisita()
+    {
+        return $this->hasMany(DiscenteVisita::class);
     }
 
 

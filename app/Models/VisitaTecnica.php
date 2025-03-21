@@ -107,6 +107,11 @@ class VisitaTecnica extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function discenteVisitas()
+    {
+        return $this->hasMany(DiscenteVisita::class);
+    }
+
 
 
 

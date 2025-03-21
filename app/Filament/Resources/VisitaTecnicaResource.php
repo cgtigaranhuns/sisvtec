@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\VisitaTecnicaResource\Pages;
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers;
+use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\DiscenteVisitasRelationManager;
 use App\Models\Cidade;
 use App\Models\Config;
 use App\Models\DadosUser;
@@ -25,6 +26,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 
@@ -485,7 +487,7 @@ class VisitaTecnicaResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            DiscenteVisitasRelationManager::class,
         ];
     }
 
