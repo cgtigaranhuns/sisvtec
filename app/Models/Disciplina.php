@@ -16,8 +16,13 @@ class Disciplina extends Model
         return $this->hasMany(VisitaTecnica::class);
     }
 
-    public function compensacaoEnvolvidos(){
-        return $this->hasMany(CompensacaoEnvolvido::class);
+    public function compesacaoDocente() 
+    {
+        return $this->hasMany(CompensacaoDocenteNaoEnvolvido::class);
+    }
+
+    public function compesacaoTurma() {
+        return $this->hasMany(CompensacaoTurmaNaoEnvolvido::class);
     }
 
 }

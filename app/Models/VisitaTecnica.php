@@ -112,12 +112,13 @@ class VisitaTecnica extends Model
         return $this->hasMany(DiscenteVisita::class);
     }
 
-    public function compensacaoEnvolvidos() {
-        return $this->hasMany(CompensacaoEnvolvido::class);
+    public function CompensacaoDocenteNaoEnvolvido() 
+    {
+        return $this->hasMany(CompensacaoDocenteNaoEnvolvido::class);
     }
 
-    public function compensacaoNaoEnvolvidos() {
-        return $this->hasMany(CompensacaoNaoEnvolvido::class);
+    public function CompensacaoTurmaNaoEnvolvido() {
+        return $this->hasMany(CompensacaoTurmaNaoEnvolvido::class);
     }
 
 

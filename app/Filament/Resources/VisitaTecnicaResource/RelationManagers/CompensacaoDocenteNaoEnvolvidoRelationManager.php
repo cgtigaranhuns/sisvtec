@@ -8,14 +8,13 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CompensacaoEnvolvidosRelationManager extends RelationManager
+class CompensacaoDocenteNaoEnvolvidoRelationManager extends RelationManager
 {
-    protected static string $relationship = 'compensacaoEnvolvidos';
+    protected static string $relationship = 'CompensacaoDocenteNaoEnvolvido';
 
-    protected static ?string $title = ' Plano de Compensação - Docentes Não Envolvidos';
+    protected static ?string $title = 'Plano de Compensação - Docente';
 
     public function form(Form $form): Form
     {
@@ -41,6 +40,7 @@ class CompensacaoEnvolvidosRelationManager extends RelationManager
                     ->searchable()
                     ->required(),
                 Forms\Components\DateTimePicker::make('data_hora_reposicao')
+                    ->dateTime('d/m/Y H:i')
                     ->label('Data e hora da reposição')
                     ->seconds(false)
                     ->required(),

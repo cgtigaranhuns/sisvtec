@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('compensacao_nao_envolvidos', function (Blueprint $table) {
+        Schema::create('compensacao_turma_nao_envolvidos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('visita_tecnica_id')->constrained('visita_tecnicas');
             $table->foreignId('user_id')->constrained('users');
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('compensacao_nao_envolvidos');
+        Schema::dropIfExists('compensacao_turma_nao_envolvidos');
     }
 };

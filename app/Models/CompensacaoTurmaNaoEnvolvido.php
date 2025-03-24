@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CompensacaoEnvolvido extends Model
+class CompensacaoTurmaNaoEnvolvido extends Model
 {
     use HasFactory;
 
@@ -15,21 +15,25 @@ class CompensacaoEnvolvido extends Model
         'disciplina_id',
         'turma_id',
         'data_hora_reposicao',
+        'user2_id',
     ];
 
-    public function visitaTecnica() {
+    public function visitaTecnica()
+    {
         return $this->belongsTo(VisitaTecnica::class);
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
-
-    public function disciplina() {
+    public function disciplina()
+    {  
         return $this->belongsTo(Disciplina::class);
     }
-    public function turma() {
+
+    public function turma() 
+    {
         return $this->belongsTo(Turma::class);
     }
-    
 }

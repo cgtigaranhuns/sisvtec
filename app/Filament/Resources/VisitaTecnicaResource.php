@@ -4,10 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\VisitaTecnicaResource\Pages;
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers;
+use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoDocenteNaoEnvolvidoRelationManager;
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoEnvolvidosRelationManager;
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoNaoEnvolvidosRelationManager;
+use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoTurmaNaoEnvolvidoRelationManager;
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\DiscenteVisitasRelationManager;
 use App\Models\Cidade;
+use App\Models\CompensacaoDocenteNaoEnvolvido;
 use App\Models\Config;
 use App\Models\DadosUser;
 use App\Models\SubCategoria;
@@ -323,7 +326,7 @@ class VisitaTecnicaResource extends Resource
                                             ->required()
                                             ->numeric(),
                                     ]),
-                                    
+
                                 Forms\Components\Fieldset::make('Custos')
                                     ->schema([
                                         Grid::make([
@@ -468,6 +471,11 @@ class VisitaTecnicaResource extends Resource
                     ->label('Data e Hora de Retorno')
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
+                Tables\Columns\ToggleColumn::make('status')
+                    ->label('Aprovar')
+                    ->sortable()
+                    ->alignCenter()
+                    ->toggleable(),
 
 
                 Tables\Columns\TextColumn::make('created_at')
@@ -496,8 +504,10 @@ class VisitaTecnicaResource extends Resource
     {
         return [
             DiscenteVisitasRelationManager::class,
-            CompensacaoEnvolvidosRelationManager::class,
-            CompensacaoNaoEnvolvidosRelationManager::class,
+            CompensacaoDocenteNaoEnvolvidoRelationManager::class,
+            CompensacaoTurmaNaoEnvolvidoRelationManager::class,
+
+
         ];
     }
 

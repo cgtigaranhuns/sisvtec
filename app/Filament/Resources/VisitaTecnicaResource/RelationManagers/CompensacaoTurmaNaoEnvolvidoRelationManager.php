@@ -10,11 +10,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CompensacaoNaoEnvolvidosRelationManager extends RelationManager
+class CompensacaoTurmaNaoEnvolvidoRelationManager extends RelationManager
 {
-    protected static string $relationship = 'compensacaoNaoEnvolvidos';
+    protected static string $relationship = 'CompensacaoTurmaNaoEnvolvido';
 
-    protected static ?string $title = ' Plano de Compensação - Turmas não Envolvidas';
+    protected static ?string $title = ' Plano de Compensação - Turmas';
 
     public function form(Form $form): Form
     {
@@ -70,6 +70,7 @@ class CompensacaoNaoEnvolvidosRelationManager extends RelationManager
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('data_hora_reposicao')
+                    ->dateTime('d/m/Y H:i')
                     ->label('Data e hora da reposição'),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Professor que vai assumir a turma')
