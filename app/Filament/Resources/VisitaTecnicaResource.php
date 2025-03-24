@@ -323,6 +323,7 @@ class VisitaTecnicaResource extends Resource
                                             ->required()
                                             ->numeric(),
                                     ]),
+                                    
                                 Forms\Components\Fieldset::make('Custos')
                                     ->schema([
                                         Grid::make([
