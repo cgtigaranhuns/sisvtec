@@ -24,6 +24,7 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
+use Filament\Support\Exceptions\Halt;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -267,13 +268,14 @@ class VisitaTecnicaResource extends Resource
                                     ->required(),
                                 Forms\Components\ToggleButtons::make('hospedagem')
                                     ->label('Haverá Hospedagem?')
+                                    ->hidden(fn(Get $get): bool => !$get('custo'))
                                     ->live()
                                     ->afterStateUpdated(function (callable $set, $state, $get) {
                                         $set('menor_valor_hospedagem', 0);
                                         $set('custo_total', ($get('valor_total_diarias') + 0));
                                         $set('cotacoes_hospedagem', []);
                                     })
-                                    ->required()
+                                    ->required(fn(Get $get): bool => $get('custo') == true)
                                     ->boolean()
                                     ->grouped(),
                                 Forms\Components\Textarea::make('justificativa_hospedagem')
@@ -329,19 +331,22 @@ class VisitaTecnicaResource extends Resource
                                         ])->schema([
                                             Forms\Components\TextInput::make('valor_total_diarias')
                                                 ->label('Valor Total das Diárias')
+                                                ->hidden(fn(Get $get): bool => !$get('custo'))
+                                                ->hidden()
                                                 ->readOnly()
                                                 ->prefix('R$')
                                                 ->numeric()
                                                 ->required(),
                                             Forms\Components\TextInput::make('menor_valor_hospedagem')
                                                 ->label('Menor Valor de Hospedagem')
-                                                ->hidden(fn(Get $get) => !$get('hospedagem'))
+                                                ->hidden(fn(Get $get) => !$get('hospedagem') || !$get('custo'))
                                                 ->prefix('R$')
                                                 ->readOnly()
                                                 ->numeric()
                                                 ->required(),
                                             Forms\Components\TextInput::make('custo_total')
                                                 ->label('Custo Total da Visita')
+                                                ->hidden(fn(Get $get): bool => !$get('custo'))
                                                 ->prefix('R$')
                                                 ->numeric()
                                                 ->readOnly()
