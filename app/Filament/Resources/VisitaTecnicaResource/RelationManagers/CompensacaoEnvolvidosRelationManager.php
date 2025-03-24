@@ -15,7 +15,7 @@ class CompensacaoEnvolvidosRelationManager extends RelationManager
 {
     protected static string $relationship = 'compensacaoEnvolvidos';
 
-    protected static ?string $title = ' Plano de Compensação - Envolvidos';
+    protected static ?string $title = ' Plano de Compensação - Docentes Não Envolvidos';
 
     public function form(Form $form): Form
     {
