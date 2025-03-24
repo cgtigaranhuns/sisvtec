@@ -38,14 +38,17 @@ class DiscenteVisitasRelationManager extends RelationManager
             ->recordTitleAttribute('visita_tecnica_id')
             ->columns([
                 Tables\Columns\TextColumn::make('discente.nome')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('discente.matricula')
                     ->label('Matrícula')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('discente.turma.nome')
+                    ->sortable()
                     ->searchable(),
-                    Tables\Columns\ToggleColumn::make('falta')
+                Tables\Columns\ToggleColumn::make('falta')
                     ->label('Faltou?')
+                    ->sortable()
                     ->alignCenter()
                     ->toggleable()
                     ->afterStateUpdated(function ($record, $state) {
@@ -56,8 +59,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                             $discente = Discente::find($record->discente_id);
                             $discente->status = 0;
                             $discente->save();
-                        }
-                        elseif(!$state) {
+                        } elseif (!$state) {
                             $discente = Discente::find($record->discente_id);
                             $discente->status = 3;
                             $discente->save();
@@ -85,11 +87,11 @@ class DiscenteVisitasRelationManager extends RelationManager
                             ]);
                         } else {
                             Notification::make()
-                                        ->title('Estudante já incluído')
-                                        ->body('O estudante ' . $discente->nome .'-'. $discente->matricula. ' já está incluído na visita.')
-                                        ->warning()
-                                        ->persistent()
-                                        ->send();
+                                ->title('Estudante já incluído')
+                                ->body('O estudante ' . $discente->nome . '-' . $discente->matricula . ' já está incluído na visita.')
+                                ->warning()
+                                ->persistent()
+                                ->send();
                         }
                     }),
                 Tables\Actions\CreateAction::make('addMais')
@@ -125,7 +127,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                                 } else {
                                     Notification::make()
                                         ->title('Estudante já incluído')
-                                        ->body('O estudante ' . $discente->nome.' - '.$discente->matricula .' já está incluído na visita.')
+                                        ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' já está incluído na visita.')
                                         ->warning()
                                         ->persistent()
                                         ->send();
@@ -133,7 +135,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                             } else {
                                 Notification::make()
                                     ->title('Estudante não incluído')
-                                    ->body('O estudante ' . $discente->nome.' - '.$discente->matricula .' não foi incluído na visita, pois está inativo.')
+                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está inativo.')
                                     ->danger()
                                     ->persistent()
                                     ->send();
@@ -146,13 +148,11 @@ class DiscenteVisitasRelationManager extends RelationManager
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            
+
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
-
-    
 }

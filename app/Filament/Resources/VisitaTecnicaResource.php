@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\VisitaTecnicaResource\Pages;
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers;
+use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoEnvolvidosRelationManager;
+use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoNaoEnvolvidosRelationManager;
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\DiscenteVisitasRelationManager;
 use App\Models\Cidade;
 use App\Models\Config;
@@ -488,6 +490,8 @@ class VisitaTecnicaResource extends Resource
     {
         return [
             DiscenteVisitasRelationManager::class,
+            CompensacaoEnvolvidosRelationManager::class,
+            CompensacaoNaoEnvolvidosRelationManager::class,
         ];
     }
 

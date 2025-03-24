@@ -54,6 +54,10 @@ class User extends Authenticatable implements LdapAuthenticatable
         return $this->belongsTo(Cargo::class);
     }
 
+    public function compensacaoEnvolvidos(){
+        return $this->hasMany(CompensacaoEnvolvido::class);
+    }
+
     
 
     

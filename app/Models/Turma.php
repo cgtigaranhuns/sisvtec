@@ -15,4 +15,9 @@ class Turma extends Model
     {
         return $this->hasMany(Discente::class);
     }
+
+    public function compensacaoEnvolvidos(){
+        return $this->hasMany(CompensacaoEnvolvido::class);
+    }
+
 }
