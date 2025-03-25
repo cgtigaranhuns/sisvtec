@@ -491,6 +491,10 @@ class VisitaTecnicaResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('imprimirVisitaTecnica')
+                    ->label('Visita Técnica')
+                    ->url(fn (VisitaTecnica $record): string => route('imprimirVisitaTecnica', $record))
+                    ->openUrlInNewTab(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
