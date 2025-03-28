@@ -12,6 +12,7 @@ class Discente extends Model
     protected $fillable = [
        
            'nome',
+           'nome_social',
            'matricula',
            'email',
            'data_nascimento',

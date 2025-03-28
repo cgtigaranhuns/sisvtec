@@ -43,6 +43,10 @@ class DiscenteResource extends Resource
                                 ->columnSpanFull()
                                 ->required()
                                 ->maxLength(50),
+                            Forms\Components\TextInput::make('nome_social')
+                                ->label('Nome Social')
+                                ->columnSpanFull()
+                                ->maxLength(50),
                             Forms\Components\TextInput::make('matricula')
                                 ->label('Matrícula')
                                 ->required()

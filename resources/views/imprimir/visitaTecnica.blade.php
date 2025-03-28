@@ -59,7 +59,7 @@
         </tr>
         <tr>
             <td colspan="0"><label>Empresa/Evento:</label> {{$visitaTecnica->emp_evento}}</td>
-            <td><label>Coordenação:</label> {{$visitaTecnica->coordenacao->nome}}</td>
+            <td><label>Coordenação/Setor:</label> {{$visitaTecnica->coordenacao->nome}}</td>
         </tr>
         <tr>
             <td><label>Curso:</label> {{$visitaTecnica->curso->nome}}</td>
@@ -72,7 +72,7 @@
                 @endforeach
             </td>
             
-            <td><label>Professor:</label> {{$visitaTecnica->professor->name}}</td>
+            <td><label>Professor/Servidor Responsável:</label> {{$visitaTecnica->professor->name}}</td>
         </tr>
         <tr>
             <td><label>Servidor Participante:</label> {{$visitaTecnica->servidor_participante}}</td>
@@ -123,6 +123,7 @@
         </tr>
     </table>
     <br>
+    <div style="page-break-after: always;"></div>
     <table>
         <tr>
             <td colspan="2" style="background-color: rgb(226, 223, 223); font-size: 12px; color: rgb(62, 62, 62); text-align:center; font-weight: bold;">
@@ -130,7 +131,7 @@
             </td>
         </tr>
         <tr>
-            <td><label>Conteúdo Programático:</label> {{$visitaTecnica->conteudo_programatico}}</td>
+            <td><label>Conteúdo Programático/Resumo:</label> {{$visitaTecnica->conteudo_programatico}}</td>
             <td><label>Justificativa:</label> {{$visitaTecnica->justificativa}}</td>
         </tr>
         <tr>
@@ -142,51 +143,7 @@
             <td><label>Forma de Avaliação da Aprendizagem:</label> {{$visitaTecnica->form_avalia_aprend}}</td>
         </tr>
     </table>
-    <br>
-    
-    <table>
-        <tr>
-            <td colspan="15" style="background-color: rgb(226, 223, 223); font-size: 12px; color: rgb(62, 62, 62); text-align:center; font-weight: bold;">
-                Estudantes
-            </td>
-        </tr>
-        <tr>
-            <th style="font-size: 8px">Nome</th>
-             <th style="font-size: 8px">Matrícula</th>
-             <th style="font-size: 8px">Email</th>
-             <th style="font-size: 8px">Data de Nascimento</th>
-             <th style="font-size: 8px">CPF</th>
-             <th style="font-size: 8px">RG</th>
-             <th style="font-size: 8px">Órgão Expeditor RG</th>
-             <th style="font-size: 8px">Data de Expedição RG</th>
-             <th style="font-size: 8px">Banco</th>
-             <th style="font-size: 8px">Agência</th>
-             <th style="font-size: 8px">Conta</th>
-             <th style="font-size: 8px">Tipo de Conta</th>
-             <th style="font-size: 8px">Curso</th>
-             <th style="font-size: 8px">Turma</th>
-             <th style="font-size: 8px">Foto</th>
-        </tr>
-        @foreach($visitaTecnica->discenteVisitas as $discenteVisita)
-        <tr style="font-size: 8px">
-            <td style="font-size: 8px">{{$discenteVisita->discente->nome}}</td>
-            <td style="font-size: 8px">{{$discenteVisita->discente->matricula}}</td>
-            <td style="font-size: 8px">{{$discenteVisita->discente->email}}</td>
-            <td style="font-size: 8px; text-align: center">{{ \Carbon\Carbon::parse($discenteVisita->discente->data_nascimento)->format('d/m/Y') }}</td>
-            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->cpf}}</td>
-            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->rg}}</td>
-            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->orgao_exp_rg}}</td>
-            <td style="font-size: 8px; text-align: center">{{ \Carbon\Carbon::parse($discenteVisita->discente->data_exp_rg)->format('d/m/Y') }}</td>
-            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->banco->nome ?? 'N/A'}}</td>
-            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->agencia}}</td>
-            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->conta}}</td>
-            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->tipo_conta = 1 ? 'Conta Corrente':'Poupança'}}</td>
-            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->curso->nome}}</td>
-            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->turma->nome}}</td>
-            <td style="font-size: 8px; text-align: center"><img src="{{ asset('storage/' . $discenteVisita->discente->foto) }}" alt="Foto" style="max-width: 50px;"></td>
-        </tr>
-        @endforeach
-    </table>
+   
     <br>
     <table>
         <tr>
@@ -216,7 +173,7 @@
     <table>
         <tr>
             <td colspan="7" style="background-color: rgb(226, 223, 223); font-size: 12px; color: rgb(62, 62, 62); text-align:center; font-weight: bold;">
-                Compensação Turma Não Envolvido
+                Compensação Turma Não Envolvida
             </td>
         </tr>
         <tr>
@@ -236,6 +193,41 @@
         </tr>
         @endforeach
     </table>
+    <br>
+    <div style="page-break-after: always;"></div>
+    @foreach($visitaTecnica->discenteVisitas->groupBy('discente.turma.nome') as $turmaNome => $discentes)
+        <table>
+            <tr>
+                <td colspan="15" style="background-color: rgb(226, 223, 223); font-size: 12px; color: rgb(62, 62, 62); text-align:center; font-weight: bold;">
+                    Estudantes - Turma: {{ $turmaNome }}
+                </td>
+            </tr>
+            <tr>
+                <th style="font-size: 8px">Nome</th>
+                <th style="font-size: 8px">Nome Social</th>
+                <th style="font-size: 8px">CPF</th>
+                <th style="font-size: 8px">Email</th>
+                <th style="font-size: 8px">Banco</th>
+                <th style="font-size: 8px">Agência</th>
+                <th style="font-size: 8px">Conta</th>
+                <th style="font-size: 8px">Tipo de Conta</th>
+            </tr>
+            @foreach($discentes as $discenteVisita)
+            <tr style="font-size: 8px">
+                <td style="font-size: 8px">{{ $discenteVisita->discente->nome }}</td>
+                <td style="font-size: 8px">{{ $discenteVisita->discente->nome_social }}</td>
+                <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->cpf }}</td>
+                <td style="font-size: 8px">{{ $discenteVisita->discente->email }}</td>
+                <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->banco->nome ?? 'N/A' }}</td>
+                <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->agencia }}</td>
+                <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->conta }}</td>
+                <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->tipo_conta == 1 ? 'Conta Corrente' : 'Poupança' }}</td>
+            </tr>
+            @endforeach
+        </table>
+        <br>
+    @endforeach
+    
 
 
 

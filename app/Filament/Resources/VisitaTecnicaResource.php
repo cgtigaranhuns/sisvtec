@@ -3,18 +3,10 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\VisitaTecnicaResource\Pages;
-use App\Filament\Resources\VisitaTecnicaResource\RelationManagers;
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoDocenteNaoEnvolvidoRelationManager;
-use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoEnvolvidosRelationManager;
-use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoNaoEnvolvidosRelationManager;
-use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoTurmaNaoEnvolvidoRelationManager;
-use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\DiscenteVisitasRelationManager;
-use App\Models\Cidade;
-use App\Models\CompensacaoDocenteNaoEnvolvido;
-use App\Models\Config;
-use App\Models\DadosUser;
+use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoTurmaNaoEnvolvidoRelationManager; 
+use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\DiscenteVisitasRelationManager;use App\Models\Cidade;
 use App\Models\SubCategoria;
-use App\Models\User;
 use App\Models\VisitaTecnica;
 use App\Traits\CalculaValorDiarias;
 use Carbon\Carbon;
@@ -27,13 +19,9 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
-use Filament\Support\Exceptions\Halt;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 
 
@@ -81,13 +69,11 @@ class VisitaTecnicaResource extends Resource
                                     ->required(),
                                 Forms\Components\ToggleButtons::make('custo')
                                     ->label('Haverá Custo?')
-                                    ->hidden(fn (Get $get): bool => $get('sub_categoria_id') != 1)
                                     ->required()
                                     ->boolean()
                                     ->grouped(),
                                 Forms\Components\ToggleButtons::make('compensacao')
                                     ->label('Haverá Compensação?')
-                                    ->hidden(fn (Get $get): bool => $get('sub_categoria_id') != 1)
                                     ->required()
                                     ->boolean()
                                     ->grouped(),
@@ -112,7 +98,7 @@ class VisitaTecnicaResource extends Resource
                                 '2xl' => 3,
                             ])->schema([
                                 Forms\Components\Select::make('coordenacao_id')
-                                    ->label('Coordenação')
+                                    ->label('Coordenação/Setor')
                                     ->searchable()
                                     ->relationship('coordenacao', 'nome')
                                     ->required(),
@@ -132,7 +118,7 @@ class VisitaTecnicaResource extends Resource
                                     ->searchable()
                                     ->live()
                                     ->multiple()
-                                    ->required(),
+                                    ->required(fn(Get $get) => $get('categoria_id') != 1),
                                 Forms\Components\Select::make('professor_id')
                                     ->label('Professor Responsável')
                                     ->default(function () {
@@ -230,7 +216,7 @@ class VisitaTecnicaResource extends Resource
                                 Forms\Components\TimePicker::make('carga_horaria_visita')
                                     ->label('Carga Horária Total da Visita')
                                     ->seconds(false)
-                                    ->required(),
+                                    ->required(fn(Get $get) => $get('categoria_id') != 1),
                             ]),
 
                         ]),
@@ -355,7 +341,7 @@ class VisitaTecnicaResource extends Resource
                                                 ->required(),
                                             Forms\Components\TextInput::make('custo_total')
                                                 ->label('Custo Total da Visita')
-                                                ->hidden(fn(Get $get): bool => !$get('custo'))
+                                                ->hidden(fn(Get $get): bool => $get('custo') == false)
                                                 ->prefix('R$')
                                                 ->numeric()
                                                 ->readOnly()
@@ -369,7 +355,7 @@ class VisitaTecnicaResource extends Resource
                         ->schema([
                             Split::make([
                                 Section::make([
-                                    Forms\Components\Textarea::make('conteudo_programatico')
+                                    Forms\Components\Textarea::make('conteudo_programatico/Resumo')
                                         ->label('Conteúdo Programático')
                                         ->autosize()
                                         ->required()
@@ -379,6 +365,11 @@ class VisitaTecnicaResource extends Resource
                                         ->autosize()
                                         ->required()
                                         ->columnSpanFull(),
+                                    Forms\Components\Textarea::make('just_outra_disciplina')
+                                        ->label('Justificativa para outra disciplina')
+                                        ->autosize()
+                                        ->required(fn(Get $get): bool => count($get('disciplina_id') ?? []) > 1 or $get('categoria_id') != 1)
+                                        ->columnSpanFull(),
                                     Forms\Components\Textarea::make('objetivos')
                                         ->label('Objetivos')
                                         ->autosize()
@@ -386,12 +377,14 @@ class VisitaTecnicaResource extends Resource
                                         ->columnSpanFull(),
                                     Forms\Components\Textarea::make('metodologia')
                                         ->label('Metodologia')
+                                        ->autosize()
+                                        ->required(fn(Get $get): bool => $get('categoria_id') != 1)
                                         ->required()
                                         ->columnSpanFull(),
                                     Forms\Components\Textarea::make('form_avalia_aprend')
                                         ->label('Forma de Avaliação da Aprendizagem')
                                         ->autosize()
-                                        ->required()
+                                        ->required(fn(Get $get): bool => $get('categoria_id') != 1)
                                         ->columnSpanFull(),
                                 ]),
                                 Section::make([
