@@ -51,7 +51,7 @@ class DiscenteResource extends Resource
                                 ->email()
                                 ->required()
                                 ->maxLength(50),
-                            Forms\Components\DatePicker::make('data_nacimento')
+                            Forms\Components\DatePicker::make('data_nascimento')
                                 ->label('Data de Nascimento')
                                 ->required(),
                             Forms\Components\Select::make('curso_id')

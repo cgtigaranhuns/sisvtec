@@ -13,7 +13,9 @@ class ManageCategorias extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Criar Categoria')
+                ->modalHeading('Criar Categoria'),
         ];
     }
 }

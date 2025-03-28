@@ -10,10 +10,14 @@ class ListVisitaTecnicas extends ListRecords
 {
     protected static string $resource = VisitaTecnicaResource::class;
 
+    protected static ?string $title = 'Visitas Técnicas';
+
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Novo')
+                ->modalHeading('Criar Proposta')
         ];
     }
 }

@@ -27,6 +27,12 @@ class CompensacaoTurmaNaoEnvolvido extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function user2()
+    {
+        return $this->belongsTo(User::class);
+    }
+    
     public function disciplina()
     {  
         return $this->belongsTo(Disciplina::class);

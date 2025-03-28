@@ -45,6 +45,11 @@
 <body>
     <table>
         <tr>
+            <td colspan="2" style="background-color: rgb(226, 223, 223); font-size: 12px; color: rgb(62, 62, 62); text-align:center; font-weight: bold;">
+                Informações Gerais
+            </td>
+        </tr>
+        <tr>
             <td><label>Categoria:</label> {{$visitaTecnica->categoria->nome}}</td>
             <td><label>Sub Categoria:</label> {{$visitaTecnica->subcategoria->nome}}</td>
         </tr>
@@ -53,7 +58,7 @@
             <td><label>Compensação:</label> {{$visitaTecnica->compensacao == 1 ? 'Sim' : 'Não'}}</td>
         </tr>
         <tr>
-            <td><label>Empresa/Evento:</label> {{$visitaTecnica->emp_evento}}</td>
+            <td colspan="0"><label>Empresa/Evento:</label> {{$visitaTecnica->emp_evento}}</td>
             <td><label>Coordenação:</label> {{$visitaTecnica->coordenacao->nome}}</td>
         </tr>
         <tr>
@@ -78,40 +83,161 @@
             <td><label>Cidade:</label> {{$visitaTecnica->cidade->nome}}</td>
         </tr>
         <tr>
-            <td><label>Data/Hora Saída:</label> {{$visitaTecnica->data_hora_saida}}</td>
-            <td><label>Data/Hora Retorno:</label> {{$visitaTecnica->data_hora_retorno}}</td>
+            <td><label>Data/Hora Saída:</label> {{ \Carbon\Carbon::parse($visitaTecnica->data_hora_saida)->format('d/m/Y H:i') }}</td>
+            <td><label>Data/Hora Retorno:</label> {{\Carbon\Carbon::parse($visitaTecnica->data_hora_retorno)->format('d/m/Y H:i')}}</td>
         </tr>
         <tr>
             <td><label>Carga Horária Total:</label> {{$visitaTecnica->carga_horaria_total}}</td>
-            <td><label>Carga Horária visitaTecnica:</label> {{$visitaTecnica->carga_horaria_visitaTecnica}}</td>
+            <td><label>Carga Horária da Visita:</label> {{$visitaTecnica->carga_horaria_visita}}</td>
+        </tr>
+        <tr>
+            
+            <td><label>Quantidade de Estudantes:</label> {{$visitaTecnica->qtd_estudantes}}</td>
+        </tr>
+        <tr>
+    </table>
+    <br>
+    <table>
+        <tr>
+            <td colspan="2" style="background-color: rgb(226, 223, 223); font-size: 12px; color: rgb(62, 62, 62); text-align:center; font-weight: bold;">
+                Informações Financeiras
+            </td>
+        </tr>
+            <td><label>Haverá Hospedagem?:</label> {{$visitaTecnica->hospedagem == 1 ? 'Sim' : 'Não'}}</td>
+            <td><label>Justificativa da Hospedagem:</label> {{$visitaTecnica->justificativa_hospedagem}}</td>
+            
+        </tr>
+        <tr>
+            <td><label>Valor da Diária por Estudante R$:</label> {{ number_format(($visitaTecnica->valor_total_diarias / $visitaTecnica->qtd_estudantes), 2, ',', '.') }}</td> 
+            <td><label>Valor da Hospedagem por Estudante R$:</label> {{number_format(($visitaTecnica->menor_valor_hospedagem / $visitaTecnica->qtd_estudantes), 2, ',', '.') }}</td> 
+        </tr>
+        <tr>
+            <td><label>Valor Total das Diárias R$:</label> {{number_format(($visitaTecnica->valor_total_diarias), 2, ',', '.')}}</td>
+            <td><label>Valor Total das Hospedagens R$:</label> {{number_format(($visitaTecnica->menor_valor_hospedagem), 2, ',', '.')}}</td>
+            
+        </tr>
+        <tr>
+            <td><label>Valor Total da Ajuda de Custo Por Estudante R$:</label> <span style="color: brown; font-weight: bold">{{number_format(($visitaTecnica->custo_total / $visitaTecnica->qtd_estudantes), 2, ',', '.')}}</span></td>
+            <td><label>Valor Total Geral da Ajuda de Custo R$:</label> <span style="color: brown; font-weight: bold">{{number_format(($visitaTecnica->custo_total), 2, ',', '.')}}</span></td>
+           
+        </tr>
+    </table>
+    <br>
+    <table>
+        <tr>
+            <td colspan="2" style="background-color: rgb(226, 223, 223); font-size: 12px; color: rgb(62, 62, 62); text-align:center; font-weight: bold;">
+                Objetivos e Justificativas
+            </td>
         </tr>
         <tr>
             <td><label>Conteúdo Programático:</label> {{$visitaTecnica->conteudo_programatico}}</td>
-            <td><label>Quantidade de Estudantes:</label> {{$visitaTecnica->quantidade_estudantes}}</td>
-        </tr>
-        <tr>
-            <td><label>Hospedagem:</label> {{$visitaTecnica->hospedagem}}</td>
-            <td><label>Cotação Hospedagem:</label></td> 
-        </tr>
-        <tr>
-            <td><label>Menor Valor Hospedagem:</label> {{$visitaTecnica->menor_valor_hospedagem}}</td>
-            <td><label>Valor Total Diárias:</label> {{$visitaTecnica->valor_total_diarias}}</td>
-        </tr>
-        <tr>
-            <td><label>Custo Total:</label> {{$visitaTecnica->custo_total}}</td>
-            <td><label>Justificativa Hospedagem:</label> {{$visitaTecnica->justificativa_hospedagem}}</td>
-        </tr>
-        <tr>
-            <td><label>Status:</label> {{$visitaTecnica->status}}</td>
             <td><label>Justificativa:</label> {{$visitaTecnica->justificativa}}</td>
         </tr>
         <tr>
-            <td><label>Justificativa Outra Disciplina:</label> {{$visitaTecnica->justificativa_outra_disciplina}}</td>
+            <td><label>Justificativa Outra Disciplina:</label> {{$visitaTecnica->just_outra_disciplina}}</td>
             <td><label>Objetivos:</label> {{$visitaTecnica->objetivos}}</td>
         </tr>
         <tr>
             <td><label>Metodologia:</label> {{$visitaTecnica->metodologia}}</td>
-            <td><label>Forma de Avaliação da Aprendizagem:</label> {{$visitaTecnica->forma_avaliacao_aprendizagem}}</td>
+            <td><label>Forma de Avaliação da Aprendizagem:</label> {{$visitaTecnica->form_avalia_aprend}}</td>
         </tr>
-    </table></body>
+    </table>
+    <br>
+    
+    <table>
+        <tr>
+            <td colspan="15" style="background-color: rgb(226, 223, 223); font-size: 12px; color: rgb(62, 62, 62); text-align:center; font-weight: bold;">
+                Estudantes
+            </td>
+        </tr>
+        <tr>
+            <th style="font-size: 8px">Nome</th>
+             <th style="font-size: 8px">Matrícula</th>
+             <th style="font-size: 8px">Email</th>
+             <th style="font-size: 8px">Data de Nascimento</th>
+             <th style="font-size: 8px">CPF</th>
+             <th style="font-size: 8px">RG</th>
+             <th style="font-size: 8px">Órgão Expeditor RG</th>
+             <th style="font-size: 8px">Data de Expedição RG</th>
+             <th style="font-size: 8px">Banco</th>
+             <th style="font-size: 8px">Agência</th>
+             <th style="font-size: 8px">Conta</th>
+             <th style="font-size: 8px">Tipo de Conta</th>
+             <th style="font-size: 8px">Curso</th>
+             <th style="font-size: 8px">Turma</th>
+             <th style="font-size: 8px">Foto</th>
+        </tr>
+        @foreach($visitaTecnica->discenteVisitas as $discenteVisita)
+        <tr style="font-size: 8px">
+            <td style="font-size: 8px">{{$discenteVisita->discente->nome}}</td>
+            <td style="font-size: 8px">{{$discenteVisita->discente->matricula}}</td>
+            <td style="font-size: 8px">{{$discenteVisita->discente->email}}</td>
+            <td style="font-size: 8px; text-align: center">{{ \Carbon\Carbon::parse($discenteVisita->discente->data_nascimento)->format('d/m/Y') }}</td>
+            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->cpf}}</td>
+            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->rg}}</td>
+            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->orgao_exp_rg}}</td>
+            <td style="font-size: 8px; text-align: center">{{ \Carbon\Carbon::parse($discenteVisita->discente->data_exp_rg)->format('d/m/Y') }}</td>
+            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->banco->nome ?? 'N/A'}}</td>
+            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->agencia}}</td>
+            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->conta}}</td>
+            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->tipo_conta = 1 ? 'Conta Corrente':'Poupança'}}</td>
+            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->curso->nome}}</td>
+            <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->turma->nome}}</td>
+            <td style="font-size: 8px; text-align: center"><img src="{{ asset('storage/' . $discenteVisita->discente->foto) }}" alt="Foto" style="max-width: 50px;"></td>
+        </tr>
+        @endforeach
+    </table>
+    <br>
+    <table>
+        <tr>
+            <td colspan="7" style="background-color: rgb(226, 223, 223); font-size: 12px; color: rgb(62, 62, 62); text-align:center; font-weight: bold;">
+                Compensação Docente Não Envolvido
+            </td>
+        </tr>
+        <tr>
+            <th style="font-size: 8px">Professor</th>
+            <th style="font-size: 8px">Disciplina</th>
+            <th style="font-size: 8px">Turma</th>
+            <th style="font-size: 8px">Data/Hora Reposição</th>
+            
+
+        </tr>
+        @foreach($visitaTecnica->compensacaoDocenteNaoEnvolvido as $compensacao)
+        <tr style="font-size: 8px">
+            <td style="font-size: 8px">{{ $compensacao->user->name }}</td>
+            <td style="font-size: 8px; text-align: center">{{ $compensacao->disciplina->nome }}</td>
+            <td style="font-size: 8px; text-align: center">{{ $compensacao->turma->nome }}</td>
+            <td style="font-size: 8px; text-align: center">{{ \Carbon\Carbon::parse($compensacao->data_hora_reposicao)->format('d/m/Y H:i') }}</td>
+           
+        </tr>
+        @endforeach
+    </table>
+    <br>
+    <table>
+        <tr>
+            <td colspan="7" style="background-color: rgb(226, 223, 223); font-size: 12px; color: rgb(62, 62, 62); text-align:center; font-weight: bold;">
+                Compensação Turma Não Envolvido
+            </td>
+        </tr>
+        <tr>
+            <th style="font-size: 8px">Professor</th>
+            <th style="font-size: 8px">Disciplina</th>
+            <th style="font-size: 8px">Turma</th>
+            <th style="font-size: 8px">Data/Hora Reposição</th>
+            <th style="font-size: 8px">Professor que Assumirá</th>
+        </tr>
+        @foreach($visitaTecnica->compensacaoTurmaNaoEnvolvido as $compensacao)
+        <tr style="font-size: 8px">
+            <td style="font-size: 8px">{{ $compensacao->user->name }}</td>
+            <td style="font-size: 8px; text-align: center">{{ $compensacao->disciplina->nome }}</td>
+            <td style="font-size: 8px; text-align: center">{{ $compensacao->turma->nome }}</td>
+            <td style="font-size: 8px; text-align: center">{{ \Carbon\Carbon::parse($compensacao->data_hora_reposicao)->format('d/m/Y H:i') }}</td>
+            <td style="font-size: 8px">{{ $compensacao->user2->name }}</td>
+        </tr>
+        @endforeach
+    </table>
+
+
+
+</body>
 </html>

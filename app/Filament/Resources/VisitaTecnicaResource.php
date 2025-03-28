@@ -66,23 +66,28 @@ class VisitaTecnicaResource extends Resource
                             ])->schema([
                                 Forms\Components\Select::make('categoria_id')
                                     ->label('Categoria')
+                                    ->default(2)
                                     ->relationship('categoria', 'nome')
                                     ->live()
                                     ->required(),
 
                                 Forms\Components\Select::make('sub_categoria_id')
                                     ->label('Sub Categoria')
+                                    ->default(1)
+                                    ->live()
                                     ->options(fn(Get $get): Collection => SubCategoria::query()
                                         ->where('categoria_id', $get('categoria_id'))
                                         ->pluck('nome', 'id'))
                                     ->required(),
                                 Forms\Components\ToggleButtons::make('custo')
                                     ->label('Haverá Custo?')
+                                    ->hidden(fn (Get $get): bool => $get('sub_categoria_id') != 1)
                                     ->required()
                                     ->boolean()
                                     ->grouped(),
                                 Forms\Components\ToggleButtons::make('compensacao')
                                     ->label('Haverá Compensação?')
+                                    ->hidden(fn (Get $get): bool => $get('sub_categoria_id') != 1)
                                     ->required()
                                     ->boolean()
                                     ->grouped(),
@@ -379,7 +384,7 @@ class VisitaTecnicaResource extends Resource
                                         ->autosize()
                                         ->required()
                                         ->columnSpanFull(),
-                                    Forms\Components\Textarea::make('motodologia')
+                                    Forms\Components\Textarea::make('metodologia')
                                         ->label('Metodologia')
                                         ->required()
                                         ->columnSpanFull(),

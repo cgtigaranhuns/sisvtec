@@ -14,7 +14,7 @@ class Discente extends Model
            'nome',
            'matricula',
            'email',
-           'data_nacimento',
+           'data_nascimento',
            'cpf',
            'rg',
            'orgao_exp_rg',

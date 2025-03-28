@@ -40,7 +40,6 @@ class CompensacaoDocenteNaoEnvolvidoRelationManager extends RelationManager
                     ->searchable()
                     ->required(),
                 Forms\Components\DateTimePicker::make('data_hora_reposicao')
-                    ->dateTime('d/m/Y H:i')
                     ->label('Data e hora da reposição')
                     ->seconds(false)
                     ->required(),

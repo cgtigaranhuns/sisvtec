@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SubCategoriaResource\Pages;
-use App\Filament\Resources\SubCategoriaResource\RelationManagers;
-use App\Models\SubCategoria;
+use App\Filament\Resources\RoleResource\Pages;
+use App\Filament\Resources\RoleResource\RelationManagers;
+use Spatie\Permission\Models\Role;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -13,30 +15,29 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class SubCategoriaResource extends Resource
+class RoleResource extends Resource
 {
-    protected static ?string $model = SubCategoria::class;
+    protected static ?string $model = Role::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
+    protected static ?string $navigationIcon = 'heroicon-s-identification';
 
-    protected static ?string $label = 'SubCategoria';
+    protected static ?string $navigationGroup = 'Segurança';
 
-    protected static ?string $navigationGroup = 'Cadastros';
+    protected static ?string $navigationLabel = 'Funções';
 
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 14;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('categoria_id')
-                    ->label('Categoria')
-                    ->relationship('categoria', 'nome')
-                    ->required(),                    
-                Forms\Components\Textarea::make('nome')
-                    ->autosize()
-                    ->required()
-                    ->maxLength(200),
+                TextInput::make('name')
+                    ->label('Nome'),
+                Select::make('permissions')
+                    ->label('Permissões')
+                    ->multiple()
+                    ->preload()
+                    ->relationship('permissions', 'name')
             ]);
     }
 
@@ -44,11 +45,8 @@ class SubCategoriaResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('categoria.nome')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('nome')
-                    ->label('SubCategoria')
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nome')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -76,7 +74,7 @@ class SubCategoriaResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageSubCategorias::route('/'),
+            'index' => Pages\ManageRoles::route('/'),
         ];
     }
 }

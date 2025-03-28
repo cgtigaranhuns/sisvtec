@@ -9,4 +9,6 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateVisitaTecnica extends CreateRecord
 {
     protected static string $resource = VisitaTecnicaResource::class;
+
+    
 }

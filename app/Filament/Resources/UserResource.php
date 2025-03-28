@@ -61,6 +61,11 @@ class UserResource extends Resource
                                     ->dehydrateStateUsing(fn($state) => Hash::make($state))
                                     ->dehydrated(fn($state) => filled($state))
                                     ->required(fn(string $context): bool => $context === 'create'),
+                                Forms\Components\Select::make('roles')
+                                    ->label('Perfil')
+                                    //  ->multiple()
+                                    ->preload()
+                                    ->relationship('roles', 'name'),
 
                             ]),
                         Tab::make('Detalhes')
@@ -86,7 +91,7 @@ class UserResource extends Resource
 
                                 ])
                                     ->columns(2)
-                                    
+
 
 
                             ]),

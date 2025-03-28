@@ -41,7 +41,7 @@ class VisitaTecnica extends Model
         'justificativa',
         'just_outra_disciplina',
         'objetivos',
-        'motodologia',
+        'metodologia',
         'form_avalia_aprend'
 
     ];
