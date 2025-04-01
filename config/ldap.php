@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('LDAP_CONNECTION', 'default'),
+   'default' => env('LDAP_CONNECTION', 'adm'),
 
     /*
     |--------------------------------------------------------------------------
@@ -27,37 +27,26 @@ return [
     */
 
     'connections' => [
-
-        'default' => [
-            'hosts' => [env('LDAP_HOST', '172.28.1.77')],
-            'username' => env('LDAP_USERNAME', 'CN=1888212,CN=Users,DC=adm,DC=garanhuns,DC=ifpe'),
-            'password' => env('LDAP_PASSWORD', 'well2870822'),
-            'port' => env('LDAP_PORT', 389),
-            'base_dn' => env('LDAP_BASE_DN', 'dc=adm,dc=garanhuns,dc=ifpe'),
-            'timeout' => env('LDAP_TIMEOUT', 5),
-            'use_ssl' => env('LDAP_SSL', false),
-            'use_tls' => env('LDAP_TLS', false),
-            'use_sasl' => env('LDAP_SASL', false),
-            'sasl_options' => [
-                // 'mech' => 'GSSAPI',
-            ],
-        ],
-
-        'labs' => [
-            'hosts' => [env('LDAP_HOST', '172.28.2.55')],
-            'username' => env('LDAP_USERNAME', 'CN=1888212,OU=TI,DC=labs,DC=garanhuns,DC=ifpe'),
-            'password' => env('LDAP_PASSWORD', 'well2870822'),
-            'port' => env('LDAP_PORT', 389),
-            'base_dn' => env('LDAP_BASE_DN', 'OU=discentes,DC=labs,DC=garanhuns,DC=ifpe'),
-            'timeout' => env('LDAP_TIMEOUT', 5),
-            'use_ssl' => env('LDAP_SSL', false),
-            'use_tls' => env('LDAP_TLS', false),
-            'use_sasl' => env('LDAP_SASL', false),
-            'sasl_options' => [
-                // 'mech' => 'GSSAPI',
-            ],
-        ],
-
+        'adm' => [
+            'hosts' => ['172.28.1.77'],
+            'username' => env('LDAP_ADM_USERNAME'),
+            'password' => env('LDAP_ADM_PASSWORD'),
+            'port' => env('LDAP_ADM_PORT', 389),
+            'base_dn' => env('LDAP_ADM_BASE_DN', 'dc=adm,dc=garanhuns,dc=ifpe'),
+            'timeout' => env('LDAP_ADM_TIMEOUT', 5),
+            'use_ssl' => env('LDAP_ADM_SSL', false),
+            'use_tls' => env('LDAP_ADM_TLS', false),
+    ],
+    'labs' => [
+        'hosts' => ['172.28.2.55'],
+        'username' => env('LDAP_LABS_USERNAME'),
+        'password' => env('LDAP_LABS_PASSWORD'),
+        'port' => env('LDAP_LABS_PORT', 389),
+        'base_dn' => env('LDAP_LABS_BASE_DN', 'dc=labs,dc=garanhuns,dc=ifpe'),
+        'timeout' => env('LDAP_LABS_TIMEOUT', 5),
+        'use_ssl' => env('LDAP_LABS_SSL', false),
+        'use_tls' => env('LDAP_LABS_TLS', false),
+    ],
     ],
 
     /*

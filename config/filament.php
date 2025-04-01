@@ -2,6 +2,13 @@
 
 return [
 
+    'auth' => [
+        'guard' => 'filament',
+        'pages' => [
+            'login' => \App\Filament\Pages\Auth\Login::class,
+        ],
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Broadcasting
@@ -85,5 +92,6 @@ return [
     */
 
     'livewire_loading_delay' => 'default',
+    'path' => 'admin',
 
 ];

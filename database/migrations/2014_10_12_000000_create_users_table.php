@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->foreignId('cargo_id')->constrained();
             $table->string('tipo_servidor');
+            $table->foreignId('coordenacao_id')->constrained();
             $table->rememberToken();
             $table->timestamps();
         });

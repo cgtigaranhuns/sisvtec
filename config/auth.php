@@ -38,7 +38,11 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'multi-ldap',
+        ],
+        'filament' => [
+            'driver' => 'session',
+            'provider' => 'multi-ldap',
         ],
     ],
 
@@ -60,40 +64,18 @@ return [
     */
 
     'providers' => [
-        // ...
-
         'users' => [
-            'driver' => 'ldap',
-            'model' => LdapRecord\Models\ActiveDirectory\User::class,
-            'rules' => [],
-            'scopes' => [],
-            'database' => [
-                'model' => App\Models\User::class,
-                'sync_passwords' => false,
-                'sync_attributes' => [
-                    'name' => 'displayname',
-                    'username' => 'samaccountname',
-                    'email' => 'mail',
-                ],
-            ],
-        ], 
-
-        'labs' => [
-            'driver' => 'ldap',
-            'model' => App\Ldap\labs\User::class,
-            'rules' => [],
-            'scopes' => [],
-            'database' => [
-                'model' => App\Models\Discente::class,
-                'sync_passwords' => false,
-                'sync_attributes' => [
-                    'name' => 'displayname',
-                    'username' => 'cn',
-                    'mail' => 'mail',
-                ], 
-            ], 
-        ], 
-    ], 
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class,
+        ],
+        'multi-ldap' => [
+            'driver' => 'multi-ldap',
+        ],
+        // 'users' => [
+        //     'driver' => 'database',
+        //     'table' => 'users',
+        // ],
+    ],
 
     /*
     |--------------------------------------------------------------------------

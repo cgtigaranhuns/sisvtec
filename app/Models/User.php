@@ -28,6 +28,7 @@ class User extends Authenticatable implements LdapAuthenticatable
         'password',
         'cargo_id',
         'tipo_servidor',
+        'coordenacao_id',
     ];
 
     /**
@@ -50,6 +51,32 @@ class User extends Authenticatable implements LdapAuthenticatable
         'password' => 'hashed',
     ];
 
+    public function getLdapDomain(): ?string
+    {
+        return $this->domain ?? 'adm';
+    }
+
+    /**
+     * Get the LDAP GUID of the user.
+     *
+     * @return string
+     */
+    public function getLdapGuid(): string 
+    {
+        return $this->guid;
+    }
+
+    /**
+     * Set the LDAP GUID of the user.
+     *
+     * @param string $guid
+     * @return void
+     */
+    public function setLdapGuid($guid): void
+    {
+        $this->guid = $guid;
+    }
+
     public function cargo()
     {
         return $this->belongsTo(Cargo::class);
@@ -63,7 +90,16 @@ class User extends Authenticatable implements LdapAuthenticatable
         return $this->hasMany(CompensacaoTurmaNaoEnvolvido::class);
     }
 
-    
+    public function coordenador() {
+        return $this->hasMany(Coordenacao::class);
+    }
+
+    public function coordenacao()
+    {   
+        return $this->belongsTo(Coordenacao::class);
+    }
+
+
 
     
 }

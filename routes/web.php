@@ -19,3 +19,4 @@ Route::get('/', function () {
 });
 
 Route::get('imprimir/visitaTecnica/{id}',[ControllerImpressoes::class, 'imprimirVisitaTecnica'])->name('imprimirVisitaTecnica');
+Route::get('imprimir/relatorioFinal/{id}',[ControllerImpressoes::class, 'imprimirRelatorioFinal'])->name('imprimirRelatorioFinal');

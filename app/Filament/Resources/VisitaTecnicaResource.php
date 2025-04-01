@@ -4,8 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\VisitaTecnicaResource\Pages;
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoDocenteNaoEnvolvidoRelationManager;
-use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoTurmaNaoEnvolvidoRelationManager; 
-use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\DiscenteVisitasRelationManager;use App\Models\Cidade;
+use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoTurmaNaoEnvolvidoRelationManager;
+use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\DiscenteVisitasRelationManager;
+use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\RelatorioFinalVisitaTecnicaRelationManager;
+use App\Models\Cidade;
 use App\Models\SubCategoria;
 use App\Models\VisitaTecnica;
 use App\Traits\CalculaValorDiarias;
@@ -21,6 +23,7 @@ use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -38,6 +41,27 @@ class VisitaTecnicaResource extends Resource
     protected static ?string $navigationGroup = 'Propostas';
 
     protected static ?int $navigationSort = 1;
+
+    public static function getEloquentQuery(): Builder
+    {
+        /** @var \App\Models\User */
+        $authUser = auth()->user();
+        
+        if ($authUser->hasRole('Coordenadores')) {
+           // dd('teste');
+            return static::getModel()::query()->where('coordenacao_id', '=', auth()->user()->coordenacao_id);
+        }
+        if ($authUser->hasRole('Professores')) {
+            return static::getModel()::query()->where('professor_id', '=', auth()->user()->id);
+        }
+        // Add a valid condition or remove this block if not needed
+        else {
+            return static::getModel()::query(); // Default return for other cases
+        }
+
+       
+        }
+    
 
     public static function form(Form $form): Form
     {
@@ -213,9 +237,9 @@ class VisitaTecnicaResource extends Resource
                                     ->readOnly()
                                     ->label('Carga Horária Total da Viagem')
                                     ->required(),
-                                Forms\Components\TimePicker::make('carga_horaria_visita')
+                                Forms\Components\TextInput::make('carga_horaria_visita')
                                     ->label('Carga Horária Total da Visita')
-                                    ->seconds(false)
+                                    ->mask('99:99')
                                     ->required(fn(Get $get) => $get('categoria_id') != 1),
                             ]),
 
@@ -355,8 +379,8 @@ class VisitaTecnicaResource extends Resource
                         ->schema([
                             Split::make([
                                 Section::make([
-                                    Forms\Components\Textarea::make('conteudo_programatico/Resumo')
-                                        ->label('Conteúdo Programático')
+                                    Forms\Components\Textarea::make('conteudo_programatico')
+                                        ->label('Conteúdo Programático/Resumo')
                                         ->autosize()
                                         ->required()
                                         ->columnSpanFull(),
@@ -448,6 +472,9 @@ class VisitaTecnicaResource extends Resource
                 Tables\Columns\TextColumn::make('subCategoria.nome')
                     ->label('Sub Categoria')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('coordenacao.nome')
+                    ->label('Coordenação')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('professor.name')
                     ->label('Professor Responsável')
                     ->sortable(),
@@ -491,7 +518,11 @@ class VisitaTecnicaResource extends Resource
             ->actions([
                 Tables\Actions\Action::make('imprimirVisitaTecnica')
                     ->label('Visita Técnica')
-                    ->url(fn (VisitaTecnica $record): string => route('imprimirVisitaTecnica', $record))
+                    ->url(fn(VisitaTecnica $record): string => route('imprimirVisitaTecnica', $record))
+                    ->openUrlInNewTab(),
+                Tables\Actions\Action::make('imprimirRelatorioFinal')
+                    ->label('Relatório Final')
+                    ->url(fn(VisitaTecnica $record): string => route('imprimirRelatorioFinal', $record))
                     ->openUrlInNewTab(),
                 Tables\Actions\EditAction::make(),
             ])
@@ -508,6 +539,7 @@ class VisitaTecnicaResource extends Resource
             DiscenteVisitasRelationManager::class,
             CompensacaoDocenteNaoEnvolvidoRelationManager::class,
             CompensacaoTurmaNaoEnvolvidoRelationManager::class,
+            RelatorioFinalVisitaTecnicaRelationManager::class,
 
 
         ];

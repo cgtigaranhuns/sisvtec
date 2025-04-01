@@ -121,6 +121,11 @@ class VisitaTecnica extends Model
         return $this->hasMany(CompensacaoTurmaNaoEnvolvido::class);
     }
 
+    public function RelatorioFinalVisitaTecnica()
+    {
+        return $this->hasMany(RelatorioFinal::class);
+    }
+
 
 
 

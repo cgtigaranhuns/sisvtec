@@ -27,6 +27,16 @@ class DiscenteResource extends Resource
 
     protected static ?int $navigationSort = 7;
 
+    public static function getEloquentQuery(): Builder
+    {
+        /** @var \App\Models\User */
+        $authUser =  auth()->user();
+
+        if ($authUser->hasRole('Estudantes')) {
+            return parent::getEloquentQuery()->where('matricula', '=', auth()->user()->username);
+        }
+    }
+
     public static function form(Form $form): Form
     {
         return $form

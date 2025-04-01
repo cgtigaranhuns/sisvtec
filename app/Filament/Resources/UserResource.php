@@ -86,6 +86,10 @@ class UserResource extends Resource
                                         ->label('Cargo')
                                         ->required()
                                         ->relationship('cargo', 'nome'),
+                                    Forms\Components\Select::make('coordenacao_id')
+                                        ->label('Coordenação')
+                                        ->required()
+                                        ->relationship('coordenacao', 'nome'),
 
 
 
