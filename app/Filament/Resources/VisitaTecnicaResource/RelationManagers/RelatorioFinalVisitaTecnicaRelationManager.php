@@ -17,6 +17,8 @@ class RelatorioFinalVisitaTecnicaRelationManager extends RelationManager
 {
     protected static string $relationship = 'RelatorioFinalVisitaTecnica';
 
+    protected static ?string $title = 'Relatório Final';
+
     public function form(Form $form): Form
     {
         return $form
@@ -55,7 +57,11 @@ class RelatorioFinalVisitaTecnicaRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label('Adicionar Relatório Final')
+                    ->modalHeading('Adicionar Relatório Final')                   
+                    ->icon('heroicon-o-plus'),
+                    
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

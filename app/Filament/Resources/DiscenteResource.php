@@ -34,7 +34,11 @@ class DiscenteResource extends Resource
 
         if ($authUser->hasRole('Estudantes')) {
             return parent::getEloquentQuery()->where('matricula', '=', auth()->user()->username);
+        } 
+        else {
+            return static::getModel()::query();
         }
+       
     }
 
     public static function form(Form $form): Form
@@ -51,6 +55,14 @@ class DiscenteResource extends Resource
                         ->schema([
                             Forms\Components\TextInput::make('nome')
                                 ->columnSpanFull()
+                                ->disabled(function () {  
+
+                                   /** @var \App\Models\User */
+                                         $authUser =  auth()->user();                            
+                                     if($authUser->hasRole('Estudantes')){
+                                        return true;
+                                     }
+                                })                                
                                 ->required()
                                 ->maxLength(50),
                             Forms\Components\TextInput::make('nome_social')
@@ -59,6 +71,14 @@ class DiscenteResource extends Resource
                                 ->maxLength(50),
                             Forms\Components\TextInput::make('matricula')
                                 ->label('Matrícula')
+                                ->disabled(function () {  
+
+                                    /** @var \App\Models\User */
+                                          $authUser =  auth()->user();                            
+                                      if($authUser->hasRole('Estudantes')){
+                                         return true;
+                                      }
+                                 })      
                                 ->required()
                                 ->maxLength(50),
                             Forms\Components\TextInput::make('email')
@@ -132,6 +152,14 @@ class DiscenteResource extends Resource
                             Forms\Components\ToggleButtons::make('status')
                                 ->label('Status')
                                 ->required()
+                                ->disabled(function () {  
+
+                                    /** @var \App\Models\User */
+                                          $authUser =  auth()->user();                            
+                                      if($authUser->hasRole('Estudantes')){
+                                         return true;
+                                      }
+                                 })      
                                 ->default('3')
                                 ->options([
                                     '0' => 'Pendência Financeira',

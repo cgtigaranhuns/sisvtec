@@ -75,15 +75,28 @@ class CompensacaoDocenteNaoEnvolvidoRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->modalHeading('Adicionar Compensação')
+                    ->icon('heroicon-o-plus')
+                    ->disabled(function () {
+                        return $this->ownerRecord->status != 0;
+                    })
                     ->label('Adicionar Compensação'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->disabled(function () {
+                        return $this->ownerRecord->status != 0;
+                    }),
+                Tables\Actions\DeleteAction::make()
+                    ->disabled(function () {
+                        return $this->ownerRecord->status != 0;
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->disabled(function () {
+                            return $this->ownerRecord->status != 0;
+                        }),
                 ]),
             ]);
     }

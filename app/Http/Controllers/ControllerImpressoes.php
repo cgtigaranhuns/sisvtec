@@ -31,4 +31,11 @@ class ControllerImpressoes extends Controller
        // dd($relatorioFinal);
         return view('imprimir.relatorioFinal', compact('visitaTecnica','relatorioFinal'));
     }
+
+    public function imprimirAtaVisitaTecnica($id)
+    {
+        $visitaTecnica = VisitaTecnica::find($id);
+        $ataVisitaTecnica = $visitaTecnica->ataVisitaTecnica;
+        return view('imprimir.ataVisitaTecnica', compact('visitaTecnica','ataVisitaTecnica'));
+    }
 }

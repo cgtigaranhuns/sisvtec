@@ -10,7 +10,8 @@ trait CalculaValorDiarias
 {
     public static function calculaValorDiarias($state, $get, $set)
     {
-        $qtdEstudantes = $state;
+        $qtdEstudantes = $get('qtd_estudantes');
+               
         $valorMeiaDiaria = Config::first()->valor_meia_diaria;
 
         $dataHoraSaida = $get('data_hora_saida');

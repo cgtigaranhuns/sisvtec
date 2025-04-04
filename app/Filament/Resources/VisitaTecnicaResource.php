@@ -20,6 +20,7 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -46,9 +47,9 @@ class VisitaTecnicaResource extends Resource
     {
         /** @var \App\Models\User */
         $authUser = auth()->user();
-        
+
         if ($authUser->hasRole('Coordenadores')) {
-           // dd('teste');
+            // dd('teste');
             return static::getModel()::query()->where('coordenacao_id', '=', auth()->user()->coordenacao_id);
         }
         if ($authUser->hasRole('Professores')) {
@@ -58,10 +59,8 @@ class VisitaTecnicaResource extends Resource
         else {
             return static::getModel()::query(); // Default return for other cases
         }
+    }
 
-       
-        }
-    
 
     public static function form(Form $form): Form
     {
@@ -79,6 +78,13 @@ class VisitaTecnicaResource extends Resource
                                 Forms\Components\Select::make('categoria_id')
                                     ->label('Categoria')
                                     ->default(2)
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->relationship('categoria', 'nome')
                                     ->live()
                                     ->required(),
@@ -86,6 +92,13 @@ class VisitaTecnicaResource extends Resource
                                 Forms\Components\Select::make('sub_categoria_id')
                                     ->label('Sub Categoria')
                                     ->default(1)
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->live()
                                     ->options(fn(Get $get): Collection => SubCategoria::query()
                                         ->where('categoria_id', $get('categoria_id'))
@@ -94,11 +107,25 @@ class VisitaTecnicaResource extends Resource
                                 Forms\Components\ToggleButtons::make('custo')
                                     ->label('Haverá Custo?')
                                     ->required()
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->boolean()
                                     ->grouped(),
                                 Forms\Components\ToggleButtons::make('compensacao')
                                     ->label('Haverá Compensação?')
                                     ->required()
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->boolean()
                                     ->grouped(),
                                 Forms\Components\Textarea::make('emp_evento')
@@ -108,6 +135,13 @@ class VisitaTecnicaResource extends Resource
                                     ])
                                     ->label('Empresa ou Evento')
                                     ->autosize()
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->required()
                                     ->maxLength(255),
                             ]),
@@ -124,27 +158,62 @@ class VisitaTecnicaResource extends Resource
                                 Forms\Components\Select::make('coordenacao_id')
                                     ->label('Coordenação/Setor')
                                     ->searchable()
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->relationship('coordenacao', 'nome')
                                     ->required(),
                                 Forms\Components\Select::make('curso_id')
                                     ->label('Curso')
                                     ->searchable()
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->relationship('curso', 'nome')
                                     ->required(),
                                 Forms\Components\Select::make('turma_id')
                                     ->label('Turma')
                                     ->searchable()
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->relationship('turma', 'nome')
                                     ->required(),
                                 Forms\Components\Select::make('disciplina_id')
                                     ->label('Componentes Curriculares')
                                     ->relationship('disciplina', 'nome')
                                     ->searchable()
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->live()
                                     ->multiple()
                                     ->required(fn(Get $get) => $get('categoria_id') != 1),
                                 Forms\Components\Select::make('professor_id')
                                     ->label('Professor Responsável')
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->default(function () {
                                         return  auth()->user()->id;
                                     })
@@ -154,6 +223,13 @@ class VisitaTecnicaResource extends Resource
                                 Forms\Components\Select::make('srv_participante_id')
                                     ->label('Servidores Participantes')
                                     ->relationship('srvParticipante', 'name')
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->username} - {$record->name} - {$record->cargo->nome}")
                                     ->searchable(['username', 'name'])
                                     ->multiple()
@@ -168,12 +244,26 @@ class VisitaTecnicaResource extends Resource
                                                 ->label('Justificar Outros Servidores')
                                                 ->hidden(fn(Get $get) => !$get('srv_participante_id'))
                                                 ->required(fn(Get $get) => $get('srv_participante_id'))
+                                                ->disabled(function ($context, Get  $get) {
+                                                    if (($get('status') != 0) && $context == 'edit') {
+                                                        return true;
+                                                    } else {
+                                                        return false;
+                                                    }
+                                                })
                                                 ->autosize()
                                                 ->maxLength(150),
                                             Forms\Components\Textarea::make('just_outra_disciplina')
                                                 ->label('Justificar Outras Disciplinas')
                                                 ->hidden(fn(Get $get) => count($get('disciplina_id') ?? []) <= 1)
                                                 ->required(fn(Get $get) => count($get('disciplina_id') ?? []) > 1)
+                                                ->disabled(function ($context, Get  $get) {
+                                                    if (($get('status') != 0) && $context == 'edit') {
+                                                        return true;
+                                                    } else {
+                                                        return false;
+                                                    }
+                                                })
                                                 ->autosize()
                                                 ->maxLength(150),
                                         ]),
@@ -196,6 +286,13 @@ class VisitaTecnicaResource extends Resource
                             ])->schema([
                                 Forms\Components\Select::make('estado_id')
                                     ->relationship('estado', 'nome')
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->label('Estado')
                                     ->live()
                                     ->searchable()
@@ -205,17 +302,36 @@ class VisitaTecnicaResource extends Resource
                                         ->where('estado_id', $get('estado_id'))
                                         ->pluck('nome', 'id'))
                                     ->label('Cidade')
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->searchable()
                                     ->required(),
                                 Forms\Components\DateTimePicker::make('data_hora_saida')
                                     ->label('Data e Hora de Saída')
                                     ->seconds(false)
-                                    // ->format('DD/MM/YYYY HH:mm')
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->required(),
                                 Forms\Components\DateTimePicker::make('data_hora_retorno')
                                     ->label('Data e Hora de Retorno')
                                     ->seconds(false)
-                                    //->format('d/m/y HH:mm')
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->live()
                                     ->afterStateUpdated(function (callable $set, $state, $get) {
                                         $dataHoraSaida = $get('data_hora_saida');
@@ -235,11 +351,25 @@ class VisitaTecnicaResource extends Resource
                                     ->required(),
                                 Forms\Components\TextInput::make('carga_horaria_total')
                                     ->readOnly()
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->label('Carga Horária Total da Viagem')
                                     ->required(),
                                 Forms\Components\TextInput::make('carga_horaria_visita')
                                     ->label('Carga Horária Total da Visita')
                                     ->mask('99:99')
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->required(fn(Get $get) => $get('categoria_id') != 1),
                             ]),
 
@@ -254,40 +384,30 @@ class VisitaTecnicaResource extends Resource
                                 Forms\Components\TextInput::make('qtd_estudantes')
                                     ->label('Quantidade de Estudantes')
                                     ->live(onBlur: true)
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->afterStateUpdated(function (callable $set, $state, $get) {
 
                                         Self::calculaValorDiarias($state, $get, $set);
-
-                                        // // VARIAVEIS
-                                        // $qtdEstudantes =  $state;
-                                        // $valorMeiaDiaria = Config::all()->first()->valor_meia_diaria;
-
-                                        // $dataHoraSaida = $get('data_hora_saida');
-                                        // $dataHoraRetorno = $get('data_hora_retorno');
-
-                                        // // CALCULA DIAS DE VIAGEM
-                                        // $saida = Carbon::parse($dataHoraSaida)->format('Y-m-d');
-                                        // $retorno = Carbon::parse($dataHoraRetorno)->format('Y-m-d');
-                                        // $totalHoras = Carbon::parse($retorno)->diffInHours(Carbon::parse($saida)->startOfDay());
-                                        // $days = floor($totalHoras / 24);
-
-                                        // if ($days < 1) {
-                                        //     $valorDiarias =  ($qtdEstudantes * $valorMeiaDiaria);
-                                        // } elseif ($days >= 1 && $days < 2) {
-                                        //     $valorDiarias =  ($qtdEstudantes * ($valorMeiaDiaria * 3));
-                                        // } elseif ($days >= 2) {
-                                        //     $valorDiarias =  ($qtdEstudantes * ((($valorMeiaDiaria * 2) * $days) + $valorMeiaDiaria));
-                                        // }
-                                        // // dd($qtdEstudantes, $valorMeiaDiaria, $days,' = ', $valorDiarias);
-                                        // $set('valor_total_diarias', $valorDiarias);
-                                        // $set('custo_total', ($valorDiarias + $get('menor_valor_hospedagem')));
                                     })
                                     ->numeric()
                                     ->required(),
                                 Forms\Components\ToggleButtons::make('hospedagem')
                                     ->label('Haverá Hospedagem?')
-                                    ->hidden(fn(Get $get): bool => !$get('custo'))
+                                    ->hidden(fn(Get $get): bool => $get('custo') == false)
                                     ->live()
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->afterStateUpdated(function (callable $set, $state, $get) {
                                         $set('menor_valor_hospedagem', 0);
                                         $set('custo_total', ($get('valor_total_diarias') + 0));
@@ -298,6 +418,13 @@ class VisitaTecnicaResource extends Resource
                                     ->grouped(),
                                 Forms\Components\Textarea::make('justificativa_hospedagem')
                                     ->label('Justificar Hospedagem')
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->hidden(fn(Get $get) => !$get('hospedagem'))
                                     ->required(fn(Get $get) => $get('hospedagem'))
                                     ->autosize()
@@ -314,6 +441,13 @@ class VisitaTecnicaResource extends Resource
                                     ->minItems(1)
                                     ->maxItems(1)
                                     ->columns(3)
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
                                     ->label('Cotações de Hospedagem')
                                     ->hidden(fn(Get $get) => !$get('hospedagem'))
                                     ->afterStateUpdated(function ($state, callable $set, $get) {
@@ -328,16 +462,37 @@ class VisitaTecnicaResource extends Resource
                                         Forms\Components\TextInput::make('valor1')
                                             ->label('Valor 1')
                                             ->prefix('R$')
+                                            ->disabled(function ($context, Get  $get) {
+                                                if (($get('status') != 0) && $context == 'edit') {
+                                                    return true;
+                                                } else {
+                                                    return false;
+                                                }
+                                            })
                                             ->required()
                                             ->numeric(),
                                         Forms\Components\TextInput::make('valor2')
                                             ->label('Valor 2')
                                             ->prefix('R$')
+                                            ->disabled(function ($context, Get  $get) {
+                                                if (($get('status') != 0) && $context == 'edit') {
+                                                    return true;
+                                                } else {
+                                                    return false;
+                                                }
+                                            })
                                             ->required()
                                             ->numeric(),
                                         Forms\Components\TextInput::make('valor3')
                                             ->label('Valor 3')
                                             ->prefix('R$')
+                                            ->disabled(function ($context, Get  $get) {
+                                                if (($get('status') != 0) && $context == 'edit') {
+                                                    return true;
+                                                } else {
+                                                    return false;
+                                                }
+                                            })
                                             ->required()
                                             ->numeric(),
                                     ]),
@@ -351,7 +506,6 @@ class VisitaTecnicaResource extends Resource
                                             Forms\Components\TextInput::make('valor_total_diarias')
                                                 ->label('Valor Total das Diárias')
                                                 ->hidden(fn(Get $get): bool => !$get('custo'))
-                                                ->hidden()
                                                 ->readOnly()
                                                 ->prefix('R$')
                                                 ->numeric()
@@ -382,26 +536,49 @@ class VisitaTecnicaResource extends Resource
                                     Forms\Components\Textarea::make('conteudo_programatico')
                                         ->label('Conteúdo Programático/Resumo')
                                         ->autosize()
+                                        ->disabled(function ($context, Get  $get) {
+                                            if (($get('status') != 0) && $context == 'edit') {
+                                                return true;
+                                            } else {
+                                                return false;
+                                            }
+                                        })
                                         ->required()
                                         ->columnSpanFull(),
                                     Forms\Components\Textarea::make('justificativa')
                                         ->label('Justificativa')
                                         ->autosize()
                                         ->required()
-                                        ->columnSpanFull(),
-                                    Forms\Components\Textarea::make('just_outra_disciplina')
-                                        ->label('Justificativa para outra disciplina')
-                                        ->autosize()
-                                        ->required(fn(Get $get): bool => count($get('disciplina_id') ?? []) > 1 or $get('categoria_id') != 1)
+                                        ->disabled(function ($context, Get  $get) {
+                                            if (($get('status') != 0) && $context == 'edit') {
+                                                return true;
+                                            } else {
+                                                return false;
+                                            }
+                                        })
                                         ->columnSpanFull(),
                                     Forms\Components\Textarea::make('objetivos')
                                         ->label('Objetivos')
                                         ->autosize()
                                         ->required()
+                                        ->disabled(function ($context, Get  $get) {
+                                            if (($get('status') != 0) && $context == 'edit') {
+                                                return true;
+                                            } else {
+                                                return false;
+                                            }
+                                        })
                                         ->columnSpanFull(),
                                     Forms\Components\Textarea::make('metodologia')
                                         ->label('Metodologia')
                                         ->autosize()
+                                        ->disabled(function ($context, Get  $get) {
+                                            if (($get('status') != 0) && $context == 'edit') {
+                                                return true;
+                                            } else {
+                                                return false;
+                                            }
+                                        })
                                         ->required(fn(Get $get): bool => $get('categoria_id') != 1)
                                         ->required()
                                         ->columnSpanFull(),
@@ -415,6 +592,17 @@ class VisitaTecnicaResource extends Resource
                                     ToggleButtons::make('status')
                                         ->label('Status')
                                         ->required()
+                                        ->hidden(function ($context, Get  $get) {
+
+                                            /** @var \App\Models\User */
+                                            $authUser =  auth()->user();
+                                            // dd($authUser->hasRole('Professor'));
+                                            if ($authUser->hasRole('Professores')) {
+                                                return true;
+                                            } else {
+                                                return false;
+                                            }
+                                        })
                                         ->default('0')
                                         ->inline(false)
                                         ->options([
@@ -444,26 +632,6 @@ class VisitaTecnicaResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('status')
-                    ->Label('Status')
-                    ->badge()
-                    ->alignCenter()
-                    ->color(fn(string $state): string => match ($state) {
-                        '0' => 'danger',
-                        '1' => 'success',
-                        '2' => 'info',
-                    })
-                    ->formatStateUsing(function ($state) {
-                        if ($state == 0) {
-                            return 'Submetida';
-                        }
-                        if ($state == 1) {
-                            return 'Autorizada';
-                        }
-                        if ($state == 3) {
-                            return 'Finalizada';
-                        }
-                    }),
                 Tables\Columns\TextColumn::make('emp_evento')
                     ->label('Empresa/Evento')
                     ->searchable(),
@@ -496,11 +664,26 @@ class VisitaTecnicaResource extends Resource
                     ->label('Data e Hora de Retorno')
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
-                Tables\Columns\ToggleColumn::make('status')
-                    ->label('Aprovar')
-                    ->sortable()
+                Tables\Columns\SelectColumn::make('status')
+                    ->label('Status')
+                    ->options([
+                        '0' => 'Submetida',
+                        '1' => 'Autorizada',
+                        '2' => 'Finalizada',
+                    ])
                     ->alignCenter()
-                    ->toggleable(),
+                    ->sortable()
+                    ->disabled(function () {
+
+                        /** @var \App\Models\User */
+                        $authUser =  auth()->user();
+                        //  dd($authUser->getRoleNames()->first());
+                        if ($authUser->hasRole('Professores')) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }),
 
 
                 Tables\Columns\TextColumn::make('created_at')
@@ -517,14 +700,43 @@ class VisitaTecnicaResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('imprimirVisitaTecnica')
+                    ->icon('heroicon-o-printer')
+                    ->disabled(function (VisitaTecnica $record) {
+                        /** @var \App\Models\User */
+                        $authUser =  auth()->user();
+                        if ($authUser->hasRole('Professores') && $record->status == 0) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    })
+
                     ->label('Visita Técnica')
                     ->url(fn(VisitaTecnica $record): string => route('imprimirVisitaTecnica', $record))
                     ->openUrlInNewTab(),
+                Tables\Actions\Action::make('imprimirAta')
+                    ->icon('heroicon-o-printer')
+                    ->disabled(fn(VisitaTecnica $record): bool => $record->status == 0)
+                    ->label('Ata da Visita Técnica')
+                    ->url(fn(VisitaTecnica $record): string => route('imprimirAtaVisitaTecnica', $record))
+                    ->openUrlInNewTab(),
                 Tables\Actions\Action::make('imprimirRelatorioFinal')
+                    ->icon('heroicon-o-printer')
+                    ->disabled(fn(VisitaTecnica $record): bool => $record->status == 0)
                     ->label('Relatório Final')
                     ->url(fn(VisitaTecnica $record): string => route('imprimirRelatorioFinal', $record))
                     ->openUrlInNewTab(),
-                Tables\Actions\EditAction::make(),
+
+
+                Tables\Actions\EditAction::make()
+                    ->before(function ($record, $data) {
+                        Notification::make()
+                            ->title('Proposta criada com sucesso!')
+                            ->body('Agora é necessário adicionar os dicentes que irão para Visita Técnica. Clique no botão "Adicionar Discente" e preencha os planos de compensação, caso necessário.')
+                            ->success()
+                            ->persistent() // Uncommented to make the notification persistent
+                            ->send();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

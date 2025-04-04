@@ -36,6 +36,7 @@ class DiscenteVisitasRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('visita_tecnica_id')
+            ->defaultGroup('discente.turma.nome')
             ->columns([
                 Tables\Columns\TextColumn::make('discente.nome')
                     ->sortable()
@@ -43,9 +44,9 @@ class DiscenteVisitasRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('discente.matricula')
                     ->label('Matrícula')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('discente.turma.nome')
-                    ->sortable()
-                    ->searchable(),
+                // Tables\Columns\TextColumn::make('discente.turma.nome')
+                //     ->sortable()
+                //     ->searchable(),
                 Tables\Columns\ToggleColumn::make('falta')
                     ->label('Faltou?')
                     ->sortable()
@@ -72,6 +73,9 @@ class DiscenteVisitasRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make('add')
                     ->label('Adicionar Discente')
+                    ->disabled(function () {
+                        return $this->ownerRecord->status != 0;
+                    })
                     ->icon('heroicon-o-user')
                     ->modalHeading('Adicionar Discente')
                     ->action(function ($livewire, array $data) {
@@ -81,14 +85,45 @@ class DiscenteVisitasRelationManager extends RelationManager
                             ->exists();
 
                         if (!$exists) {
-                            DiscenteVisita::create([
-                                'discente_id' => $data['discente_id'],
-                                'visita_tecnica_id' => $livewire->ownerRecord->id,
-                            ]);
+                            if ($discente->status == 0) {
+                                Notification::make()
+                                    ->title('Estudante não pode ser incluído')
+                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não pode ser incluído na visita, pois está com pendência financeira.')
+                                    ->danger()
+                                    ->persistent()
+                                    ->send();
+                            } elseif ($discente->status == 1) {
+                                Notification::make()
+                                    ->title('Estudante não pode ser incluído')
+                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não pode ser incluído na visita, pois está com cadastro incompleto.')
+                                    ->danger()
+                                    ->persistent()
+                                    ->send();
+                            } elseif ($discente->status == 2) {
+                                Notification::make()
+                                    ->title('Estudante não pode ser incluído')
+                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não pode ser incluído na visita, pois está inativo.')
+                                    ->info()
+                                    ->persistent()
+                                    ->send();
+                            } else {
+
+                                // Cria o registro de DiscenteVisita
+                                DiscenteVisita::create([
+                                    'discente_id' => $data['discente_id'],
+                                    'visita_tecnica_id' => $livewire->ownerRecord->id,
+                                ]);
+                                Notification::make()
+                                    ->title('Estudante incluído com sucesso')
+                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' foi incluído na visita.')
+                                    ->success()
+                                    ->persistent()
+                                    ->send();
+                            }
                         } else {
                             Notification::make()
                                 ->title('Estudante já incluído')
-                                ->body('O estudante ' . $discente->nome . '-' . $discente->matricula . ' já está incluído na visita.')
+                                ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' já está incluído na visita.')
                                 ->warning()
                                 ->persistent()
                                 ->send();
@@ -96,6 +131,9 @@ class DiscenteVisitasRelationManager extends RelationManager
                     }),
                 Tables\Actions\CreateAction::make('addMais')
                     ->label('Adicionar Discente por Turma')
+                    ->disabled(function () {
+                        return $this->ownerRecord->status != 0;
+                    })
                     ->modalHeading('Adicionar todos os discentes da turma')
                     ->icon('heroicon-o-user-group')
                     ->model(Turma::class)
@@ -124,6 +162,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                                         'discente_id' => $discente->id,
                                         'visita_tecnica_id' => $livewire->ownerRecord->id,
                                     ]);
+
                                 } else {
                                     Notification::make()
                                         ->title('Estudante já incluído')
@@ -132,11 +171,25 @@ class DiscenteVisitasRelationManager extends RelationManager
                                         ->persistent()
                                         ->send();
                                 }
-                            } else {
+                            } elseif ($discente->status == 0) {
+                                Notification::make()
+                                    ->title('Estudante não incluído')
+                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está com pendência financeira.')
+                                    ->danger()
+                                    ->persistent()
+                                    ->send();
+                            } elseif ($discente->status == 1) {
+                                Notification::make()
+                                    ->title('Estudante não incluído')
+                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está com cadastro incompleto.')
+                                    ->danger()
+                                    ->persistent()
+                                    ->send();
+                            } elseif ($discente->status == 2) {
                                 Notification::make()
                                     ->title('Estudante não incluído')
                                     ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está inativo.')
-                                    ->danger()
+                                    ->info()
                                     ->persistent()
                                     ->send();
                             }
@@ -145,13 +198,22 @@ class DiscenteVisitasRelationManager extends RelationManager
 
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->disabled(function () {
+                        return $this->ownerRecord->status != 0;
+                    }),
+                Tables\Actions\DeleteAction::make()
+                    ->disabled(function () {
+                        return $this->ownerRecord->status != 0;
+                    }),
             ])
 
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->disabled(function () {
+                            return $this->ownerRecord->status != 0;
+                        }),
                 ]),
             ]);
     }

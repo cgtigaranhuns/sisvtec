@@ -5,6 +5,7 @@ namespace App\Filament\Resources\VisitaTecnicaResource\Pages;
 use App\Filament\Resources\VisitaTecnicaResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Notifications\Notification;
 
 class ListVisitaTecnicas extends ListRecords
 {
@@ -18,6 +19,7 @@ class ListVisitaTecnicas extends ListRecords
             Actions\CreateAction::make()
                 ->label('Novo')
                 ->modalHeading('Criar Proposta')
+               
         ];
     }
 }
