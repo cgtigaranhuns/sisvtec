@@ -58,7 +58,7 @@
             <td><label>Turma:</label> {{$visitaTecnica->turma->nome}}</td>
         </tr>
         <tr>
-            <td><label>Quantidade de Estudantes:</label> {{$visitaTecnica->quantidade_estudantes}}</td>
+            <td><label>Quantidade de Estudantes:</label> {{$visitaTecnica->qtd_estudantes}}</td>
             <td><label>Local:</label> {{$visitaTecnica->emp_evento}}</td>
         </tr>
         <tr>
