@@ -15,9 +15,9 @@ class ManageConfigs extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-                ->modalHeading('Criar Configuração')
-                ->label('Nova Configuração'),
+            // Actions\CreateAction::make()
+            //     ->modalHeading('Criar Parâmetro')
+            //     ->label('Nova Parametrização'),
         ];
     }
 }

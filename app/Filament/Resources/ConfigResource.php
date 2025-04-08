@@ -17,11 +17,11 @@ class ConfigResource extends Resource
 {
     protected static ?string $model = Config::class;
 
-    protected static ?string $navigationGroup = 'Parâmetros';
+    protected static ?string $navigationGroup = 'Configurações';
 
     protected static ?string $navigationIcon = 'heroicon-s-wrench-screwdriver';
 
-    protected static ?string $navigationLabel = 'Configurações';
+    protected static ?string $navigationLabel = 'Parâmetros';
 
     protected static ?int $navigationSort = 11;
 

@@ -230,7 +230,7 @@ class VisitaTecnicaResource extends Resource
                                             return false;
                                         }
                                     })
-                                    ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->username} - {$record->name} - {$record->cargo->nome}")
+                                    ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->username} - {$record->name}" . ($record->cargo ? " - {$record->cargo->nome}" : ""))
                                     ->searchable(['username', 'name'])
                                     ->multiple()
                                     ->required(false),
@@ -251,8 +251,7 @@ class VisitaTecnicaResource extends Resource
                                                         return false;
                                                     }
                                                 })
-                                                ->autosize()
-                                                ->maxLength(150),
+                                                ->autosize(),                                                
                                             Forms\Components\Textarea::make('just_outra_disciplina')
                                                 ->label('Justificar Outras Disciplinas')
                                                 ->hidden(fn(Get $get) => count($get('disciplina_id') ?? []) <= 1)
@@ -264,8 +263,8 @@ class VisitaTecnicaResource extends Resource
                                                         return false;
                                                     }
                                                 })
-                                                ->autosize()
-                                                ->maxLength(150),
+                                                ->autosize(),
+                                                
                                         ]),
                                     ]),
 
