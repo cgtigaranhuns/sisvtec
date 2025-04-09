@@ -50,6 +50,7 @@ class VisitaTecnica extends Model
         'disciplina_id' => 'array',
         'srv_participante_id' => 'array',
         'cotacao_hospedagem' => 'array',
+        'turma_id' => 'array',
 
     ];
 

@@ -190,6 +190,7 @@ class VisitaTecnicaResource extends Resource
                                         }
                                     })
                                     ->relationship('turma', 'nome')
+                                    ->multiple()
                                     ->required(),
                                 Forms\Components\Select::make('disciplina_id')
                                     ->label('Componentes Curriculares')
