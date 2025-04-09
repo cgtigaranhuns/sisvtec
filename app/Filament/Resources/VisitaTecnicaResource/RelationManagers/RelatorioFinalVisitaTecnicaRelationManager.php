@@ -59,17 +59,29 @@ class RelatorioFinalVisitaTecnicaRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->label('Adicionar Relatório Final')
-                    ->modalHeading('Adicionar Relatório Final')                   
-                    ->icon('heroicon-o-plus'),
-                    
+                    ->modalHeading('Adicionar Relatório Final')
+                    ->icon('heroicon-o-plus')
+                    ->disabled(function () {
+                        return $this->ownerRecord->status == 2;
+                    }),
+
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->disabled(function () {
+                        return $this->ownerRecord->status == 2;
+                    }),
+                Tables\Actions\DeleteAction::make()
+                    ->disabled(function () {
+                        return $this->ownerRecord->status == 2;
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->disabled(function () {
+                            return $this->ownerRecord->status == 2;
+                        }),
                 ]),
             ]);
     }
