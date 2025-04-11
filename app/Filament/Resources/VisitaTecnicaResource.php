@@ -646,9 +646,10 @@ class VisitaTecnicaResource extends Resource
                 Tables\Columns\TextColumn::make('professor.name')
                     ->label('Professor Responsável')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('turma.nome')
-                    ->numeric()
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('turma.nome')
+                //     ->label('Turma')
+                //     ->sortable()
+                //     ->searchable(),
 
                 Tables\Columns\TextColumn::make('estado.nome')
                     ->numeric()

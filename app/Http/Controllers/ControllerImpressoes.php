@@ -19,9 +19,17 @@ class ControllerImpressoes extends Controller
             }
         }
 
+        $nomeTurmas = [];
+        foreach($visitaTecnica->turma_id as $turmaId){
+            $turma = \App\Models\Turma::find($turmaId);
+            if ($turma) {
+            $nomeTurmas[] = $turma->nome;
+            }
+        }
+
       //  dd($nomeDisciplinas);
 
-        return view('imprimir.visitaTecnica', compact('visitaTecnica','nomeDisciplinas'));
+        return view('imprimir.visitaTecnica', compact('visitaTecnica','nomeDisciplinas','nomeTurmas'));
     }
 
     public function imprimirRelatorioFinal($id)

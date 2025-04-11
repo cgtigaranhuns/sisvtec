@@ -63,7 +63,11 @@
         </tr>
         <tr>
             <td><label>Curso:</label> {{$visitaTecnica->curso->nome}}</td>
-            <td><label>Turma:</label> {{$visitaTecnica->turma->nome}}</td>
+            <td><label>Turma:</label>
+                @foreach($nomeTurmas as $turma)
+                    {{$turma}}@if(!$loop->last), @endif
+                @endforeach
+            </td>
         </tr>
         <tr>
             <td><label>Disciplinas:</label>
