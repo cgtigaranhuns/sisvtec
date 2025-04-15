@@ -590,6 +590,13 @@ class VisitaTecnicaResource extends Resource
                                     Forms\Components\Textarea::make('form_avalia_aprend')
                                         ->label('Forma de Avaliação da Aprendizagem por Disciplina')
                                         ->autosize()
+                                        ->disabled(function ($context, Get  $get) {
+                                            if (($get('status') != 0) && $context == 'edit') {
+                                                return true;
+                                            } else {
+                                                return false;
+                                            }
+                                        })
                                         ->required(fn(Get $get): bool => $get('categoria_id') != 1)
                                         ->columnSpanFull(),
                                 ]),

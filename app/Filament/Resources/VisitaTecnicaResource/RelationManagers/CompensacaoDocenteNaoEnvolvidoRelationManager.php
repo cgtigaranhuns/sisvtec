@@ -2,13 +2,16 @@
 
 namespace App\Filament\Resources\VisitaTecnicaResource\RelationManagers;
 
+use App\Mail\PropostaEmail;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Mail;
 
 class CompensacaoDocenteNaoEnvolvidoRelationManager extends RelationManager
 {
@@ -90,6 +93,28 @@ class CompensacaoDocenteNaoEnvolvidoRelationManager extends RelationManager
                         return $this->ownerRecord->status != 0;
                     })
                     ->label('Adicionar Compensação'),
+                Tables\Actions\Action::make('submeter')
+                    ->label('Submeter Proposta')
+                    ->action(function ($livewire) {
+                        $livewire->ownerRecord->status = 1;
+                        $livewire->ownerRecord->save();
+
+                        Notification::make()
+                            ->title('Proposta enviada com sucesso!')
+                            ->success()
+                            ->persistent()
+                            ->send();
+                        Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
+                        $livewire->redirect(route('filament.admin.resources.visita-tecnicas.index'));
+                    })
+                    ->color('info')
+                    ->icon('heroicon-o-paper-airplane')
+                    ->requiresConfirmation()
+                    ->visible(fn($livewire) => $livewire->ownerRecord->discenteVisitas()->exists())
+                    ->disabled(fn($livewire) =>  $livewire->ownerRecord->status != 0)
+                    ->modalHeading('Enviar Proposta')
+                    ->modalDescription('Tem certeza que deseja enviar a proposta?')
+                    ->modalIcon('heroicon-o-paper-airplane'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

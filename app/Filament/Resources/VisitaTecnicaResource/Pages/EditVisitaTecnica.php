@@ -19,7 +19,7 @@ class EditVisitaTecnica extends EditRecord
         ];
     }
 
-    protected function getFooterWidgets(): array
+    protected function getFooterActions(): array
     {
         
         return [
