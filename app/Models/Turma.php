@@ -24,4 +24,9 @@ class Turma extends Model
         return $this->hasMany(CompensacaoTurmaNaoEnvolvido::class);
     }
 
+    public function visitasTecnicas()
+    {
+        return $this->hasMany(VisitaTecnica::class);
+    }
+
 }

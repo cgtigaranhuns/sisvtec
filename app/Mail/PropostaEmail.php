@@ -37,16 +37,29 @@ class PropostaEmail extends Mailable
      */
     public function content(): Content
     {
-
+        
         $local = $this->visitaTecnica->emp_evento;
+        $categoria = $this->visitaTecnica->categoria->nome;
+        $subCategoria = $this->visitaTecnica->subCategoria->nome;
         $dataSaida = $this->visitaTecnica->data_hora_saida;
         $dataSaida = \Carbon\Carbon::parse($dataSaida)->format('d/m/Y H:i');
         $dataRetorno = $this->visitaTecnica->data_hora_retorno;
         $dataRetorno = \Carbon\Carbon::parse($dataRetorno)->format('d/m/Y H:i');
         $responsavel = $this->visitaTecnica->professor->name;
-        $turma = $this->visitaTecnica->turma->nome;
         $estado = $this->visitaTecnica->estado->nome;
         $cidade = $this->visitaTecnica->cidade->nome;
+
+        $nomeTurmas = [];
+        if ($this->visitaTecnica->turma_id) {
+            foreach($this->visitaTecnica->turma_id as $turmaId){
+                $turma = \App\Models\Turma::find($turmaId);
+                if ($turma) {
+                    $nomeTurmas[] = $turma->nome;
+                }
+            }
+        }
+       // dd($categoria . ' - ' . $subCategoria);
+       
 
 
         return new Content(
@@ -57,9 +70,11 @@ class PropostaEmail extends Mailable
                 'dataSaida' => $dataSaida,
                 'dataRetorno' => $dataRetorno,
                 'responsavel' => $responsavel,
-                'turma' => $turma,
+                'nomeTurmas' => $nomeTurmas,
                 'estado' => $estado,
                 'cidade' => $cidade,
+                'categoria' => $categoria,
+                'subCategoria' => $subCategoria,
             ]
         );
     }

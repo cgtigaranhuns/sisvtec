@@ -38,10 +38,14 @@ class CoordenacaoResource extends Resource
                 Forms\Components\Select::make('user_id')
                     ->label('coordenador')
                     ->relationship('user', 'name')
-                  //  ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->username} - {$record->name} - {$record->cargo->nome}")
+                    //  ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->username} - {$record->name} - {$record->cargo->nome}")
                     ->searchable(['username', 'name'])
                     ->preload()
                     ->required(true),
+                Forms\Components\TextInput::make('email')
+                    ->email()
+                    ->required(),
+
             ]);
     }
 
@@ -53,6 +57,8 @@ class CoordenacaoResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Coordenador'),
+                Tables\Columns\TextColumn::make('email')
+                    ->label('E-mail'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

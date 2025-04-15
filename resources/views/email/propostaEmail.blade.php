@@ -46,9 +46,16 @@
     </style>
 </head>
 <body>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <img src="{{ asset('img/ifpe.png') }}" alt="Logo" style="max-width: 200px;">
+    </div>
     <div class="container">
         <div class="header">
-            <h2>Detalhes da Visita Técnica</h2>
+            <h2>Projeto de {{$categoria.' - '.$subCategoria}} cadastrado com sucesso.<br>
+                Pendente de análise e pronunciamento.</h2>
+                Acesse: <a href="{{ route('filament.admin.resources.visita-tecnicas.index') }}">Clique aqui</a> para visualizar o projeto.
+                <br><br>
+                <strong>Dados do projeto:</strong>
         </div>
         <div class="content">
             <div class="field-row">
@@ -76,8 +83,12 @@
                 <div class="field-value">{{ $responsavel }}</div>
             </div>
             <div class="field-row">
-                <div class="field-label">Turma:</div>
-                <div class="field-value">{{ $turma }}</div>
+                <div class="field-label">Turmas:</div>
+                <div class="field-value">
+                    @foreach($nomeTurmas as $turma)
+                    {{$turma}}@if(!$loop->last), @endif
+                @endforeach
+                </div>
             </div>
         </div>
     </div>

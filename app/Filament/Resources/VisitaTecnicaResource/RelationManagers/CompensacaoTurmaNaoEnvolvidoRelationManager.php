@@ -43,12 +43,7 @@ class CompensacaoTurmaNaoEnvolvidoRelationManager extends RelationManager
                     ->label('Data e hora da reposição')
                     ->seconds(false)
                     ->required(),
-                Forms\Components\Select::make('user2_id')
-                    ->hint('Pesquise por nome ou matrícula')
-                    ->label('Professor que vai assumir a turma')
-                    ->relationship(name: 'user2', titleAttribute: 'name')
-                    ->searchable(['name', 'username'])
-                    ->required(),
+                
             ]);
     }
 
@@ -72,10 +67,7 @@ class CompensacaoTurmaNaoEnvolvidoRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('data_hora_reposicao')
                     ->dateTime('d/m/Y H:i')
                     ->label('Data e hora da reposição'),
-                Tables\Columns\TextColumn::make('user2.name')
-                    ->label('Professor que vai assumir a turma')
-                    ->sortable()
-                    ->searchable(),
+                
             ])
             ->filters([
                 //

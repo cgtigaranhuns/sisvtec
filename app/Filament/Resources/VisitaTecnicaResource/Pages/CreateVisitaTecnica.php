@@ -16,13 +16,21 @@ class CreateVisitaTecnica extends CreateRecord
 
     // protected function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
     // {
+              
+    //   //  dd($data['turma_id']);
     //     $record = parent::handleRecordCreation($data);
-    //     $this->afterCreate($record);
-    //     return $record;
+
+    //     Mail::to($record->professor->email)->cc($record->coordenacao->email)->send(new PropostaEmail($record));
+        
+    //     // $this->afterCreate($record);
+    //      return $record;
+
+         
     // }
 
-    protected function afterCreate(): void
+    protected function afterCreate()
     {
+       // dd($record);
        
         Notification::make()
             ->title('Proposta criada com sucesso e enviada notificação para o coordenador!')
@@ -36,6 +44,6 @@ class CreateVisitaTecnica extends CreateRecord
             ->persistent()
             ->send();
 
-          //  Mail::to($record->professor->email)->send(new PropostaEmail($record));
+           
     }
 }

@@ -13,6 +13,7 @@ class RelatorioFinal extends Model
         'visita_tecnica_id',
         'descricao',
         'ocorrencia',
+        'conferido',
         
     ];
 

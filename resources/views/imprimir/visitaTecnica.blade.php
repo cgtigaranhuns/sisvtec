@@ -62,7 +62,11 @@
             <td><label>Coordenação/Setor:</label> {{$visitaTecnica->coordenacao->nome}}</td>
         </tr>
         <tr>
-            <td><label>Curso:</label> {{$visitaTecnica->curso->nome}}</td>
+            <td><label>Curso:</label> 
+                @foreach($nomeCursos as $curso)
+                    {{$curso}}@if(!$loop->last), @endif
+                @endforeach
+            </td>
             <td><label>Turma:</label>
                 @foreach($nomeTurmas as $turma)
                     {{$turma}}@if(!$loop->last), @endif

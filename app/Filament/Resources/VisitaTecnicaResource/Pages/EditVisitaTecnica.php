@@ -15,15 +15,40 @@ class EditVisitaTecnica extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
+            // Removed from header actions as requested
         ];
     }
 
-    // protected function afterSave(): void
-    // {
-    //     Notification::make()
-    //         ->title('Visita Técnica atualizada com sucesso!')
-    //         ->body('As alterações no registro foram salvas com sucesso.')
-    //         ->success()
-    //         ->send();
-    // }
+    protected function getFooterWidgets(): array
+    {
+        
+        return [
+            Actions\Action::make('submeter')
+                ->label('Submeter Proposta')
+                ->action(function () {
+                    $this->record->status = 1;
+                    $this->record->save();
+
+                    Notification::make()
+                        ->title('Proposta enviada com sucesso!')
+                        ->success()
+                        ->persistent()
+                        ->send();
+                })
+                ->color('success')
+                ->icon('heroicon-o-paper-airplane')
+                ->requiresConfirmation()
+                ->visible(fn () => $this->record->status != 1)
+                ->modalHeading('Enviar Proposta')
+                ->modalDescription('Tem certeza que deseja enviar a proposta?')
+                ->modalIcon('heroicon-o-paper-airplane'),
+        ];
+                
+                
+    }     
+    
+    
+
+
+    
 }

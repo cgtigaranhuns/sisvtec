@@ -27,9 +27,17 @@ class ControllerImpressoes extends Controller
             }
         }
 
+        $nomeCursos = [];
+        foreach($visitaTecnica->curso_id as $cursoId){
+            $curso = \App\Models\Curso::find($cursoId);
+            if ($curso) {
+            $nomeCursos[] = $curso->nome;
+            }
+        }
+
       //  dd($nomeDisciplinas);
 
-        return view('imprimir.visitaTecnica', compact('visitaTecnica','nomeDisciplinas','nomeTurmas'));
+        return view('imprimir.visitaTecnica', compact('visitaTecnica','nomeDisciplinas','nomeTurmas','nomeCursos'));
     }
 
     public function imprimirRelatorioFinal($id)

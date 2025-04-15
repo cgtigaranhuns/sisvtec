@@ -15,7 +15,7 @@ class CompensacaoTurmaNaoEnvolvido extends Model
         'disciplina_id',
         'turma_id',
         'data_hora_reposicao',
-        'user2_id',
+        
     ];
 
     public function visitaTecnica()
@@ -28,10 +28,7 @@ class CompensacaoTurmaNaoEnvolvido extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function user2()
-    {
-        return $this->belongsTo(User::class);
-    }
+    
     
     public function disciplina()
     {  

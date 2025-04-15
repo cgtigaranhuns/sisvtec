@@ -7,7 +7,9 @@ use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -23,12 +25,21 @@ class RelatorioFinalVisitaTecnicaRelationManager extends RelationManager
     {
         return $form
             ->schema([
+                Toggle::make('conferido')
+                    ->label('Declaro que a lista de estudantes foi conferido!')
+                    ->live()
+                    ->required()
+                    ->default(false)
+                    ->inline()
+                    ->columnSpanFull(),
                 RichEditor::make('descricao')
                     ->required()
+                    ->hidden(fn(Get $get) => $get('conferido') == false)
                     ->columnSpanFull()
                     ->label('Descrição'),
                 RichEditor::make('ocorrencia')
                     ->required(false)
+                    ->hidden(fn(Get $get) => $get('conferido') == false)
                     ->columnSpanFull()
                     ->label('Ocorrência'),
 
@@ -63,7 +74,9 @@ class RelatorioFinalVisitaTecnicaRelationManager extends RelationManager
                     ->icon('heroicon-o-plus')
                     ->disabled(function () {
                         return $this->ownerRecord->status == 2;
-                    }),
+                    })
+                    
+                    
 
             ])
             ->actions([
