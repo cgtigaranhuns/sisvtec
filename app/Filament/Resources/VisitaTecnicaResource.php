@@ -7,7 +7,7 @@ use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoDoc
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoTurmaNaoEnvolvidoRelationManager;
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\DiscenteVisitasRelationManager;
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\RelatorioFinalVisitaTecnicaRelationManager;
-use App\Mail\PropostaEmail;
+use App\Mail\PropostaStatusEmail;
 use App\Models\Cidade;
 use App\Models\SubCategoria;
 use App\Models\VisitaTecnica;
@@ -174,6 +174,7 @@ class VisitaTecnicaResource extends Resource
                                 Forms\Components\Select::make('curso_id')
                                     ->label('Curso')
                                     ->searchable()
+                                    ->relationship('curso', 'nome')
                                     ->disabled(function ($context, Get  $get) {
                                         if (($get('status') != 0) && $context == 'edit') {
                                             return true;
@@ -181,7 +182,6 @@ class VisitaTecnicaResource extends Resource
                                             return false;
                                         }
                                     })
-                                    ->relationship('curso', 'nome')
                                     ->multiple()
                                     ->required(),
                                 Forms\Components\Select::make('turma_id')
@@ -695,10 +695,10 @@ class VisitaTecnicaResource extends Resource
                     ->alignCenter()
                     ->sortable()
                     ->afterStateUpdated(function ($record, $state) {
-                        if($state == 1) {
-                            $record->update(['status' => 1]);
-                            Mail::to($record->professor->email)->cc($record->coordenacao->email)->send(new PropostaEmail($record));
-                        } 
+                        // if($state == 1) {
+                        //     $record->update(['status' => 1]);
+                            Mail::to($record->professor->email)->cc($record->coordenacao->email)->send(new PropostaStatusEmail($record));
+                       // } 
                     })
                     ->disabled(function ($state) {
 

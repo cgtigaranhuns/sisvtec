@@ -15,4 +15,8 @@ class Curso extends Model
     {
         return $this->hasMany(Discente::class);
     }
+
+    public function visitaTecnica(){
+        return $this->hasMany(VisitaTecnica::class);
+    }
 }

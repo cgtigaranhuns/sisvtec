@@ -33,7 +33,7 @@ class CreateVisitaTecnica extends CreateRecord
        // dd($record);
        
         Notification::make()
-            ->title('Proposta criada com sucesso e enviada notificação para o coordenador!')
+            ->title('Proposta criada com sucesso!')
             ->body('Agora é necessário adicionar os estudantes que irão para Visita Técnica.<br>
                     Preenche os demais formulários abaixo, caso necessário:<br>
                     <b>1 - Discente da Visitas</b><br> 

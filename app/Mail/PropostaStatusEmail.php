@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PropostaEmail extends Mailable
+class PropostaStatusEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -27,9 +27,44 @@ class PropostaEmail extends Mailable
      */
     public function envelope(): Envelope
     {
-        return new Envelope(
-            subject: 'Atividade Extraclasse - Proposta Cadastada',
-        );
+       
+            if($this->visitaTecnica->status == 0) {
+                return new Envelope(
+                    subject: 'Atividade Extraclasse - Proposta Cadastrada',
+                );
+            }
+            elseif($this->visitaTecnica->status == 1) {
+                return new Envelope(
+                    subject: 'Atividade Extraclasse - Proposta Submetida',
+                );
+            }
+            elseif($this->visitaTecnica->status == 2) {
+                return new Envelope(
+                    subject: 'Atividade Extraclasse - Proposta Aprovada',
+                );
+            }
+            elseif($this->visitaTecnica->status == 3) {
+                return new Envelope(
+                    subject: 'Atividade Extraclasse - Proposta Reprovada',
+                );
+            }
+            elseif($this->visitaTecnica->status == 4) {
+                return new Envelope(
+                    subject: 'Atividade Extraclasse - Finalizada',
+                );
+            }
+            elseif($this->visitaTecnica->status == 6) {
+                return new Envelope(
+                    subject: 'Proposta Cadastrada com Sucesso',
+                );  
+            }
+            else{
+                return new Envelope(
+                    subject: 'Atividade Extraclasse',
+                );
+            }
+
+            
     }
 
     /**
@@ -49,6 +84,22 @@ class PropostaEmail extends Mailable
         $estado = $this->visitaTecnica->estado->nome;
         $cidade = $this->visitaTecnica->cidade->nome;
 
+        if($this->visitaTecnica->status == 0) {
+            $nomeStatus = 'Cadastrada';
+        }
+        elseif($this->visitaTecnica->status == 1) {
+            $nomeStatus = 'Submetida';
+        }
+        elseif($this->visitaTecnica->status == 2) {
+            $nomeStatus = 'Aprovada';
+        }
+        elseif($this->visitaTecnica->status == 3) {
+            $nomeStatus = 'Reprovada';
+        }
+        elseif($this->visitaTecnica->status == 4) {
+            $nomeStatus = 'Finalizada';
+        }
+
         $nomeTurmas = [];
         if ($this->visitaTecnica->turma_id) {
             foreach($this->visitaTecnica->turma_id as $turmaId){
@@ -59,11 +110,11 @@ class PropostaEmail extends Mailable
             }
         }
        // dd($categoria . ' - ' . $subCategoria);
-       
+      // dd($nomeStatus);
 
 
         return new Content(
-            view: 'email.propostaEmail',
+            view: 'email.propostaStatusEmail',
 
             with: [
                 'local' => $local,
@@ -75,6 +126,7 @@ class PropostaEmail extends Mailable
                 'cidade' => $cidade,
                 'categoria' => $categoria,
                 'subCategoria' => $subCategoria,
+                'nomeStatus' => $nomeStatus,
             ]
         );
     }
