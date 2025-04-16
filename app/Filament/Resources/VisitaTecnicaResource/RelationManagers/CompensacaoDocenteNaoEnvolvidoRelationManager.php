@@ -94,7 +94,13 @@ class CompensacaoDocenteNaoEnvolvidoRelationManager extends RelationManager
                     })
                     ->label('Adicionar Compensação'),
                 Tables\Actions\Action::make('submeter')
-                    ->label('Submeter Proposta')
+                    ->label(function () {
+                        if ($this->ownerRecord->status > 0) {
+                            return 'Proposta enviada';
+                        } else {
+                            return 'Submeter proposta';
+                        }
+                    })
                     ->action(function ($livewire) {
                         $livewire->ownerRecord->status = 1;
                         $livewire->ownerRecord->save();

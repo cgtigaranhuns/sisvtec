@@ -84,7 +84,13 @@ class CompensacaoTurmaNaoEnvolvidoRelationManager extends RelationManager
                     })
                     ->label('Adicionar Compensação'),
                 Tables\Actions\Action::make('submeter')
-                    ->label('Submeter Proposta')
+                    ->label(function () {
+                        if ($this->ownerRecord->status > 0) {
+                            return 'Proposta enviada';
+                        } else {
+                            return 'Submeter proposta';
+                        }
+                    })
                     ->action(function ($livewire) {
                         $livewire->ownerRecord->status = 1;
                         $livewire->ownerRecord->save();
@@ -100,8 +106,8 @@ class CompensacaoTurmaNaoEnvolvidoRelationManager extends RelationManager
                     ->color('info')
                     ->icon('heroicon-o-paper-airplane')
                     ->requiresConfirmation()
-                    ->visible(fn ($livewire) => $livewire->ownerRecord->discenteVisitas()->exists())
-                    ->disabled(fn ($livewire) =>  $livewire->ownerRecord->status != 0)
+                    ->visible(fn($livewire) => $livewire->ownerRecord->discenteVisitas()->exists())
+                    ->disabled(fn($livewire) =>  $livewire->ownerRecord->status != 0)
                     ->modalHeading('Enviar Proposta')
                     ->modalDescription('Tem certeza que deseja enviar a proposta?')
                     ->modalIcon('heroicon-o-paper-airplane'),
