@@ -47,7 +47,7 @@
 </head>
 <body>
     <div style="text-align: center; margin-bottom: 20px;">
-        <img src="{{ asset('http://homologacao.sisvtec.intranet/img/Logo-Garanhuns.png') }}" alt="Logo" style="max-width: 200px;">
+        <img src="{{ asset('https://extensao.garanhuns.ifpe.edu.br/img/Logo-Garanhuns.png') }}" alt="Logo" style="max-width: 200px;">
     </div>
     <div class="container">
         <div class="header">

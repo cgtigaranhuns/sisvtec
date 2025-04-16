@@ -47,29 +47,25 @@
 </head>
 <body>
     <div style="text-align: center; margin-bottom: 20px;">
-        <img src="{{ asset('http://homologacao.sisvtec.intranet/img/Logo-Garanhuns.png') }}" alt="Logo" style="max-width: 200px;">
+        <img src="{{ asset('https://extensao.garanhuns.ifpe.edu.br/img/Logo-Garanhuns.png') }}" alt="Logo" style="max-width: 200px;">
     </div>
     <div class="container">
         <div class="header">
             
            @if($nomeStatus == 'Aprovada')
                 <h2>Projeto de {{$categoria.' - '.$subCategoria}}</h2><br>
-                <h2 style="font-size: 16px; font-weight: bold; color: #2e7d32;">{{strtoupper($nomeStatus)}}.</h2>         
+                <h2 style="font-size: 16px; font-weight: bold; color: #2e7d32;">Status: {{strtoupper($nomeStatus)}}</h2>         
             @elseif($nomeStatus == 'Reprovada')
                 <h2>Projeto de {{$categoria.' - '.$subCategoria}}</h2><br>
-                <h2 style="font-size: 16px; font-weight: bold; color: #db191c;">{{strtoupper($nomeStatus)}}.</h2>  
+                <h2 style="font-size: 16px; font-weight: bold; color: #db191c;">Status: {{strtoupper($nomeStatus)}}</h2>  
             @elseif($nomeStatus == 'Finalizada')
                 <h2>{{$categoria.' - '.$subCategoria}}</h2><br>
-                <h2 style="font-size: 16px; font-weight: bold; color: #2578e5;">{{strtoupper($nomeStatus)}}.</h2>
+                <h2 style="font-size: 16px; font-weight: bold; color: #2578e5;">Status: {{strtoupper($nomeStatus)}}</h2>
             @elseif($nomeStatus == 'Financeiro')
             <h2>Um relatório final de atividade extraclasse foi gerado.</h2><br>
-            <h2 style="font-size: 16px; font-weight: bold; color: #f11619;">{{strtoupper($nomeStatus)}}.</h2>
-            @endif
-            
-
-
-
-                Acesse: <a href="{{ route('filament.admin.resources.visita-tecnicas.index') }}">Clique aqui</a> para visualizar o projeto.
+            <h2 style="font-size: 16px; font-weight: bold; color: #f11619;">Status: {{strtoupper($nomeStatus)}}</h2>
+            @endif       
+            Acesse: <a href="{{ route('filament.admin.resources.visita-tecnicas.index') }}">Clique aqui</a> para visualizar o projeto.
                 <br><br>
                 <strong>Dados Básicos:</strong>
         </div>
