@@ -551,7 +551,7 @@ class VisitaTecnicaResource extends Resource
                                         ->required()
                                         ->columnSpanFull(),
                                     Forms\Components\Textarea::make('justificativa')
-                                        ->label('Justificativa por Disciplina')
+                                        ->label('Justificativa Geral')
                                         ->autosize()
                                         ->required()
                                         ->disabled(function ($context, Get  $get) {
