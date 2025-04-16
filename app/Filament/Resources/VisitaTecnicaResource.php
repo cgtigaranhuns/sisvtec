@@ -753,7 +753,7 @@ class VisitaTecnicaResource extends Resource
                     ->openUrlInNewTab(),
                 Tables\Actions\Action::make('imprimirRelatorioFinal')
                     ->icon('heroicon-o-printer')
-                    ->disabled(fn(VisitaTecnica $record): bool => $record->status == 0)
+                    ->disabled(fn(VisitaTecnica $record): bool => $record->status < 4)
                     ->label('Relatório Final')
                     ->url(fn(VisitaTecnica $record): string => route('imprimirRelatorioFinal', $record))
                     ->openUrlInNewTab(),
