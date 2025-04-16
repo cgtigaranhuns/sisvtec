@@ -25,14 +25,13 @@
 </head>
 <table>
     <tr>
-        <td style="width: 30%; text-align: center; border: 0px solid;">
-            <img src="{{ asset('img/logo-ifpe.png') }}" alt="Logo" style="max-width: 120px;">
-        </td>
-        
+              
         <td style="width: 70%; text-align: center; border: 0px solid; color:gray; padding: 0px;">
-            <h3>MINISTÉRIO DA EDUCAÇÃO</h3>
-            <h4>SECRETARIA DE EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA</h4>
-            <h4>INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA</h4>
+            <img src="{{ asset('img/brasao.png') }}" alt="Logo" style="max-width: 100px;">
+            <h3>Ministério da Educação</h3>
+            <h4>Secretaria de Educação Profissional e Tecnológica</h4>
+            <h4>Instituto Federal de Educação, Ciência e Tecnologia de Pernambuco</h4>
+            <h4>Campus Garanhuns/Direção-geral/Diretoria de Ensino/</h4>
             
         </td>
     </tr>
