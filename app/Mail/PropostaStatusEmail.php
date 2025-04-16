@@ -50,12 +50,12 @@ class PropostaStatusEmail extends Mailable
             }
             elseif($this->visitaTecnica->status == 4) {
                 return new Envelope(
-                    subject: 'Atividade Extraclasse - Finalizada',
+                    subject: 'Atividade Extraclasse - Financeiro',
                 );
             }
-            elseif($this->visitaTecnica->status == 6) {
+            elseif($this->visitaTecnica->status == 5) {
                 return new Envelope(
-                    subject: 'Proposta Cadastrada com Sucesso',
+                    subject: 'Atividade Extraclasse - Finalizada',
                 );  
             }
             else{
@@ -97,6 +97,9 @@ class PropostaStatusEmail extends Mailable
             $nomeStatus = 'Reprovada';
         }
         elseif($this->visitaTecnica->status == 4) {
+            $nomeStatus = 'Financeiro';
+        }
+        elseif($this->visitaTecnica->status == 5) {
             $nomeStatus = 'Finalizada';
         }
 

@@ -128,6 +128,11 @@ class VisitaTecnica extends Model
         return $this->hasMany(RelatorioFinal::class);
     }
 
+    public function config()
+    {
+        return $this->hasMany(Config::class);
+    }
+
 
 
 

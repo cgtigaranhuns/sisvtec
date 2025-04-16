@@ -9,5 +9,8 @@ class Config extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['valor_meia_diaria'];
+    protected $fillable = [
+        'valor_meia_diaria',
+        'email_financeiro'
+    ];
 }

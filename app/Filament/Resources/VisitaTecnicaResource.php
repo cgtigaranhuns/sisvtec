@@ -622,21 +622,24 @@ class VisitaTecnicaResource extends Resource
                                             '1' => 'Submetida',
                                             '2' => 'Aprovada',
                                             '3' => 'Reprovada',
-                                            '4' => 'Finalizada',
+                                            '4' => 'Financeiro',
+                                            '5' => 'Finalizada',
                                         ])
                                         ->colors([
                                             '0' => 'warning',
                                             '1' => 'info',
                                             '2' => 'success',
                                             '3' => 'danger',
-                                            '4' => 'success',
+                                            '4' => 'warning',
+                                            '5' => 'success',
                                         ])
                                         ->icons([
                                             '0' => 'heroicon-o-pencil',
                                             '1' => 'heroicon-o-clock',
                                             '2' => 'heroicon-o-check-circle',
                                             '3' => 'heroicon-o-x-circle',
-                                            '4' => 'heroicon-o-check-circle',
+                                            '4' => 'heroicon-o-currency-dollar',
+                                            '5' => 'heroicon-o-check-circle',
                                         ])
                                 ])->grow(false),
                             ])->from('md')
@@ -690,7 +693,8 @@ class VisitaTecnicaResource extends Resource
                         '1' => 'Submetida',
                         '2' => 'Aprovada',
                         '3' => 'Reprovada',
-                        '4' => 'Finalizada',
+                        '4' => 'Financeiro',
+                        '5' => 'Finalizada',
                     ])
                     ->alignCenter()
                     ->sortable()

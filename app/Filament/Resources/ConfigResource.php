@@ -32,6 +32,11 @@ class ConfigResource extends Resource
                 Forms\Components\TextInput::make('valor_meia_diaria')
                     ->required()
                     ->numeric(),
+                Forms\Components\TextInput::make('email_financeiro')
+                    ->required()
+                    ->email()
+                    ->label('E-mail Financeiro')
+                    ->placeholder('E-mail Financeiro'),
             ]);
     }
 
@@ -42,6 +47,9 @@ class ConfigResource extends Resource
                 Tables\Columns\TextColumn::make('valor_meia_diaria')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('email_financeiro')
+                    ->label('E-mail Financeiro')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

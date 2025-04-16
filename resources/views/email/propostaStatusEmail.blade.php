@@ -61,6 +61,9 @@
             @elseif($nomeStatus == 'Finalizada')
                 <h2>{{$categoria.' - '.$subCategoria}}</h2><br>
                 <h2 style="font-size: 16px; font-weight: bold; color: #2578e5;">{{strtoupper($nomeStatus)}}.</h2>
+            @elseif($nomeStatus == 'Financeiro')
+            <h2>Um relatório final de atividade extraclasse foi gerado.</h2><br>
+            <h2 style="font-size: 16px; font-weight: bold; color: #f11619;">{{strtoupper($nomeStatus)}}.</h2>
             @endif
             
 
