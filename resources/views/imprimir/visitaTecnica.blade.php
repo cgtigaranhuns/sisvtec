@@ -164,6 +164,7 @@
             <th style="font-size: 8px">Disciplina</th>
             <th style="font-size: 8px">Turma</th>
             <th style="font-size: 8px">Data/Hora Reposição</th>
+            <th style="font-size: 8px">Professor que Assumirá</th>
             
 
         </tr>
@@ -173,6 +174,7 @@
             <td style="font-size: 8px; text-align: center">{{ $compensacao->disciplina->nome }}</td>
             <td style="font-size: 8px; text-align: center">{{ $compensacao->turma->nome }}</td>
             <td style="font-size: 8px; text-align: center">{{ \Carbon\Carbon::parse($compensacao->data_hora_reposicao)->format('d/m/Y H:i') }}</td>
+            <td style="font-size: 8px">{{ $compensacao->user2->name }}</td>
            
         </tr>
         @endforeach
@@ -189,7 +191,7 @@
             <th style="font-size: 8px">Disciplina</th>
             <th style="font-size: 8px">Turma</th>
             <th style="font-size: 8px">Data/Hora Reposição</th>
-            <th style="font-size: 8px">Professor que Assumirá</th>
+            
         </tr>
         @foreach($visitaTecnica->compensacaoTurmaNaoEnvolvido as $compensacao)
         <tr style="font-size: 8px">
@@ -197,7 +199,7 @@
             <td style="font-size: 8px; text-align: center">{{ $compensacao->disciplina->nome }}</td>
             <td style="font-size: 8px; text-align: center">{{ $compensacao->turma->nome }}</td>
             <td style="font-size: 8px; text-align: center">{{ \Carbon\Carbon::parse($compensacao->data_hora_reposicao)->format('d/m/Y H:i') }}</td>
-            <td style="font-size: 8px">{{ $compensacao->user2->name }}</td>
+            
         </tr>
         @endforeach
     </table>
