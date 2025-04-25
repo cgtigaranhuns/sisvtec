@@ -16,7 +16,11 @@ class ManageCoordenacaos extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Nova Coordenacão'),
+                ->label('Adicionar Coordenacão')
+                ->icon('heroicon-o-plus')
+                ->color('success')
+                ->modalHeading('Adicionar Coordenacão'),
+                
         ];
     }
 }

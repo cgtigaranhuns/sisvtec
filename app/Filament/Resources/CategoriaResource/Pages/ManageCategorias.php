@@ -14,8 +14,9 @@ class ManageCategorias extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Criar Categoria')
-                ->modalHeading('Criar Categoria'),
+                ->label('Adicionar Categoria')
+                ->icon('heroicon-o-plus')
+                ->color('success'),
         ];
     }
 }

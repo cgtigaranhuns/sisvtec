@@ -11,6 +11,8 @@ class EditVisitaTecnica extends EditRecord
 {
     protected static string $resource = VisitaTecnicaResource::class;
 
+    protected static ?string $title = 'Editar Atividade Extraclasse';
+
     protected function getHeaderActions(): array
     {
         return [

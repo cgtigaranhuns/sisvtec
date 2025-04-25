@@ -13,7 +13,10 @@ class ManageDisciplinas extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Adicionar Disciplina')
+                ->icon('heroicon-o-plus')
+                ->color('success'),
         ];
     }
 }

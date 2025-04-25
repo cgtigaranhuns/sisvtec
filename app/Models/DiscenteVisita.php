@@ -13,11 +13,12 @@ class DiscenteVisita extends Model
         'discente_id',
         'visita_tecnica_id',
         'falta',
+        'status',
         
         
     ];
 
-    
+        
 
     public function discente()
     {

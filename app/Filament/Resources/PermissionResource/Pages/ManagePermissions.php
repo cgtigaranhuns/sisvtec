@@ -16,8 +16,10 @@ class ManagePermissions extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Criar Permissão')
-                ->modalHeading('Permissão'),
+                ->label('Adicionar Permissão')
+                ->icon('heroicon-o-plus')
+                ->color('success'),
+                
         ];
     }
 }

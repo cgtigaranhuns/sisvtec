@@ -16,8 +16,10 @@ class ManageRoles extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Criar Função')
-                ->modalHeading('Função'),
+                ->label('Adicionar Função')
+                ->icon('heroicon-o-plus')
+                ->color('success')
+                ->modalHeading('Adicionar Função'),
         ];
     }
 }

@@ -106,7 +106,19 @@ class CompensacaoTurmaNaoEnvolvidoRelationManager extends RelationManager
                     ->color('info')
                     ->icon('heroicon-o-paper-airplane')
                     ->requiresConfirmation()
-                    ->visible(fn($livewire) => $livewire->ownerRecord->discenteVisitas()->exists())
+                    ->visible(function ($livewire) {
+                        if ($livewire->ownerRecord->discenteVisitas()->exists() && $livewire->ownerRecord->compensacao == false) {
+                            return true;
+                        } elseif ($livewire->ownerRecord->discenteVisitas()->exists() && $livewire->ownerRecord->compensacao == true) {
+                            if ($livewire->ownerRecord->compensacaoDocenteNaoEnvolvido()->exists() && $livewire->ownerRecord->CompensacaoTurmaNaoEnvolvido()->exists()) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        } else {
+                            return false;
+                        }
+                    })
                     ->disabled(fn($livewire) =>  $livewire->ownerRecord->status != 0)
                     ->modalHeading('Enviar Proposta')
                     ->modalDescription('Tem certeza que deseja enviar a proposta?')

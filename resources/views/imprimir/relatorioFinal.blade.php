@@ -88,12 +88,63 @@
         </tr>
         @foreach($visitaTecnica->RelatorioFinalVisitaTecnica as $relatorio)
         <tr>
-            <td><label>Ocorrência:</label> {!! str($relatorio->ocorrencia)->sanitizeHtml() !!}</td>
+            <td><label>Ocorrências:</label> {!! str($relatorio->ocorrencia)->sanitizeHtml() !!}</td>
             
         </tr>
-        @endforeach
+        @endforeach      
         
     </table>
+    <br>
+        @foreach($visitaTecnica->discenteVisitas->where('falta', 1)->groupBy('discente.turma.nome') as $turmaNome => $discentes)
+        <table>
+            <tr>
+                <td colspan="15" style="background-color: rgb(226, 223, 223); font-size: 12px; color: rgb(241, 16, 16); text-align:center; font-weight: bold;">
+                    Estudantes Faltosos - Turma: {{ $turmaNome }}
+                </td>
+            </tr>
+            <tr>
+                <th style="font-size: 8px">Nome</th>
+                <th style="font-size: 8px">Nome Social</th>
+                <th style="font-size: 8px">CPF</th>
+                <th style="font-size: 8px">Email</th>
+                <th style="font-size: 8px">Banco</th>
+                <th style="font-size: 8px">Agência</th>
+                <th style="font-size: 8px">Conta</th>
+                <th style="font-size: 8px">Tipo de Conta</th>
+            </tr>
+            @foreach($discentes as $discenteVisita)
+            <tr style="font-size: 8px">
+                <td style="font-size: 8px">{{ $discenteVisita->discente->nome }}</td>
+                <td style="font-size: 8px">{{ $discenteVisita->discente->nome_social }}</td>
+                <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->cpf }}</td>
+                <td style="font-size: 8px">{{ $discenteVisita->discente->email }}</td>
+                <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->banco->nome ?? 'N/A' }}</td>
+                <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->agencia }}</td>
+                <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->conta }}</td>
+                <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->tipo_conta == 1 ? 'Conta Corrente' : 'Poupança' }}</td>
+            </tr>
+            @endforeach
+        </table>
+        <br>
+    @endforeach
+    <br>
+    @foreach($visitaTecnica->RelatorioFinalVisitaTecnica as $relatorio)
+        
+        @if($relatorio->fotos)
+            <tr>
+                <td>
+                    <label>Fotos:</label>
+                    <div>
+                        @foreach($relatorio->fotos as $foto)
+                            <img src="{{ asset('storage/' . $foto) }}" alt="Foto da Visita Técnica" style="max-width: 200px; margin: 5px;">
+                        @endforeach
+                    </div>
+                </td>
+            </tr>
+        @endif
+    @endforeach
+
+
 
     <div style="margin-top: 50px;">
         <table style="width: 100%; border: 0px;">

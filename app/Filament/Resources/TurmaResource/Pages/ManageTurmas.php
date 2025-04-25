@@ -13,7 +13,11 @@ class ManageTurmas extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Adicionar Turma')
+                ->icon('heroicon-o-plus')
+                ->color('success'),
+                
         ];
     }
 }

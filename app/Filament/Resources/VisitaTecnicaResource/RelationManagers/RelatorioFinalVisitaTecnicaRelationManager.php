@@ -37,14 +37,32 @@ class RelatorioFinalVisitaTecnicaRelationManager extends RelationManager
                     ->columnSpanFull(),
                 RichEditor::make('descricao')
                     ->required()
+                    ->disableToolbarButtons([
+                        'attachFiles',
+                    ])
                     ->hidden(fn(Get $get) => $get('conferido') == false)
                     ->columnSpanFull()
                     ->label('Descrição'),
                 RichEditor::make('ocorrencia')
                     ->required(false)
+                    ->disableToolbarButtons([
+                        'attachFiles',
+                    ])
                     ->hidden(fn(Get $get) => $get('conferido') == false)
                     ->columnSpanFull()
                     ->label('Ocorrência'),
+                FileUpload::make('fotos')
+                    ->label('Fotos')
+                    ->directory('fotos')
+                    ->image()
+                    ->maxFiles(5)
+                   // ->minSize(512)
+                    ->maxSize(1024)
+                    ->openable()
+                    ->columnSpanFull()
+                    ->panelLayout('grid')
+                    ->multiple(),
+
 
 
 

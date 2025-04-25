@@ -14,7 +14,9 @@ class ManageCargos extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Novo Cargo'),
+                ->label('Adicionar Cargo')
+                ->icon('heroicon-o-plus')
+                ->color('success'),
         ];
     }
 }

@@ -13,7 +13,11 @@ class ManageDiscentes extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Adicionar Discente')
+                ->icon('heroicon-o-plus')
+                ->color('success')
+                
         ];
     }
 }

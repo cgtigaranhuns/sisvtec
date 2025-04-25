@@ -14,7 +14,10 @@ class ManageBancos extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Novo Banco'),
+                ->label('Adicionar Banco')
+                ->icon('heroicon-o-plus')
+                ->color('success'),
+                
         ];
     }
 }

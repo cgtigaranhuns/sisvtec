@@ -14,8 +14,11 @@ class ManageSubCategorias extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Cria SubCategoria')
-                ->modalHeading('Nova SubCategoria'),
+                ->label('Adicionar Subcategoria')
+                ->icon('heroicon-o-plus')
+                ->modalHeading('Adicionar Subcategoria')
+                ->color('success')
+               
         ];
     }
 }

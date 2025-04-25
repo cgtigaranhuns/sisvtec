@@ -14,7 +14,11 @@ class ManageCursos extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Novo Curso'),
+                ->label('Adicionar Curso')
+                ->icon('heroicon-o-plus')
+                ->color('success')
+                ->modalHeading('Adicionar Curso'),
+                
         ];
     }
 }

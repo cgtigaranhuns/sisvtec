@@ -11,14 +11,19 @@ class ListVisitaTecnicas extends ListRecords
 {
     protected static string $resource = VisitaTecnicaResource::class;
 
-    protected static ?string $title = 'Visitas Técnicas';
+    protected static ?string $title = 'Atividades Extraclasses';
+    
+
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make()
-                ->label('Novo')
-                ->modalHeading('Criar Proposta')
+                ->label('Adicionar Atividade')
+                ->icon('heroicon-o-plus')
+                ->color('success')
+                ->modalHeading('Adicionar Atividade Extraclasse'),
+                
                
         ];
     }

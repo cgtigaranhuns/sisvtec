@@ -13,8 +13,13 @@ class RelatorioFinal extends Model
         'visita_tecnica_id',
         'descricao',
         'ocorrencia',
+        'fotos',
         'conferido',
         
+    ];
+
+    protected $casts = [
+        'fotos' => 'array',
     ];
 
    

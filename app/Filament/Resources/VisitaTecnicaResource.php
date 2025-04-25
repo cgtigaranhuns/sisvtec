@@ -36,7 +36,7 @@ class VisitaTecnicaResource extends Resource
 
     protected static ?string $model = VisitaTecnica::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-map-pin';
 
     protected static ?string $navigationLabel = 'Atividade Extraclasse';
 
@@ -194,7 +194,7 @@ class VisitaTecnicaResource extends Resource
                                         } else {
                                             return false;
                                         }
-                                    })                                    
+                                    })
                                     ->multiple()
                                     ->required(),
                                 Forms\Components\Select::make('disciplina_id')
@@ -257,7 +257,7 @@ class VisitaTecnicaResource extends Resource
                                                         return false;
                                                     }
                                                 })
-                                                ->autosize(),                                                
+                                                ->autosize(),
                                             Forms\Components\Textarea::make('just_outra_disciplina')
                                                 ->label('Justificar Outras Disciplinas')
                                                 ->hidden(fn(Get $get) => count($get('disciplina_id') ?? []) <= 1)
@@ -270,7 +270,7 @@ class VisitaTecnicaResource extends Resource
                                                     }
                                                 })
                                                 ->autosize(),
-                                                
+
                                         ]),
                                     ]),
 
@@ -319,6 +319,28 @@ class VisitaTecnicaResource extends Resource
                                 Forms\Components\DateTimePicker::make('data_hora_saida')
                                     ->label('Data e Hora de Saída')
                                     ->seconds(false)
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function ($state, Get $get) {
+                                        $saida = \Carbon\Carbon::parse($state);
+                                        //  dd($get('custo') == true && $saida->lt(Carbon::now()->addDays(30)));
+                                        if ($get('custo') == true && $saida->lt(Carbon::now()->addDays(30))) {
+                                            Notification::make()
+                                                ->title('ATENÇÃO!')
+                                                ->body('Considerando que é uma proposta que envolverá custos, a data de saída não deve ser inferior a 30 dias.')
+                                                ->warning()
+                                                ->duration(10000)
+                                                ->send();
+                                        }
+                                        if ($get('custo') == false && $saida->lt(Carbon::now()->addDays(7))) {
+                                            Notification::make()
+                                                ->title('ATENÇÃO!')
+                                                ->body('Embora sejá uma proposta que não envolverá custos, a data de saída não deve ser inferior a 7 dias. Pois, pode 
+                                                não ser possível agendar o transporte.')
+                                                ->warning()
+                                                ->duration(10000)
+                                                ->send();
+                                        }
+                                    })
                                     ->disabled(function ($context, Get  $get) {
                                         if (($get('status') != 0) && $context == 'edit') {
                                             return true;
@@ -337,10 +359,39 @@ class VisitaTecnicaResource extends Resource
                                             return false;
                                         }
                                     })
-                                    ->live()
+                                    ->live(onBlur: true)
                                     ->afterStateUpdated(function (callable $set, $state, $get) {
                                         $dataHoraSaida = $get('data_hora_saida');
                                         $dataHoraRetorno = $get('data_hora_retorno');
+
+                                        $dataHoraSaida = $get('data_hora_saida');
+                                        $dataHoraRetorno = $state;
+
+                                        if ($dataHoraSaida && $dataHoraRetorno) {
+                                            $saida = \Carbon\Carbon::parse($dataHoraSaida);
+                                            $retorno = \Carbon\Carbon::parse($dataHoraRetorno);
+
+                                            if ($saida->gt($retorno)) {
+                                                $set('data_hora_retorno', null);
+                                                Notification::make()
+                                                    ->title('ATENÇÃO!')
+                                                    ->body('A data/hora de retorno não pode ser anterior à data/hora de saída.')
+                                                    ->danger()
+                                                    ->send();
+                                            }
+
+                                            if ($saida->gt($retorno)) {
+                                                $set('data_hora_retorno', null);
+                                                Notification::make()
+                                                    ->title('ATENÇÃO!')
+                                                    ->body('A data/hora de retorno não pode ser anterior à data/hora de saída.')
+                                                    ->danger()
+                                                    ->send();
+                                            }
+                                            // dd(!$saida->lt(Carbon::now()->addDays(30)));
+
+
+                                        }
 
                                         if ($dataHoraSaida && $dataHoraRetorno) {
                                             $saida = \Carbon\Carbon::parse($dataHoraSaida);
@@ -353,6 +404,8 @@ class VisitaTecnicaResource extends Resource
                                             $set('carga_horaria_total', $humanReadable);
                                         }
                                     })
+
+
                                     ->required(),
                                 Forms\Components\TextInput::make('carga_horaria_total')
                                     ->readOnly()
@@ -381,6 +434,7 @@ class VisitaTecnicaResource extends Resource
                         ]),
                     Wizard\Step::make('Custos e Estudantes')
                         ->completedIcon('heroicon-m-hand-thumb-up')
+
                         ->schema([
                             Grid::make([
                                 'xl' => 3,
@@ -405,9 +459,34 @@ class VisitaTecnicaResource extends Resource
                                 Forms\Components\ToggleButtons::make('hospedagem')
                                     ->label('Haverá Hospedagem?')
                                     ->hidden(fn(Get $get): bool => $get('custo') == false)
+                                    ->default(function (Get $get) {
+                                        $dataSaida = Carbon::parse($get('data_hora_saida'))->startOfDay();
+                                        $dataRetorno = Carbon::parse($get('data_hora_retorno'))->startOfDay();
+                                        if ($dataSaida->equalTo($dataRetorno)) {
+                                            return false;
+                                        } else {
+                                            return true;
+                                        }
+                                    })
                                     ->live()
+                                   // ->disableOptionWhen(fn (string $value, $get): bool => $value == true ||Carbon::parse($get('data_hora_saida'))->startOfDay()->equalTo(Carbon::parse($get('data_hora_retorno'))->startOfDay()))
+                                    ->disableOptionWhen(function(string $value, $get){
+                                        $dataSaida = Carbon::parse($get('data_hora_saida'))->startOfDay();
+                                        $dataRetorno = Carbon::parse($get('data_hora_retorno'))->startOfDay();
+                                        if ($dataSaida->equalTo($dataRetorno)) {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    }
+                                        
+                                    )
                                     ->disabled(function ($context, Get  $get) {
-                                        if (($get('status') != 0) && $context == 'edit') {
+                                        $dataSaida = Carbon::parse($get('data_hora_saida'))->startOfDay();
+                                        $dataRetorno = Carbon::parse($get('data_hora_retorno'))->startOfDay();
+
+                                        //  dd($dataSaida->equalTo($dataRetorno));
+                                        if ((($get('status') != 0) && $context == 'edit') /* or  $dataSaida->equalTo($dataRetorno) */) {
                                             return true;
                                         } else {
                                             return false;
@@ -701,8 +780,8 @@ class VisitaTecnicaResource extends Resource
                     ->afterStateUpdated(function ($record, $state) {
                         // if($state == 1) {
                         //     $record->update(['status' => 1]);
-                            Mail::to($record->professor->email)->cc($record->coordenacao->email)->send(new PropostaStatusEmail($record));
-                       // } 
+                        Mail::to($record->professor->email)->cc($record->coordenacao->email)->send(new PropostaStatusEmail($record));
+                        // } 
                     })
                     ->disabled(function ($state) {
 
@@ -760,7 +839,7 @@ class VisitaTecnicaResource extends Resource
 
 
                 Tables\Actions\EditAction::make(),
-                    
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

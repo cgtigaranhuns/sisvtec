@@ -38,6 +38,7 @@ class DiscenteVisitasRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('visita_tecnica_id')
+            ->defaultSort('status', 'desc')
             ->defaultGroup('discente.turma.nome')
             ->columns([
                 Tables\Columns\TextColumn::make('discente.nome')
@@ -68,6 +69,23 @@ class DiscenteVisitasRelationManager extends RelationManager
                             $discente->save();
                         }
                     }),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->alignCenter()
+                    ->color(fn(string $state): string => match ($state) {
+                        '0' => 'danger',
+                        '1' => 'warning',
+                        '2' => 'info',
+                        '3' => 'success',
+                    })
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        '0' => 'Pendência Financeira',
+                        '1' => 'Cadastro Incompleto',
+                        '2' => 'Desativado',
+                        '3' => 'OK',
+                    })
+
             ])
             ->filters([
                 //
@@ -154,8 +172,9 @@ class DiscenteVisitasRelationManager extends RelationManager
                         //  dd($livewire);
                         $turma = Turma::find($data['turma_id']);
                         $discentes = $turma->discentes;
+
                         foreach ($discentes as $discente) {
-                            if ($discente->status == 3) {
+                            if ($discente) {
                                 $exists = DiscenteVisita::where('discente_id', $discente->id)
                                     ->where('visita_tecnica_id', $livewire->ownerRecord->id)
                                     ->exists();
@@ -164,6 +183,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                                     DiscenteVisita::create([
                                         'discente_id' => $discente->id,
                                         'visita_tecnica_id' => $livewire->ownerRecord->id,
+                                        'status' => $discente->status,
                                     ]);
                                 } else {
                                     Notification::make()
@@ -173,23 +193,25 @@ class DiscenteVisitasRelationManager extends RelationManager
                                         ->persistent()
                                         ->send();
                                 }
-                            } elseif ($discente->status == 0) {
+                            }
+
+                            if ($discente->status == 0) {
                                 Notification::make()
-                                    ->title('Estudante não incluído')
+                                    ->title('Estudante com pendência')
                                     ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está com pendência financeira.')
                                     ->danger()
                                     ->persistent()
                                     ->send();
                             } elseif ($discente->status == 1) {
                                 Notification::make()
-                                    ->title('Estudante não incluído')
+                                    ->title('Estudante com pendência')
                                     ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está com cadastro incompleto.')
                                     ->danger()
                                     ->persistent()
                                     ->send();
                             } elseif ($discente->status == 2) {
                                 Notification::make()
-                                    ->title('Estudante não incluído')
+                                    ->title('Estudante com pendência')
                                     ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está inativo.')
                                     ->info()
                                     ->persistent()
@@ -197,6 +219,34 @@ class DiscenteVisitasRelationManager extends RelationManager
                             }
                         }
                     }),
+                Tables\Actions\Action::make('updateStatus')
+                    ->label('Atualizar Status')
+                    ->action(function ($livewire) {
+                        $discenteVisitas = $livewire->ownerRecord->discenteVisitas;
+
+                        foreach ($discenteVisitas as $discenteVisita) {
+                            $discente = Discente::find($discenteVisita->discente_id);
+
+                            if ($discente && $discente->status != $discenteVisita->status) {
+                                $discenteVisita->status = $discente->status;
+                                $discenteVisita->save();
+                            }
+                        }
+
+                        Notification::make()
+                            ->title('Status atualizado com sucesso!')
+                            ->success()
+                            ->persistent()
+                            ->send();
+                    })
+                    ->color('warning')
+                    ->icon('heroicon-o-arrow-path')
+                    ->requiresConfirmation()
+                    ->disabled(fn($livewire) =>  $livewire->ownerRecord->status != 0)
+                    ->modalHeading('Atualizar Status')
+                    ->modalDescription('Tem certeza que deseja atualizar o status dos discentes?')
+                    ->modalIcon('heroicon-o-arrow-path'),
+
                 Tables\Actions\Action::make('submeter')
 
                     ->label(function () {
@@ -207,6 +257,10 @@ class DiscenteVisitasRelationManager extends RelationManager
                         }
                     })
                     ->action(function ($livewire) {
+                        $discentesValidados = $livewire->ownerRecord->discenteVisitas()->count();
+                        
+
+
                         $livewire->ownerRecord->status = 1;
                         $livewire->ownerRecord->save();
 
@@ -221,7 +275,20 @@ class DiscenteVisitasRelationManager extends RelationManager
                     ->color('info')
                     ->icon('heroicon-o-paper-airplane')
                     ->requiresConfirmation()
-                    ->visible(fn($livewire) => $livewire->ownerRecord->discenteVisitas()->exists())
+                    //  ->visible(fn($livewire) => $livewire->ownerRecord->discenteVisitas()->exists() && (($livewire->ownerRecord->compesacao == true && $livewire->ownerRecord->compensacaoDocenteNaoEnvolvido()->exists() && $livewire->ownerRecord->compensacaoTurmaEnvolvido()->exists())))
+                    ->visible(function ($livewire) {
+                        if ($livewire->ownerRecord->discenteVisitas()->exists() && $livewire->ownerRecord->compensacao == false) {
+                            return true;
+                        } elseif ($livewire->ownerRecord->discenteVisitas()->exists() && $livewire->ownerRecord->compensacao == true) {
+                            if ($livewire->ownerRecord->compensacaoDocenteNaoEnvolvido()->exists() && $livewire->ownerRecord->CompensacaoTurmaNaoEnvolvido()->exists()) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        } else {
+                            return false;
+                        }
+                    })
                     ->disabled(fn($livewire) =>  $livewire->ownerRecord->status != 0)
                     ->modalHeading('Enviar Proposta')
                     ->modalDescription('Tem certeza que deseja enviar a proposta?')

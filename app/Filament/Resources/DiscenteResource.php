@@ -187,6 +187,7 @@ class DiscenteResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultGroup('turma.nome')
             ->columns([
                 Tables\Columns\TextColumn::make('nome')
                     ->searchable(),
