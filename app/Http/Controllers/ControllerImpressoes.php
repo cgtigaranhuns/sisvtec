@@ -54,4 +54,18 @@ class ControllerImpressoes extends Controller
         $ataVisitaTecnica = $visitaTecnica->ataVisitaTecnica;
         return view('imprimir.ataVisitaTecnica', compact('visitaTecnica','ataVisitaTecnica'));
     }
+
+    public function imprimirTermoCompromisso($id)
+    {
+        
+        $visitaTecnica = VisitaTecnica::find($id);
+
+        foreach($visitaTecnica->discenteVisitas as $discente){
+           // dd($discente);
+            return view('imprimir.termoCompromisso', compact('visitaTecnica','discente'));
+        }
+        
+       
+       
+    }
 }

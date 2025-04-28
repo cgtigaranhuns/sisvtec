@@ -4,18 +4,22 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\DiscenteResource\Pages;
 use App\Filament\Resources\DiscenteResource\RelationManagers;
+use App\Models\Cidade;
 use App\Models\Discente;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Split;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 
 class DiscenteResource extends Resource
 {
@@ -34,11 +38,9 @@ class DiscenteResource extends Resource
 
         if ($authUser->hasRole('Estudantes')) {
             return parent::getEloquentQuery()->where('matricula', '=', auth()->user()->username);
-        } 
-        else {
+        } else {
             return static::getModel()::query();
         }
-       
     }
 
     public static function form(Form $form): Form
@@ -55,14 +57,14 @@ class DiscenteResource extends Resource
                         ->schema([
                             Forms\Components\TextInput::make('nome')
                                 ->columnSpanFull()
-                                ->disabled(function () {  
+                                ->disabled(function () {
 
-                                   /** @var \App\Models\User */
-                                         $authUser =  auth()->user();                            
-                                     if($authUser->hasRole('Estudantes')){
+                                    /** @var \App\Models\User */
+                                    $authUser =  auth()->user();
+                                    if ($authUser->hasRole('Estudantes')) {
                                         return true;
-                                     }
-                                })                                
+                                    }
+                                })
                                 ->required()
                                 ->maxLength(50),
                             Forms\Components\TextInput::make('nome_social')
@@ -71,16 +73,43 @@ class DiscenteResource extends Resource
                                 ->maxLength(50),
                             Forms\Components\TextInput::make('matricula')
                                 ->label('Matrícula')
-                                ->disabled(function () {  
+                                ->disabled(function () {
 
                                     /** @var \App\Models\User */
-                                          $authUser =  auth()->user();                            
-                                      if($authUser->hasRole('Estudantes')){
-                                         return true;
-                                      }
-                                 })      
+                                    $authUser =  auth()->user();
+                                    if ($authUser->hasRole('Estudantes')) {
+                                        return true;
+                                    }
+                                })
                                 ->required()
                                 ->maxLength(50),
+                            Forms\Components\TextInput::make('contato')
+                                ->label('Contato')
+                                ->mask('(99) 99999-9999')
+                                ->required()
+                                ->maxLength(15),
+                            Forms\Components\Textarea::make('endereco')
+                                ->label('Endereço')
+                                ->columnSpanFull(),
+                            
+                            
+                            Forms\Components\Select::make('estado_id')
+                                ->relationship('estado', 'nome')
+                                ->label('Estado')
+                                ->live()
+                                ->searchable()
+                                ->required(),
+                            Forms\Components\Select::make('cidade_id')
+                                ->options(fn(Get $get): Collection => Cidade::query()
+                                    ->where('estado_id', $get('estado_id'))
+                                    ->pluck('nome', 'id'))
+                                ->label('Cidade')
+                                ->searchable()
+                                ->required(),
+                            Forms\Components\TextInput::make('cep')
+                                ->label('CEP')
+                                ->mask('99999-999'),
+                            
                             Forms\Components\TextInput::make('email')
                                 ->email()
                                 ->required()
@@ -152,14 +181,14 @@ class DiscenteResource extends Resource
                             Forms\Components\ToggleButtons::make('status')
                                 ->label('Status')
                                 ->required()
-                                ->disabled(function () {  
+                                ->disabled(function () {
 
                                     /** @var \App\Models\User */
-                                          $authUser =  auth()->user();                            
-                                      if($authUser->hasRole('Estudantes')){
-                                         return true;
-                                      }
-                                 })      
+                                    $authUser =  auth()->user();
+                                    if ($authUser->hasRole('Estudantes')) {
+                                        return true;
+                                    }
+                                })
                                 ->default('3')
                                 ->options([
                                     '0' => 'Pendência Financeira',

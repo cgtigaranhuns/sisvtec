@@ -16,9 +16,12 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Mail;
+use App\Traits\RecalculaFinanceiro;
 
 class DiscenteVisitasRelationManager extends RelationManager
 {
+    use RecalculaFinanceiro;
+
     protected static string $relationship = 'discenteVisitas';
 
     protected static ?string $title = 'Discentes da Visita';
@@ -106,48 +109,44 @@ class DiscenteVisitasRelationManager extends RelationManager
                             ->exists();
 
                         if (!$exists) {
-                            if ($discente->status == 0) {
-                                Notification::make()
-                                    ->title('Estudante não pode ser incluído')
-                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não pode ser incluído na visita, pois está com pendência financeira.')
-                                    ->danger()
-                                    ->persistent()
-                                    ->send();
-                            } elseif ($discente->status == 1) {
-                                Notification::make()
-                                    ->title('Estudante não pode ser incluído')
-                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não pode ser incluído na visita, pois está com cadastro incompleto.')
-                                    ->danger()
-                                    ->persistent()
-                                    ->send();
-                            } elseif ($discente->status == 2) {
-                                Notification::make()
-                                    ->title('Estudante não pode ser incluído')
-                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não pode ser incluído na visita, pois está inativo.')
-                                    ->info()
-                                    ->persistent()
-                                    ->send();
-                            } else {
-
+                            if ($discente) {
                                 // Cria o registro de DiscenteVisita
                                 DiscenteVisita::create([
                                     'discente_id' => $data['discente_id'],
                                     'visita_tecnica_id' => $livewire->ownerRecord->id,
+                                    'status' => $discente->status,
+
                                 ]);
+                                if ($discente->status == 0) {
+                                    Notification::make()
+                                        ->title('Estudante com pendência')
+                                        ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está com pendência financeira.')
+                                        ->danger()
+                                        ->persistent()
+                                        ->send();
+                                } elseif ($discente->status == 1) {
+                                    Notification::make()
+                                        ->title('Estudante com pendência')
+                                        ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está com cadastro incompleto.')
+                                        ->danger()
+                                        ->persistent()
+                                        ->send();
+                                } elseif ($discente->status == 2) {
+                                    Notification::make()
+                                        ->title('Estudante com pendência')
+                                        ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está inativo.')
+                                        ->info()
+                                        ->persistent()
+                                        ->send();
+                                }
+                            } else {
                                 Notification::make()
-                                    ->title('Estudante incluído com sucesso')
-                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' foi incluído na visita.')
-                                    ->success()
+                                    ->title('Estudante já incluído')
+                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' já está incluído na visita.')
+                                    ->warning()
                                     ->persistent()
                                     ->send();
                             }
-                        } else {
-                            Notification::make()
-                                ->title('Estudante já incluído')
-                                ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' já está incluído na visita.')
-                                ->warning()
-                                ->persistent()
-                                ->send();
                         }
                     }),
                 Tables\Actions\CreateAction::make('addMais')
@@ -247,6 +246,15 @@ class DiscenteVisitasRelationManager extends RelationManager
                     ->modalDescription('Tem certeza que deseja atualizar o status dos discentes?')
                     ->modalIcon('heroicon-o-arrow-path'),
 
+                // Tables\Actions\Action::make('enviartermo')
+                //     ->label('Enviar Termo de Compromisso')
+                //     ->url(
+                //         route('imprimirTermoCompromisso'),
+                //         fn($record) => [
+                //             'id' => $record->id,
+                //         ]
+                //     )
+                //     ->color('success'),
                 Tables\Actions\Action::make('submeter')
 
                     ->label(function () {
@@ -257,20 +265,33 @@ class DiscenteVisitasRelationManager extends RelationManager
                         }
                     })
                     ->action(function ($livewire) {
-                        $discentesValidados = $livewire->ownerRecord->discenteVisitas()->count();
-                        
 
+                        $totalDiscentes = $livewire->ownerRecord->qtd_estudantes;
+                        $discentesStatusOk = $livewire->ownerRecord->discenteVisitas()->where('status', 3)->count();
+                        //  dd($totalDiscentes, $discentesStatusOk);
 
-                        $livewire->ownerRecord->status = 1;
-                        $livewire->ownerRecord->save();
+                        if ($totalDiscentes == $discentesStatusOk) {
+                            $livewire->ownerRecord->status = 1;
+                            $livewire->ownerRecord->save();
 
-                        Notification::make()
-                            ->title('Proposta enviada com sucesso!')
-                            ->success()
-                            ->persistent()
-                            ->send();
-                        Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
-                        $livewire->redirect(route('filament.admin.resources.visita-tecnicas.index'));
+                            Notification::make()
+                                ->title('Proposta enviada com sucesso!')
+                                ->success()
+                                ->persistent()
+                                ->send();
+
+                            Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
+                            $livewire->redirect(route('filament.admin.resources.visita-tecnicas.index'));
+                        } else {
+                            Notification::make()
+                                ->title('ATENÇÃO: Inconsistência de dados')
+                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta foi <b>' . $totalDiscentes . ' estudantes</b>, porém os estudantes incluídos para esta Atividade com STATUS OK, soman <b>' . $discentesStatusOk . ' estudantes</b>, corriga a diferença e tente novamente.</p>')
+                                ->danger()
+                                ->icon('heroicon-o-exclamation-triangle')
+                                ->color('danger')
+                                ->persistent()
+                                ->send();
+                        }
                     })
                     ->color('info')
                     ->icon('heroicon-o-paper-airplane')
@@ -300,6 +321,12 @@ class DiscenteVisitasRelationManager extends RelationManager
                     ->disabled(function () {
                         return $this->ownerRecord->status != 0;
                     }),
+                Tables\Actions\Action::make('imprimir')
+                    ->label('Imprimir Termo de Compromisso')
+                    ->url(fn($record) => route('imprimirTermoCompromisso', ['id' => $record->id]))
+                    ->icon('heroicon-o-printer')
+                    ->color('primary')
+                    ->openUrlInNewTab(),
                 Tables\Actions\DeleteAction::make()
                     ->disabled(function () {
                         return $this->ownerRecord->status != 0;

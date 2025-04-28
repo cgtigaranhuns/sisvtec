@@ -28,6 +28,11 @@ class Discente extends Model
            'turma_id',
            'status',
            'foto',
+           'endereco',
+           'cidade_id',
+           'estado_id',
+           'cep',
+           'contato',
     ];
 
     public function curso()
@@ -48,6 +53,15 @@ class Discente extends Model
     public function discenteVisita()
     {
         return $this->hasMany(DiscenteVisita::class);
+    }
+
+    public function estado()
+    {
+        return $this->belongsTo(Estado::class);
+    }
+    public function cidade()
+    {
+        return $this->belongsTo(Cidade::class);
     }
 
 

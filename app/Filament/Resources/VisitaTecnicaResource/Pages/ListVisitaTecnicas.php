@@ -4,6 +4,7 @@ namespace App\Filament\Resources\VisitaTecnicaResource\Pages;
 
 use App\Filament\Resources\VisitaTecnicaResource;
 use Filament\Actions;
+use Filament\Actions\Modal\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Notifications\Notification;
 
@@ -23,6 +24,7 @@ class ListVisitaTecnicas extends ListRecords
                 ->icon('heroicon-o-plus')
                 ->color('success')
                 ->modalHeading('Adicionar Atividade Extraclasse'),
+           
                 
                
         ];

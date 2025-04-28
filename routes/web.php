@@ -21,3 +21,4 @@ Route::get('/', function () {
 Route::get('imprimir/visitaTecnica/{id}',[ControllerImpressoes::class, 'imprimirVisitaTecnica'])->name('imprimirVisitaTecnica');
 Route::get('imprimir/relatorioFinal/{id}',[ControllerImpressoes::class, 'imprimirRelatorioFinal'])->name('imprimirRelatorioFinal');
 Route::get('imprimir/ataVisitaTecnica/{id}',[ControllerImpressoes::class, 'imprimirAtaVisitaTecnica'])->name('imprimirAtaVisitaTecnica');
+Route::get('imprimir/termoCompromisso/{id}',[ControllerImpressoes::class, 'imprimirTermoCompromisso'])->name('imprimirTermoCompromisso');

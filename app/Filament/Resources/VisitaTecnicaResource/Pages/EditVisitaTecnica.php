@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\VisitaTecnicaResource\Pages;
 
 use App\Filament\Resources\VisitaTecnicaResource;
+use App\Models\VisitaTecnica;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
@@ -17,7 +19,12 @@ class EditVisitaTecnica extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
-            // Removed from header actions as requested
+            Actions\Action::make('gerarTermoCompromisso')
+            ->label('Gerar Termo de Compromisso')
+            
+                  ->url(fn(VisitaTecnica $record): string => route('imprimirTermoCompromisso', $record))
+                ->openUrlInNewTab(),
+          
         ];
     }
 

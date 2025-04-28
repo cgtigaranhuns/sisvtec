@@ -204,7 +204,7 @@
     </table>
     <br>
     <div style="page-break-after: always;"></div>
-    @foreach($visitaTecnica->discenteVisitas->where('status', 3)->groupBy('discente.turma.nome') as $turmaNome => $discentes)
+    @foreach($visitaTecnica->discenteVisitas->groupBy('discente.turma.nome') as $turmaNome => $discentes)
         <table>
             <tr>
                 <td colspan="15" style="background-color: rgb(226, 223, 223); font-size: 12px; color: rgb(62, 62, 62); text-align:center; font-weight: bold;">
@@ -220,6 +220,7 @@
                 <th style="font-size: 8px">Agência</th>
                 <th style="font-size: 8px">Conta</th>
                 <th style="font-size: 8px">Tipo de Conta</th>
+                <th style="font-size: 8px">Status</th>
             </tr>
             @foreach($discentes as $discenteVisita)
             <tr style="font-size: 8px">
@@ -231,6 +232,9 @@
                 <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->agencia }}</td>
                 <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->conta }}</td>
                 <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->tipo_conta == 1 ? 'Conta Corrente' : 'Poupança' }}</td>
+                <td style="font-size: 8px; text-align: center; color: {{ $discenteVisita->discente->status == 3 ? 'green' : 'red' }}">
+                    {{ $discenteVisita->discente->status == 3 ? 'OK' : 'Pendência' }}
+                </td>
             </tr>
             @endforeach
         </table>

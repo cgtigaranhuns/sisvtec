@@ -69,7 +69,7 @@
         </tr>
     </table>
     <br>
-    @foreach($visitaTecnica->discenteVisitas->where('status', 3)->groupBy('discente.turma.nome') as $turmaNome => $discentes)
+    @foreach($visitaTecnica->discenteVisitas->groupBy('discente.turma.nome') as $turmaNome => $discentes)
     <table>
         <tr>
             <td colspan="15" style="background-color: rgb(226, 223, 223); font-size: 12px; color: rgb(62, 62, 62); text-align:center; font-weight: bold;">
