@@ -93,7 +93,8 @@ class CompensacaoDocenteNaoEnvolvidoRelationManager extends RelationManager
                         return $this->ownerRecord->status != 0;
                     })
                     ->label('Adicionar Compensação'),
-                Tables\Actions\Action::make('submeter')
+                    Tables\Actions\Action::make('submeter')
+
                     ->label(function () {
                         if ($this->ownerRecord->status > 0) {
                             return 'Proposta enviada';
@@ -102,20 +103,61 @@ class CompensacaoDocenteNaoEnvolvidoRelationManager extends RelationManager
                         }
                     })
                     ->action(function ($livewire) {
-                        $livewire->ownerRecord->status = 1;
-                        $livewire->ownerRecord->save();
 
-                        Notification::make()
-                            ->title('Proposta enviada com sucesso!')
-                            ->success()
-                            ->persistent()
-                            ->send();
-                        Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
-                        $livewire->redirect(route('filament.admin.resources.visita-tecnicas.index'));
+                        $totalDiscentes = $livewire->ownerRecord->qtd_estudantes;
+                        $discentesStatusOk = $livewire->ownerRecord->discenteVisitas()->where('status', 3)->count();
+                        $discentesStatusTodos = $livewire->ownerRecord->discenteVisitas()->count();
+                        $discentesStatusPendentes = $livewire->ownerRecord->discenteVisitas()->where('status', '!=', 3)->count();
+
+                        if ($totalDiscentes != $discentesStatusOk && $discentesStatusTodos == $discentesStatusPendentes) {
+                            $livewire->ownerRecord->status = 1;
+                            $livewire->ownerRecord->save();
+                            Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
+                            $livewire->redirect(route('filament.admin.resources.visita-tecnicas.index'));
+                            Notification::make()
+                                ->title('Proposta enviada com sucesso!')
+                                ->success()
+                                ->persistent()
+                                ->send();
+                            Notification::make()
+                                ->title('ATENÇÃO: Inconsistência de dados')
+                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta, foi de <b>' . $totalDiscentes . '</b>, porém há' . $discentesStatusPendentes . '</b>estudantes que estão com status de pendência. Por favor, pedimos que informe aos estudantes para regularizar a situação..</p>')
+                                ->danger()
+                                ->icon('heroicon-o-exclamation-triangle')
+                                ->color('danger')
+                                ->persistent()
+                                ->send();
+                        } elseif ($discentesStatusTodos != $totalDiscentes) {
+                            Notification::make()
+                                ->title('Proposta NÃO enviada!')
+                                ->success()
+                                ->persistent()
+                                ->send();
+                            Notification::make()
+                                ->title('ATENÇÃO: Inconsistência de dados')
+                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta, foi de <b>' . $totalDiscentes . ',</b> porém após a inclusão dos nomes verificou-se que ha<b> ' .$discentesStatusTodos. ' </b>estudantes incluídos. Favor corrigir a diferença e tentar novamente.</p>')
+                                ->danger()
+                                ->icon('heroicon-o-exclamation-triangle')
+                                ->color('danger')
+                                ->persistent()
+                                ->send();
+                        }
+                        else {
+                            $livewire->ownerRecord->status = 1;
+                            $livewire->ownerRecord->save();
+                            Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
+                            $livewire->redirect(route('filament.admin.resources.visita-tecnicas.index'));
+                            Notification::make()
+                                ->title('Proposta enviada com sucesso!')
+                                ->success()
+                                ->persistent()
+                                ->send();
+                        }
                     })
                     ->color('info')
                     ->icon('heroicon-o-paper-airplane')
                     ->requiresConfirmation()
+                    //  ->visible(fn($livewire) => $livewire->ownerRecord->discenteVisitas()->exists() && (($livewire->ownerRecord->compesacao == true && $livewire->ownerRecord->compensacaoDocenteNaoEnvolvido()->exists() && $livewire->ownerRecord->compensacaoTurmaEnvolvido()->exists())))
                     ->visible(function ($livewire) {
                         if ($livewire->ownerRecord->discenteVisitas()->exists() && $livewire->ownerRecord->compensacao == false) {
                             return true;
@@ -133,6 +175,7 @@ class CompensacaoDocenteNaoEnvolvidoRelationManager extends RelationManager
                     ->modalHeading('Enviar Proposta')
                     ->modalDescription('Tem certeza que deseja enviar a proposta?')
                     ->modalIcon('heroicon-o-paper-airplane'),
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
