@@ -121,21 +121,21 @@ class DiscenteVisitasRelationManager extends RelationManager
                                 if ($discente->status == 0) {
                                     Notification::make()
                                         ->title('Estudante com pendência')
-                                        ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está com pendência financeira.')
+                                        ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' está com pendência financeira.')
                                         ->danger()
                                         ->persistent()
                                         ->send();
                                 } elseif ($discente->status == 1) {
                                     Notification::make()
                                         ->title('Estudante com pendência')
-                                        ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está com cadastro incompleto.')
+                                        ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . 'está com cadastro incompleto.')
                                         ->danger()
                                         ->persistent()
                                         ->send();
                                 } elseif ($discente->status == 2) {
                                     Notification::make()
                                         ->title('Estudante com pendência')
-                                        ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está inativo.')
+                                        ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' está inativo.')
                                         ->info()
                                         ->persistent()
                                         ->send();
@@ -198,21 +198,21 @@ class DiscenteVisitasRelationManager extends RelationManager
                             if ($discente->status == 0) {
                                 Notification::make()
                                     ->title('Estudante com pendência')
-                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está com pendência financeira.')
+                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' está com pendência financeira.')
                                     ->danger()
                                     ->persistent()
                                     ->send();
                             } elseif ($discente->status == 1) {
                                 Notification::make()
                                     ->title('Estudante com pendência')
-                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está com cadastro incompleto.')
+                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . 'está com cadastro incompleto.')
                                     ->danger()
                                     ->persistent()
                                     ->send();
                             } elseif ($discente->status == 2) {
                                 Notification::make()
                                     ->title('Estudante com pendência')
-                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' não foi incluído na visita, pois está inativo.')
+                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' está inativo.')
                                     ->info()
                                     ->persistent()
                                     ->send();
@@ -270,21 +270,21 @@ class DiscenteVisitasRelationManager extends RelationManager
                         $totalDiscentes = $livewire->ownerRecord->qtd_estudantes;
                         $discentesStatusOk = $livewire->ownerRecord->discenteVisitas()->where('status', 3)->count();
                         $discentesStatusTodos = $livewire->ownerRecord->discenteVisitas()->count();
+                        $discentesStatusPendentes = $livewire->ownerRecord->discenteVisitas()->where('status', '!=', 3)->count();
 
-                        $livewire->ownerRecord->status = 1;
-                        $livewire->ownerRecord->save();
-                        Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
-                        $livewire->redirect(route('filament.admin.resources.visita-tecnicas.index'));
-                        Notification::make()
-                            ->title('Proposta enviada com sucesso!')
-                            ->success()
-                            ->persistent()
-                            ->send();
-                            
-                        if ($totalDiscentes != $discentesStatusOk) {
+                        if ($totalDiscentes != $discentesStatusOk && $discentesStatusTodos == $discentesStatusPendentes) {
+                            $livewire->ownerRecord->status = 1;
+                            $livewire->ownerRecord->save();
+                            Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
+                            $livewire->redirect(route('filament.admin.resources.visita-tecnicas.index'));
+                            Notification::make()
+                                ->title('Proposta enviada com sucesso!')
+                                ->success()
+                                ->persistent()
+                                ->send();
                             Notification::make()
                                 ->title('ATENÇÃO: Inconsistência de dados')
-                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta foi <b>' . $totalDiscentes . ' estudantes</b>, porém os estudantes ' . $discentesStatusOk . ' estudantes</b>, corriga a diferença e tente novamente.</p>')
+                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta, foi de <b>' . $totalDiscentes . '</b>, porém há' . $discentesStatusPendentes . '</b>estudantes que estão com status de pendência. Por favor, pedimos que informe aos estudantes para regularizar a situação..</p>')
                                 ->danger()
                                 ->icon('heroicon-o-exclamation-triangle')
                                 ->color('danger')
@@ -292,11 +292,27 @@ class DiscenteVisitasRelationManager extends RelationManager
                                 ->send();
                         } elseif ($discentesStatusTodos != $totalDiscentes) {
                             Notification::make()
+                                ->title('Proposta NÃO enviada!')
+                                ->success()
+                                ->persistent()
+                                ->send();
+                            Notification::make()
                                 ->title('ATENÇÃO: Inconsistência de dados')
-                                ->body('<p style="text-align: justify;"> Não existe nenhum discente cadastrado na proposta, corriga a diferença e tente novamente.</p>')
+                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta, foi de <b>' . $totalDiscentes . ',</b> porém após a inclusão dos nomes verificou-se que ha<b> ' .$discentesStatusTodos. ' </b>estudantes incluídos. Favor corrigir a diferença e tentar novamente.</p>')
                                 ->danger()
                                 ->icon('heroicon-o-exclamation-triangle')
                                 ->color('danger')
+                                ->persistent()
+                                ->send();
+                        }
+                        else {
+                            $livewire->ownerRecord->status = 1;
+                            $livewire->ownerRecord->save();
+                            Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
+                            $livewire->redirect(route('filament.admin.resources.visita-tecnicas.index'));
+                            Notification::make()
+                                ->title('Proposta enviada com sucesso!')
+                                ->success()
                                 ->persistent()
                                 ->send();
                         }
