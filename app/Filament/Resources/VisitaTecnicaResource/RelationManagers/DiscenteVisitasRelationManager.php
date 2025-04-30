@@ -6,6 +6,7 @@ use App\Mail\PropostaEmail;
 use App\Models\Discente;
 use App\Models\DiscenteVisita;
 use App\Models\Turma;
+use App\Models\VisitaTecnica;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -20,7 +21,7 @@ use App\Traits\RecalculaFinanceiro;
 
 class DiscenteVisitasRelationManager extends RelationManager
 {
-    use RecalculaFinanceiro;
+
 
     protected static string $relationship = 'discenteVisitas';
 
@@ -268,24 +269,31 @@ class DiscenteVisitasRelationManager extends RelationManager
 
                         $totalDiscentes = $livewire->ownerRecord->qtd_estudantes;
                         $discentesStatusOk = $livewire->ownerRecord->discenteVisitas()->where('status', 3)->count();
-                        //  dd($totalDiscentes, $discentesStatusOk);
+                        $discentesStatusTodos = $livewire->ownerRecord->discenteVisitas()->count();
 
-                        if ($totalDiscentes == $discentesStatusOk) {
-                            $livewire->ownerRecord->status = 1;
-                            $livewire->ownerRecord->save();
-
-                            Notification::make()
-                                ->title('Proposta enviada com sucesso!')
-                                ->success()
-                                ->persistent()
-                                ->send();
-
-                            Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
-                            $livewire->redirect(route('filament.admin.resources.visita-tecnicas.index'));
-                        } else {
+                        $livewire->ownerRecord->status = 1;
+                        $livewire->ownerRecord->save();
+                        Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
+                        $livewire->redirect(route('filament.admin.resources.visita-tecnicas.index'));
+                        Notification::make()
+                            ->title('Proposta enviada com sucesso!')
+                            ->success()
+                            ->persistent()
+                            ->send();
+                            
+                        if ($totalDiscentes != $discentesStatusOk) {
                             Notification::make()
                                 ->title('ATENÇÃO: Inconsistência de dados')
-                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta foi <b>' . $totalDiscentes . ' estudantes</b>, porém os estudantes incluídos para esta Atividade com STATUS OK, soman <b>' . $discentesStatusOk . ' estudantes</b>, corriga a diferença e tente novamente.</p>')
+                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta foi <b>' . $totalDiscentes . ' estudantes</b>, porém os estudantes ' . $discentesStatusOk . ' estudantes</b>, corriga a diferença e tente novamente.</p>')
+                                ->danger()
+                                ->icon('heroicon-o-exclamation-triangle')
+                                ->color('danger')
+                                ->persistent()
+                                ->send();
+                        } elseif ($discentesStatusTodos != $totalDiscentes) {
+                            Notification::make()
+                                ->title('ATENÇÃO: Inconsistência de dados')
+                                ->body('<p style="text-align: justify;"> Não existe nenhum discente cadastrado na proposta, corriga a diferença e tente novamente.</p>')
                                 ->danger()
                                 ->icon('heroicon-o-exclamation-triangle')
                                 ->color('danger')
@@ -322,8 +330,8 @@ class DiscenteVisitasRelationManager extends RelationManager
                         return $this->ownerRecord->status != 0;
                     }),
                 Tables\Actions\Action::make('imprimir')
-                    ->label('Imprimir Termo de Compromisso')
-                    ->url(fn($record) => route('imprimirTermoCompromisso', ['id' => $record->id]))
+                    ->label('Termo de Compromisso')
+                    ->url(fn($livewire, $record): string => route('downloadTermoCompromisso', [$livewire->ownerRecord->id, $record->discente->id]))
                     ->icon('heroicon-o-printer')
                     ->color('primary')
                     ->openUrlInNewTab(),

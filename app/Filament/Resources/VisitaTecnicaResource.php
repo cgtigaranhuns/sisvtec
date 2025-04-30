@@ -8,6 +8,7 @@ use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\CompensacaoTur
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\DiscenteVisitasRelationManager;
 use App\Filament\Resources\VisitaTecnicaResource\RelationManagers\RelatorioFinalVisitaTecnicaRelationManager;
 use App\Mail\PropostaStatusEmail;
+use App\Mail\TermoCompromisso;
 use App\Models\Cidade;
 use App\Models\SubCategoria;
 use App\Models\VisitaTecnica;
@@ -469,17 +470,18 @@ class VisitaTecnicaResource extends Resource
                                         }
                                     })
                                     ->live()
-                                   // ->disableOptionWhen(fn (string $value, $get): bool => $value == true ||Carbon::parse($get('data_hora_saida'))->startOfDay()->equalTo(Carbon::parse($get('data_hora_retorno'))->startOfDay()))
-                                    ->disableOptionWhen(function(string $value, $get){
-                                        $dataSaida = Carbon::parse($get('data_hora_saida'))->startOfDay();
-                                        $dataRetorno = Carbon::parse($get('data_hora_retorno'))->startOfDay();
-                                        if ($dataSaida->equalTo($dataRetorno)) {
-                                            return true;
-                                        } else {
-                                            return false;
+                                    // ->disableOptionWhen(fn (string $value, $get): bool => $value == true ||Carbon::parse($get('data_hora_saida'))->startOfDay()->equalTo(Carbon::parse($get('data_hora_retorno'))->startOfDay()))
+                                    ->disableOptionWhen(
+                                        function (string $value, $get) {
+                                            $dataSaida = Carbon::parse($get('data_hora_saida'))->startOfDay();
+                                            $dataRetorno = Carbon::parse($get('data_hora_retorno'))->startOfDay();
+                                            if ($dataSaida->equalTo($dataRetorno)) {
+                                                return true;
+                                            } else {
+                                                return false;
+                                            }
                                         }
-                                    }
-                                        
+
                                     )
                                     ->disabled(function ($context, Get  $get) {
                                         $dataSaida = Carbon::parse($get('data_hora_saida'))->startOfDay();
@@ -778,10 +780,18 @@ class VisitaTecnicaResource extends Resource
                     ->alignCenter()
                     ->sortable()
                     ->afterStateUpdated(function ($record, $state) {
-                        // if($state == 1) {
-                        //     $record->update(['status' => 1]);
                         Mail::to($record->professor->email)->cc($record->coordenacao->email)->send(new PropostaStatusEmail($record));
-                        // } 
+                        if ($state == 2) {
+                            foreach ($record->discenteVisitas as $discente) {
+                                // dd($discente);
+                                Mail::to($discente->discente->email)->send(new TermoCompromisso($record, $discente->discente->id));
+                            }
+                            Notification::make()
+                                ->title('Termos de compromisso enviados por email para os estudantes!')
+                                ->success()
+                                ->send();
+                        }
+                        
                     })
                     ->disabled(function ($state) {
 

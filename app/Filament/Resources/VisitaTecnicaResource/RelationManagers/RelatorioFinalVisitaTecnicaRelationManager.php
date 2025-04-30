@@ -53,7 +53,7 @@ class RelatorioFinalVisitaTecnicaRelationManager extends RelationManager
                     ->label('Ocorrência'),
                 FileUpload::make('fotos')
                     ->label('Fotos')
-                    ->directory('fotos')
+                    ->directory('fotos_relatorio_final')
                     ->image()
                     ->maxFiles(5)
                    // ->minSize(512)

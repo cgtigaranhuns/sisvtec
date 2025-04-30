@@ -127,6 +127,7 @@ class DiscenteResource extends Resource
                                 ->required(),
                             FileUpload::make('foto')
                                 ->alignCenter()
+                                ->directory('fotos_discentes')
                                 ->image()
                                 ->avatar()
                                 ->imageEditor()

@@ -51,7 +51,7 @@
     <table>
         <tr>
             <td colspan="2" style="background-color: rgb(226, 223, 223); font-size: 12px; color: rgb(62, 62, 62); text-align:center; font-weight: bold;">
-                Dados do Estudante
+                Dados do Estudante 
             </td>
         </tr>
         <tr>
@@ -71,8 +71,12 @@
             <td><label>CEP: </label>{{$discente->discente->cep}} </td>
         </tr>
         <tr>
-            <td><label>Estado: </label> {{$discente->discente->estado->nome}} </td>
-            <td><label>Cidade: </label> {{$discente->discente->cidade->nome}}</td>
+            @if($discente->discente->estado)
+                <td><label>Estado: </label>{{$discente->discente->estado->nome}}  </td>
+            @endif
+            @if($discente->discente->cidade)
+                <td><label>Cidade: </label>{{$discente->discente->cidade->nome}} </td>
+            @endif
         </tr>
     </table>
 
@@ -153,10 +157,7 @@
 
     <p style="text-align: center;">Garanhuns, _____ de ____________________ de 20____</p>
     <p style="text-align: center;">_________________________________________<br>
-    Assinatura do estudante</p><br>
-
-    
- 
+    Assinatura do estudante</p><br>   
     
 
     <h3 style="text-align: center;">QUANDO O ESTUDANTE FOR MENOR DE IDADE</h3>
