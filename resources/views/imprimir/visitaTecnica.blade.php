@@ -37,7 +37,7 @@
     </tr>
     <tr>
         <td colspan="2" style="text-align: center; border: 0px solid;">
-            <h4>FORMULÁRIO DE VISITA TÉCNICA</h4>
+            <h4>PROJETO DA ATIVIDADE EXTRACLASSE</h4>
         </td>
     </tr>
 </table>
@@ -57,7 +57,7 @@
             <td><label>Compensação:</label> {{$visitaTecnica->compensacao == 1 ? 'Sim' : 'Não'}}</td>
         </tr>
         <tr>
-            <td colspan="0"><label>Empresa/Evento:</label> {{$visitaTecnica->emp_evento}}</td>
+            <td colspan="0"><label>Local:</label> {{$visitaTecnica->emp_evento}}</td>
             <td><label>Coordenação/Setor:</label> {{$visitaTecnica->coordenacao->nome}}</td>
         </tr>
         <tr>

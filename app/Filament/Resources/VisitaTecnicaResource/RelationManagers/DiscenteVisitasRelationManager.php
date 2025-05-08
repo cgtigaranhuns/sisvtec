@@ -325,7 +325,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                         if ($livewire->ownerRecord->discenteVisitas()->exists() && $livewire->ownerRecord->compensacao == false) {
                             return true;
                         } elseif ($livewire->ownerRecord->discenteVisitas()->exists() && $livewire->ownerRecord->compensacao == true) {
-                            if ($livewire->ownerRecord->compensacaoDocenteNaoEnvolvido()->exists() && $livewire->ownerRecord->CompensacaoTurmaNaoEnvolvido()->exists()) {
+                            if ($livewire->ownerRecord->compensacaoTurmaNaoEnvolvido()->exists()) {
                                 return true;
                             } else {
                                 return false;

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Proposta de Visita Técnica</title>
+    <title>Proposta da Atividade Extraclasse</title>
     <style>
         body {
             font-family: Arial, sans-serif;

@@ -42,10 +42,17 @@
     </tr>
     <tr>
         <td colspan="2" style="text-align: center; border: 0px solid;">
-            <h4>TERMO DE COMPROMISSO E AUTORIZAÇÃO PARA REALIZAÇÃO DE VISITAS TÉCNICAS</h4>
+            <h4>TERMO DE COMPROMISSO E AUTORIZAÇÃO PARA REALIZAÇÃO DA ATIVIDADE EXTRACLASSE</h4>
         </td>
     </tr>
 </table>
+<div>
+    <table>
+        <td><label style="font-weight: bold; font-size: 12px;">Categoria: </label> <span style="font-size: 12px">{{$visitaTecnica->categoria->nome}}</span></td>
+            <td><label style="font-weight: bold; font-size: 12px;">Subcategoria: </label> <span style="font-size: 12px">{{$visitaTecnica->subcategoria->nome}}</span></td>
+        </tr>
+    </table>
+</div>
 <body>
     
     <table>
@@ -55,7 +62,7 @@
             </td>
         </tr>
         <tr>
-            <td><label>Local da visita: </label> {{$visitaTecnica->emp_evento}}</td>
+            <td><label>Local: </label> {{$visitaTecnica->emp_evento}}</td>
             <td><label>Estudante: </label> {{$discente->discente->nome}} </td>
         </tr>
         <tr>
@@ -166,7 +173,11 @@
     <div style="border: 1px solid black; padding: 15px; border-radius: 5px;">
         <h4 style="text-align: center">TERMO DE AUTORIZAÇÃO DE VISITA TÉCNICA</h4>
 
-        <p style="text-align: center">AUTORIZO o(a) menor __________________________________________________________________, nascido(a) em _____/_____/________, CPF: _____________________________________, a viajar e hospedar-se na companhia do(a) Sr.(a) _____________________________________________________, CPF n° _______________________, durante o período de ____/_____/_____ à ____/_____/_____, consoante estabelece o Art. 82 da Lei Federal nº. 8.069/1990 (Estatuto da Criança e do Adolescente).</p>
+        @if($visitaTecnica->hospedagem)
+        <p style="text-align: center">AUTORIZO o(a) menor __________________________________________________________________, nascido(a) em _____/_____/________, CPF: _____________________________________, a se deslocar e se hospedar na companhia do(a) Sr.(a) _____________________________________________________, CPF n° _______________________, durante o período de ____/_____/_____ à ____/_____/_____, consoante estabelece o Art. 82 da Lei Federal nº. 8.069/1990 (Estatuto da Criança e do Adolescente).</p>
+        @else
+        <p style="text-align: center">AUTORIZO o(a) menor __________________________________________________________________, nascido(a) em _____/_____/________, CPF: _____________________________________, a se deslocar na companhia do(a) Sr.(a) _____________________________________________________, CPF n° _______________________, durante o período de ____/_____/_____ à ____/_____/_____, consoante estabelece o Art. 82 da Lei Federal nº. 8.069/1990 (Estatuto da Criança e do Adolescente).</p>
+        @endif
 
         <p style="text-align: center">OBS: O retorno está previsto para ____:____ horas.</p>
         <p style="text-align: center">Para tanto, é necessário que o responsável assinale abaixo o local pertinente para deixar o estudante:</p>

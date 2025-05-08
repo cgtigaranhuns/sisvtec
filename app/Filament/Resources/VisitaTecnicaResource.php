@@ -831,13 +831,13 @@ class VisitaTecnicaResource extends Resource
                         }
                     })
 
-                    ->label('Visita Técnica')
+                    ->label('Projeto')
                     ->url(fn(VisitaTecnica $record): string => route('imprimirVisitaTecnica', $record))
                     ->openUrlInNewTab(),
                 Tables\Actions\Action::make('imprimirAta')
                     ->icon('heroicon-o-printer')
                     ->disabled(fn(VisitaTecnica $record): bool => $record->status == 0)
-                    ->label('Ata da Visita Técnica')
+                    ->label('Ata de Presença')
                     ->url(fn(VisitaTecnica $record): string => route('imprimirAtaVisitaTecnica', $record))
                     ->openUrlInNewTab(),
                 Tables\Actions\Action::make('imprimirRelatorioFinal')

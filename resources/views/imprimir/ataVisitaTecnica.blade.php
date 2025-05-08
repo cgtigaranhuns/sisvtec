@@ -36,7 +36,7 @@
     </tr>
     <tr>
         <td colspan="2" style="text-align: center; border: 0px solid;">
-            <h4>ATA DE COMPARECIMENTO DA VISITA TÉCNICA</h4>
+            <h4>ATA DE COMPARECIMENTO DA ATIVIDADE EXTRACLASSE</h4>
         </td>
     </tr>
 </table>
