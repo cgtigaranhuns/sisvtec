@@ -229,6 +229,7 @@ class DiscenteResource extends Resource
                 Tables\Columns\TextColumn::make('turma.nome')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->sortable()
                     ->Label('Status')
                     ->badge()
                     ->alignCenter()

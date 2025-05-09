@@ -37,7 +37,7 @@ class AtualizarStatusDiscentes extends Command
                 $temCampoVazio = false;
                 
                 foreach ($atributos as $atributo => $valor) {
-                    if ($atributo !== 'nome_social' && empty($valor)) { // Ignora o campo 'nome_social'
+                    if ($atributo !== 'nome_social' && empty($valor) && $discente->status != 0 ) { // Ignora o campo 'nome_social'
                         $temCampoVazio = true;
                         try {
                             // Inicia uma transação para garantir que a atualização seja feita de forma atômica.
@@ -59,7 +59,7 @@ class AtualizarStatusDiscentes extends Command
                     }
                 }
                 
-                if (!$temCampoVazio) {
+                if (!$temCampoVazio && $discente->status != 0) {
                     try {
                         DB::beginTransaction();
                         $discente->status = 3;
@@ -80,5 +80,4 @@ class AtualizarStatusDiscentes extends Command
 
         $this->info('Comando executado com sucesso!'); // Mensagem geral de sucesso
         return 0; // Retorna 0 para indicar sucesso no Artisan
-    }
-}
+    }}
