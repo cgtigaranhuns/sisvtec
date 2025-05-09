@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Mail;
 use App\Traits\RecalculaFinanceiro;
+use Illuminate\Database\Eloquent\Model;
 
 class DiscenteVisitasRelationManager extends RelationManager
 {
@@ -32,8 +33,10 @@ class DiscenteVisitasRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\Select::make('discente_id')
-                    ->relationship('discente', 'nome')
-                    ->searchable()
+                    ->label('Discente')
+                    ->relationship('discente', 'nome', fn (Builder $query) => $query->where('status_qa', 'Matriculado'))
+                    ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->nome} - {$record->matricula}")
+                    ->searchable(['nome', 'matricula'])
                     ->required(),
             ]);
     }
@@ -59,11 +62,11 @@ class DiscenteVisitasRelationManager extends RelationManager
                     ->sortable()
                     ->alignCenter()
                     ->toggleable()
-                    ->afterStateUpdated(function ($record, $state) {
+                    ->afterStateUpdated(function ($record, $state, $livewire) {
                         $record->falta = $state;
                         $record->save();
 
-                        if ($state) {
+                        if ($state && $livewire->ownerRecord->custo) {
                             $discente = Discente::find($record->discente_id);
                             $discente->status = 0;
                             $discente->save();
@@ -171,7 +174,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                     ->action(function ($livewire, array $data) {
                         //  dd($livewire);
                         $turma = Turma::find($data['turma_id']);
-                        $discentes = $turma->discentes;
+                        $discentes = $turma->discentes()->where('status_qa', 'Matriculado')->get();
 
                         foreach ($discentes as $discente) {
                             if ($discente) {
@@ -298,14 +301,13 @@ class DiscenteVisitasRelationManager extends RelationManager
                                 ->send();
                             Notification::make()
                                 ->title('ATENÇÃO: Inconsistência de dados')
-                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta, foi de <b>' . $totalDiscentes . ',</b> porém após a inclusão dos nomes verificou-se que ha<b> ' .$discentesStatusTodos. ' </b>estudantes incluídos. Favor corrigir a diferença e tentar novamente.</p>')
+                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta, foi de <b>' . $totalDiscentes . ',</b> porém após a inclusão dos nomes verificou-se que ha<b> ' . $discentesStatusTodos . ' </b>estudantes incluídos. Favor corrigir a diferença e tentar novamente.</p>')
                                 ->danger()
                                 ->icon('heroicon-o-exclamation-triangle')
                                 ->color('danger')
                                 ->persistent()
                                 ->send();
-                        }
-                        else {
+                        } else {
                             $livewire->ownerRecord->status = 1;
                             $livewire->ownerRecord->save();
                             Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));

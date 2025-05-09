@@ -26,6 +26,7 @@ class Discente extends Model
            'tipo_conta',
            'curso_id',
            'turma_id',
+           'status_qa',
            'status',
            'foto',
            'endereco',

@@ -99,6 +99,11 @@ class User extends Authenticatable implements LdapAuthenticatable
         return $this->belongsTo(Coordenacao::class);
     }
 
+    public function visitaTecnica()
+    {
+        return $this->hasMany(VisitaTecnica::class);
+    }
+
 
 
     

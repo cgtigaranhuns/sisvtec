@@ -218,6 +218,7 @@ class DiscenteResource extends Resource
     {
         return $table
             ->defaultGroup('turma.nome')
+            ->defaultSort('nome', 'asc')
             ->columns([
                 Tables\Columns\TextColumn::make('nome')
                     ->searchable(),
@@ -251,6 +252,12 @@ class DiscenteResource extends Resource
                             return 'OK';
                         }
                     }),
+                    Tables\Columns\TextColumn::make('status_qa')
+                        ->label('Status Q-Academico')
+                        ->badge()
+                        ->alignCenter()
+                        ->color(fn(string $state): string => $state === 'Matriculado' ? 'success' : 'danger'),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
