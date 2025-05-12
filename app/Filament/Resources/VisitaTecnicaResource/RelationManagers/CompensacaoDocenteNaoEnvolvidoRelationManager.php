@@ -109,7 +109,7 @@ class CompensacaoDocenteNaoEnvolvidoRelationManager extends RelationManager
                         $discentesStatusTodos = $livewire->ownerRecord->discenteVisitas()->count();
                         $discentesStatusPendentes = $livewire->ownerRecord->discenteVisitas()->where('status', '!=', 3)->count();
 
-                        if ($totalDiscentes != $discentesStatusOk && $discentesStatusTodos == $discentesStatusPendentes) {
+                        if ($totalDiscentes != $discentesStatusOk && $discentesStatusTodos == $totalDiscentes) {
                             $livewire->ownerRecord->status = 1;
                             $livewire->ownerRecord->save();
                             Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
