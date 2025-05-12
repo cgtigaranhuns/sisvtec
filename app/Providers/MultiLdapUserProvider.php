@@ -8,6 +8,8 @@ use App\Models\LabsUser;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use LdapRecord\Laravel\Auth\LdapAuthenticatable;
 use LdapRecord\Laravel\Auth\AuthenticatesWithLdap;
 
@@ -41,13 +43,13 @@ class MultiLdapUserProvider implements UserProvider
         // Obtém a conexão selecionada no formulário (padrão: 'adm')
         $connection = $credentials['connection'] ?? 'adm';
         
-        \Log::debug("Tentando autenticar na conexão: " . $connection);
+        Log::debug("Tentando autenticar na conexão: " . $connection);
     
         // Busca o usuário na conexão especificada
         $ldapUser = $this->findLdapUser($credentials['username'], $connection);
         
         if (!$ldapUser) {
-            \Log::debug("Usuário não encontrado na conexão: " . $connection);
+            Log::debug("Usuário não encontrado na conexão: " . $connection);
             return null;
         }
     
@@ -67,7 +69,7 @@ class MultiLdapUserProvider implements UserProvider
     }
 protected function findLdapUser($username, $connection)
 {
-    \Log::info("Iniciando busca LDAP", [
+    Log::info("Iniciando busca LDAP", [
         'username' => $username,
         'base' => $connection
     ]);
@@ -80,7 +82,7 @@ protected function findLdapUser($username, $connection)
             $user = $query->first();
 
         if ($user) {
-            \Log::info("Usuário encontrado", [
+            Log::info("Usuário encontrado", [
                 'dn' => $user->getDn(),
                 'base' => $connection
             ]);
@@ -90,7 +92,7 @@ protected function findLdapUser($username, $connection)
     } else {
         $model = LabsUser::class;
         $baseDn = 'ou=Discentes,dc=labs,dc=garanhuns,dc=ifpe';
-        \Log::debug("Buscando usuário na conexão: {$connection}");
+        Log::debug("Buscando usuário na conexão: {$connection}");
         $query = (new $model)->on($connection); // Cria instância com conexão correta
     
         $query2 = $query->where('samaccountname', '=', $username)
@@ -99,7 +101,7 @@ protected function findLdapUser($username, $connection)
                   //   ->orWhere('userprincipalname', '=', $username);
           
         if ($user) {
-            \Log::info("Usuário encontrado", [
+            Log::info("Usuário encontrado", [
                 'dn' => $user->getDn(),
                 'base' => $connection
             ]);
@@ -111,7 +113,7 @@ protected function findLdapUser($username, $connection)
     
 protected function authenticateInLdap($user, $credentials, $connection)
 {
-    \Log::info("Iniciando autenticação LDAP", [
+Log::info("Iniciando autenticação LDAP", [
         'username' => $credentials['username'],
         'connection' => $connection
     ]);
@@ -119,22 +121,22 @@ protected function authenticateInLdap($user, $credentials, $connection)
     $ldapUser = $this->findLdapUser($credentials['username'], $connection);
     
     if (!$ldapUser) {
-        \Log::warning("Usuário LDAP não encontrado");
+        Log::warning("Usuário LDAP não encontrado");
         return false;
     }
 
-    \Log::debug("Tentando autenticar com DN", ['dn' => $ldapUser->getDn()]);
+    Log::debug("Tentando autenticar com DN", ['dn' => $ldapUser->getDn()]);
     $result = $ldapUser->getConnection()->auth()->attempt(
         $ldapUser->getDn(),
         $credentials['password']
     );
 
-    \Log::info("Resultado da autenticação", ['sucesso' => $result]);
+    Log::info("Resultado da autenticação", ['sucesso' => $result]);
     return $result;
 }
 protected function getOrCreateLocalUser($ldapUser, $credentials)
 {
-    \Log::info("Processando usuário local", [
+    Log::info("Processando usuário local", [
         'username' => $credentials['username'],
         'email' => $ldapUser->getFirstAttribute('mail')
     ]);
@@ -144,7 +146,7 @@ protected function getOrCreateLocalUser($ldapUser, $credentials)
         ->first();
         
     if ($user) {
-        \Log::debug("Usuário local existente encontrado", ['id' => $user->id]);
+        Log::debug("Usuário local existente encontrado", ['id' => $user->id]);
         
         // Atualiza os dados do usuário existente com as informações do LDAP
         $updated = false;
@@ -167,23 +169,35 @@ protected function getOrCreateLocalUser($ldapUser, $credentials)
         
         if ($updated) {
             $user->save();
-            \Log::info("Dados do usuário atualizados", ['id' => $user->id]);
+            Log::info("Dados do usuário atualizados", ['id' => $user->id]);
         } else {
-            \Log::debug("Nenhuma alteração necessária nos dados do usuário", ['id' => $user->id]);
+            Log::debug("Nenhuma alteração necessária nos dados do usuário", ['id' => $user->id]);
         }
         
         return $user;
     }
     
-    \Log::info("Criando novo usuário local");
+    Log::info("Criando novo usuário local");
     $newUser = new User();
     $newUser->name = $ldapUser->getFirstAttribute('description');
     $newUser->email = $ldapUser->getFirstAttribute('mail') ?? $credentials['username'] . '@garanhuns.ifpe';
     $newUser->username = $credentials['username'];
     $newUser->password = bcrypt(Str::random(16));
     $newUser->save();
+
     
-    \Log::info("Novo usuário criado com sucesso", ['id' => $newUser->id]);
+    //   //  if (preg_match('/[a-zA-Z]/', $credentials['username'])) {
+    //         DB::table('model_has_roles')->insert([
+    //             'role_id' => 2,
+    //             'model_type' => 'App\Models\User',
+    //             'model_id' => $newUser->id
+    //         ]);
+    //         Log::info("Atribuído role_id 2 ao usuário", ['id' => $newUser->id]);
+    //  //   }
+    
+
+    
+    Log::info("Novo usuário criado com sucesso", ['id' => $newUser->id]);
     return $newUser;
 }
 }

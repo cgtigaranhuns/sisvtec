@@ -131,7 +131,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                                 } elseif ($discente->status == 1) {
                                     Notification::make()
                                         ->title('Estudante com pendência')
-                                        ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . 'está com cadastro incompleto.')
+                                        ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' está com cadastro incompleto.')
                                         ->danger()
                                         ->persistent()
                                         ->send();
@@ -208,7 +208,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                             } elseif ($discente->status == 1) {
                                 Notification::make()
                                     ->title('Estudante com pendência')
-                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . 'está com cadastro incompleto.')
+                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' está com cadastro incompleto.')
                                     ->danger()
                                     ->persistent()
                                     ->send();
@@ -275,7 +275,8 @@ class DiscenteVisitasRelationManager extends RelationManager
                         $discentesStatusTodos = $livewire->ownerRecord->discenteVisitas()->count();
                         $discentesStatusPendentes = $livewire->ownerRecord->discenteVisitas()->where('status', '!=', 3)->count();
 
-                        if ($totalDiscentes != $discentesStatusOk && $discentesStatusTodos == $discentesStatusPendentes) {
+                        if ($totalDiscentes != $discentesStatusOk && $discentesStatusTodos == $totalDiscentes) {
+                          //  dd('totalDiscente: ' . $totalDiscentes . ' - statusOk: ' . $discentesStatusOk . ' - statusTodos: ' . $discentesStatusTodos . ' - statusPendentes: ' . $discentesStatusPendentes);
                             $livewire->ownerRecord->status = 1;
                             $livewire->ownerRecord->save();
                             Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
@@ -294,6 +295,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                                 ->persistent()
                                 ->send();
                         } elseif ($discentesStatusTodos != $totalDiscentes) {
+                         //   dd('teste2');
                             Notification::make()
                                 ->title('Proposta NÃO enviada!')
                                 ->success()
@@ -308,6 +310,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                                 ->persistent()
                                 ->send();
                         } else {
+                         //   dd('teste3');
                             $livewire->ownerRecord->status = 1;
                             $livewire->ownerRecord->save();
                             Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
