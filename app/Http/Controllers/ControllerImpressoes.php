@@ -67,7 +67,9 @@ class ControllerImpressoes extends Controller
             if (!file_exists(dirname($filePath))) {
                 mkdir(dirname($filePath), 0777, true);
             }
-            $pdf->save($filePath);
+            if (!file_exists($filePath)) {
+                $pdf->save($filePath);
+            }
             $pdfs[] = $filePath;
         }
 
