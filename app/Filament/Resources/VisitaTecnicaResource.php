@@ -30,6 +30,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
+use App\Http\ControlerImpressoes;
+use App\Http\Controllers\ControllerImpressoes;
 
 class VisitaTecnicaResource extends Resource
 {
@@ -784,6 +786,7 @@ class VisitaTecnicaResource extends Resource
                         if ($state == 2) {
                             foreach ($record->discenteVisitas as $discente) {
                                 // dd($discente);
+                               (new ControllerImpressoes())->imprimirTermoCompromisso($record->id);
                                 Mail::to($discente->discente->email)->send(new TermoCompromisso($record, $discente->discente->id));
                             }
                             Notification::make()

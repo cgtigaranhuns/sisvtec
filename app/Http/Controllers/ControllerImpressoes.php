@@ -61,7 +61,7 @@ class ControllerImpressoes extends Controller
 
         $pdfs = [];
         foreach ($visitaTecnica->discenteVisitas as $discente) {
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('imprimir.termoCompromisso', compact('visitaTecnica', 'discente'));
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('imprimir.termoCompromissoEmail', compact('visitaTecnica', 'discente'));
             $fileName = 'termo_compromisso_' . $visitaTecnica->id . '-' . $discente->discente->id . '.pdf';
             $filePath = storage_path('app/public/termos_compromisso/' . $fileName);
             if (!file_exists(dirname($filePath))) {

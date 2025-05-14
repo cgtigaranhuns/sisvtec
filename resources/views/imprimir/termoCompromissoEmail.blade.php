@@ -96,7 +96,7 @@
 </head>
 <body>
     <div class="header-container">
-        <img src="{{ asset('img/brasao.png') }}" alt="Logo" class="logo">
+        <img src="{{ public_path('img/brasao.png') }}" alt="Logo" class="logo">
         <h3>Ministério da Educação</h3>
         <h4>Secretaria de Educação Profissional e Tecnológica</h4>
         <h4>Instituto Federal de Educação, Ciência e Tecnologia de Pernambuco</h4>
