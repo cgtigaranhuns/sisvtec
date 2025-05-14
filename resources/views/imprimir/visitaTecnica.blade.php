@@ -228,7 +228,7 @@
                 <td style="font-size: 8px">{{ $discenteVisita->discente->nome_social }}</td>
                 <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->cpf }}</td>
                 <td style="font-size: 8px">{{ $discenteVisita->discente->email }}</td>
-                <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->banco->nome ?? 'N/A' }}</td>
+                <td style="font-size: 8px; text-align: center">{{$discenteVisita->discente->banco->numero ?? 'N/A'}} - {{$discenteVisita->discente->banco->nome ?? 'N/A' }}</td>
                 <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->agencia }}</td>
                 <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->conta }}</td>
                 <td style="font-size: 8px; text-align: center">{{ $discenteVisita->discente->tipo_conta == 1 ? 'Conta Corrente' : 'Poupança' }}</td>
