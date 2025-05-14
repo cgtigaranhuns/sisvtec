@@ -61,7 +61,7 @@ class TermoCompromisso extends Mailable
     public function attachments(): array
     {
         return [
-            Attachment::fromPath(public_path('storage\termos_compromisso\termo_compromisso_'.$this->visitaTecnica->id.'-'.$this->discente_id.'.pdf'))
+            Attachment::fromPath(public_path('storage/termos_compromisso/termo_compromisso_'.$this->visitaTecnica->id.'-'.$this->discente_id.'.pdf'))
                 ->as('certificado.pdf')
                 ->withMime('application/pdf'),
             ];
