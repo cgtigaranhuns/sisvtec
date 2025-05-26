@@ -74,14 +74,13 @@ class UserResource extends Resource
                             ->schema([
                                 Group::make([
                                     Forms\Components\Select::make('tipo_servidor')
-                                        ->label('Tipo de Servidor')
+                                        ->label('Tipo')
                                         ->required()
                                         ->options([
                                             '1' => 'Professor',
                                             '2' => 'Técnico Administrativo',
-
-                                        ]),
-
+                                            '3' => 'Estudante',
+                                        ]),    
                                     Forms\Components\Select::make('cargo_id')
                                         ->label('Cargo')
                                         ->required()

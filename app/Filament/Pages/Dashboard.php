@@ -2,9 +2,7 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\PDV;
-use App\Models\VendaPDV;
-use Filament\Pages\Page;
+
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Facades\Filament;
 use Filament\Panel;
@@ -12,8 +10,7 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Support\Facades\Route;
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
+
 
 class Dashboard extends \Filament\Pages\Dashboard
 {
@@ -33,15 +30,24 @@ class Dashboard extends \Filament\Pages\Dashboard
 
     public function mount(): void
     {
-        $discentes = \App\Models\Discente::all();
+        $discentes = \App\Models\Discente::where('status', 3)->get();
 
         foreach ($discentes as $discente) {
-            foreach ($discente->getAttributes() as $attribute => $value) {
-                if (empty($value)) {
-                    $discente->status = 1;
-                    $discente->save();
-                    break;
-                }
+            $attributes = $discente->getAttributes();
+
+            // Exclui o campo 'nome_social' da verificação
+            unset($attributes['nome_social']);
+
+            // Verifica se algum campo obrigatório está vazio
+            $hasEmpty = collect($attributes)
+                ->except(['id', 'created_at', 'updated_at']) // ignore campos padrão
+                ->contains(function ($value) {
+                    return empty($value);
+                });
+
+            if ($hasEmpty) {
+                $discente->status = 1;
+                $discente->save();
             }
         }
     }

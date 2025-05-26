@@ -6,20 +6,23 @@ use App\Filament\Resources\DiscenteResource\Pages;
 use App\Filament\Resources\DiscenteResource\RelationManagers;
 use App\Models\Cidade;
 use App\Models\Discente;
+use App\Traits\UpdateStatusDiscentes;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Split;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use PhpParser\Node\Stmt\Nop;
 
 class DiscenteResource extends Resource
 {
@@ -30,6 +33,8 @@ class DiscenteResource extends Resource
     protected static ?string $navigationGroup = 'Cadastros';
 
     protected static ?int $navigationSort = 7;
+
+    use UpdateStatusDiscentes;
 
     public static function getEloquentQuery(): Builder
     {
@@ -91,8 +96,8 @@ class DiscenteResource extends Resource
                             Forms\Components\Textarea::make('endereco')
                                 ->label('Endereço')
                                 ->columnSpanFull(),
-                            
-                            
+
+
                             Forms\Components\Select::make('estado_id')
                                 ->relationship('estado', 'nome')
                                 ->label('Estado')
@@ -109,7 +114,7 @@ class DiscenteResource extends Resource
                             Forms\Components\TextInput::make('cep')
                                 ->label('CEP')
                                 ->mask('99999-999'),
-                            
+
                             Forms\Components\TextInput::make('email')
                                 ->email()
                                 ->required()
@@ -257,11 +262,11 @@ class DiscenteResource extends Resource
                             return 'OK';
                         }
                     }),
-                    Tables\Columns\TextColumn::make('status_qa')
-                        ->label('Status Q-Academico')
-                        ->badge()
-                        ->alignCenter()
-                        ->color(fn(string $state): string => $state === 'Matriculado' ? 'success' : 'danger'),
+                Tables\Columns\TextColumn::make('status_qa')
+                    ->label('Status Q-Academico')
+                    ->badge()
+                    ->alignCenter()
+                    ->color(fn(string $state): string => $state === 'Matriculado' ? 'success' : 'danger'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -276,8 +281,11 @@ class DiscenteResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                    
+
+                Tables\Actions\EditAction::make()
+                    ->after(function (Model $record, array $data) {
+                        self::updateStatusDiscentes($record, $data);
+                    }),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
