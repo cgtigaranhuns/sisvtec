@@ -108,7 +108,13 @@ class User extends Authenticatable implements LdapAuthenticatable
         return $this->hasMany(VisitaTecnica::class);
     }
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
 
 
     
+
 }

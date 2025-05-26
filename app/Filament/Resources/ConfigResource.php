@@ -30,6 +30,7 @@ class ConfigResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('valor_meia_diaria')
+                    ->label('Valor Meia Diária')
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('email_financeiro')
@@ -45,7 +46,8 @@ class ConfigResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('valor_meia_diaria')
-                    ->numeric()
+                    ->label('Valor Meia Diária')
+                    ->money('BRL')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email_financeiro')
                     ->label('E-mail Financeiro')

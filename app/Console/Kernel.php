@@ -13,16 +13,19 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('ifpe:sync-students --all')
-        ->dailyAt('23:00');
-        $schedule->command('discentes:atualizar-status')
-             ->dailyAt('08:00')
-             ->dailyAt('12:00')
-             ->dailyAt('18:00')
-             ->dailyAt('23:00');
+             ->dailyAt('23:00')
+             ->withoutOverlapping()
+             ->runInBackground();
+             
+        // $schedule->command('discentes:atualizar-status')
+        //      ->dailyAt('08:00')
+        //      ->dailyAt('12:00')
+        //      ->dailyAt('18:00')
+        //      ->dailyAt('23:00')
+        //      ->withoutOverlapping()
+        //      ->runInBackground();
         
-    }
-
-    /**
+    }    /**
      * Register the commands for the application.
      */
     protected function commands(): void

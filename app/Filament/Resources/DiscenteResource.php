@@ -17,6 +17,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -278,7 +279,31 @@ class DiscenteResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options([
+                        '0' => 'Pendência Financeira',
+                        '1' => 'Cadastro Incompleto',
+                        '2' => 'Desativado',
+                        '3' => 'OK',
+                    ])
+                    ->label('Status')
+                    ->query(fn (Builder $query, array $data) => $data['value'] ? $query->where('status', $data['value']) : null),
+                    SelectFilter::make('status_qa')
+                    ->options([
+                        'Matriculado' => 'Matriculado',
+                        'Desmatriculado' => 'Desmatriculado',
+                        'Trancado' => 'Trancado',
+                        'Transferido' => 'Transferido',
+                        'Concluído' => 'Concluído',
+                        'Desistente' => 'Desistente',
+                        'Transferido Externo' => 'Transferido Externo',
+                        'Transferido Interno' => 'Transferido Interno',
+                        ])
+                    ->label('Status Q-Academico')
+                    ->query(fn (Builder $query, array $data) => $data['value'] ? $query->where('status_qa', $data['value']) : null),
+                    SelectFilter::make('turma_id')->relationship('turma', 'nome')->label('Turma')
+                    ->query(fn (Builder $query, array $data) => $data['value'] ? $query->where('turma_id', $data['value']) : null), 
+                  
             ])
             ->actions([
 

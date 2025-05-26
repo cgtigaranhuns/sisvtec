@@ -12,6 +12,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -102,15 +103,27 @@ class UserResource extends Resource
             ]);
     }
 
-
-
-
-
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->badge()
+                    ->color(function ($state) {
+                        return match ($state) {
+                            'Administradores' => 'danger',
+                            'TI' => 'danger',
+                            'Estudantes' => 'secondary',
+                            'Professores' => 'primary',
+                            'Coordenadores' => 'warning',
+                            'Financeiro' => 'info',
+                            
+                        };
+                    })
+                    ->icon('heroicon-o-user-group')
+                    ->label('Perfil')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
@@ -148,7 +161,19 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('roles.name')
+                    ->label('Perfil')
+                    ->relationship('roles', 'name')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('tipo_servidor')
+                    ->label('Tipo de Servidor')
+                    ->options([
+                        '1' => 'Professor',
+                        '2' => 'Técnico Administrativo',
+                        '3' => 'Estudante',
+                    ])->multiple()
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
