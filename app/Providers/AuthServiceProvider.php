@@ -11,6 +11,8 @@ use App\Policies\FuncaoPolicy;
 use App\Policies\UsuarioPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Models\Activity;
+use App\Policies\ActivityPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,8 @@ class AuthServiceProvider extends ServiceProvider
         User::class => UsuarioPolicy::class,
         Role::class => FuncaoPolicy::class,  
         Permission::class => FuncaoPolicy::class,
+         Activity::class => ActivityPolicy::class,
+        
     ];
 
     /**
