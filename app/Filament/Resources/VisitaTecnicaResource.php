@@ -32,6 +32,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use App\Http\ControlerImpressoes;
 use App\Http\Controllers\ControllerImpressoes;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 
 class VisitaTecnicaResource extends Resource
 {
@@ -786,7 +789,7 @@ class VisitaTecnicaResource extends Resource
                         if ($state == 2) {
                             foreach ($record->discenteVisitas as $discente) {
                                 // dd($discente);
-                               (new ControllerImpressoes())->imprimirTermoCompromisso($record->id);
+                                (new ControllerImpressoes())->imprimirTermoCompromisso($record->id);
                                 Mail::to($discente->discente->email)->send(new TermoCompromisso($record, $discente->discente->id));
                             }
                             Notification::make()
@@ -794,7 +797,6 @@ class VisitaTecnicaResource extends Resource
                                 ->success()
                                 ->send();
                         }
-                        
                     })
                     ->disabled(function ($state) {
 
@@ -819,8 +821,72 @@ class VisitaTecnicaResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Filter::make('custos')
+                    ->label('Com Custos')
+                    ->query(fn(Builder $query): Builder => $query->where('custo', true)),
+                Filter::make('sem_custos')
+                    ->label('Sem Custos')
+                    ->query(fn(Builder $query): Builder => $query->where('custo', false)),
+              //  Filter::make('hospedagem')
+
+
+                SelectFilter::class::make('status')
+                    ->label('Status')
+                    ->options([
+                        '0' => 'Cadastrada',
+                        '1' => 'Submetida',
+                        '2' => 'Aprovada',
+                        '3' => 'Reprovada',
+                        '4' => 'Financeiro',
+                        '5' => 'Finalizada',
+                    ])
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('categoria_id')
+                    ->label('Categoria')
+                    ->relationship('categoria', 'nome')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('sub_categoria_id')
+                    ->label('Sub Categoria')
+                    ->relationship('subCategoria', 'nome')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('coordenacao_id')
+                    ->label('Coordenação')
+                    ->relationship('coordenacao', 'nome')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('professor_id')
+                    ->label('Professor Responsável')
+                    ->relationship('professor', 'name')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('turma_id')
+                    ->label('Turma')
+                    ->relationship('turma', 'nome')
+                    ->multiple()
+                    ->preload(),
+                Tables\Filters\Filter::make('datas')
+                    ->form([
+                        DatePicker::make('data_saida_de')
+                            ->label('Saída de:'),
+                        DatePicker::make('data_retorno_ate')
+                            ->label('Retorno até:'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['data_saida_de'],
+                                fn($query) => $query->whereDate('data_hora_saida', '>=', $data['data_saida_de'])
+                            )
+                            ->when(
+                                $data['data_retorno_ate'],
+                                fn($query) => $query->whereDate('data_hora_retorno', '<=', $data['data_retorno_ate'])
+                            );
+                    })
             ])
+
             ->actions([
                 Tables\Actions\Action::make('imprimirVisitaTecnica')
                     ->icon('heroicon-o-printer')
