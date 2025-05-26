@@ -62,7 +62,7 @@ class DiscenteResource extends Resource
                         ->schema([
                             Forms\Components\TextInput::make('nome')
                                 ->columnSpanFull()
-                                ->disabled(function () {
+                                ->readOnly(function () {
 
                                     /** @var \App\Models\User */
                                     $authUser =  auth()->user();
@@ -78,7 +78,7 @@ class DiscenteResource extends Resource
                                 ->maxLength(50),
                             Forms\Components\TextInput::make('matricula')
                                 ->label('Matrícula')
-                                ->disabled(function () {
+                                ->readOnly(function () {
 
                                     /** @var \App\Models\User */
                                     $authUser =  auth()->user();
