@@ -220,6 +220,10 @@ class DiscenteResource extends Resource
             ->defaultGroup('turma.nome')
             ->defaultSort('nome', 'asc')
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('nome')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('matricula')
@@ -273,6 +277,7 @@ class DiscenteResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                    
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

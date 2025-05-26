@@ -15,6 +15,8 @@ class User extends Authenticatable implements LdapAuthenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, AuthenticatesWithLdap, HasRoles;
 
+     protected $guard_name = 'web';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -30,6 +32,8 @@ class User extends Authenticatable implements LdapAuthenticatable
         'tipo_servidor',
         'coordenacao_id',
     ];
+
+   
 
     /**
      * The attributes that should be hidden for serialization.

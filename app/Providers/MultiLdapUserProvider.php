@@ -12,62 +12,72 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use LdapRecord\Laravel\Auth\LdapAuthenticatable;
 use LdapRecord\Laravel\Auth\AuthenticatesWithLdap;
+use App\Models\Role;
 
 class MultiLdapUserProvider implements UserProvider
 {
-    public function retrieveById($identifier)
-    {
-        return User::find($identifier);
-    }
+    use AuthenticatesWithLdap;
+    
+    /**
+     * Retrieve a user by their unique identifier.
+     *
+     * @param  mixed  $identifier
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     */
+public function retrieveById($identifier)
+{
+    return User::find($identifier);
+}
 
-    public function retrieveByToken($identifier, $token)
-    {
-        $user = User::where('id', $identifier)->first();
+public function retrieveByToken($identifier, $token)
+{
+    $user = User::where('id', $identifier)->first();
         
-        return $user && $user->getRememberToken() && hash_equals($user->getRememberToken(), $token)
-            ? $user : null;
-    }
+    return $user && $user->getRememberToken() && hash_equals($user->getRememberToken(), $token)
+        ? $user : null;
+}
 
-    public function updateRememberToken(Authenticatable $user, $token)
-    {
+public function updateRememberToken(Authenticatable $user, $token)
+{
+    if ($user instanceof User) {
         $user->setRememberToken($token);
         $user->save();
     }
+}
 
-    public function retrieveByCredentials(array $credentials)
-    {
-        if (empty($credentials['username']) || empty($credentials['password'])) {
-            return null;
-        }
-    
-        // Obtém a conexão selecionada no formulário (padrão: 'adm')
-        $connection = $credentials['connection'] ?? 'adm';
-        
-        Log::debug("Tentando autenticar na conexão: " . $connection);
-    
-        // Busca o usuário na conexão especificada
-        $ldapUser = $this->findLdapUser($credentials['username'], $connection);
-        
-        if (!$ldapUser) {
-            Log::debug("Usuário não encontrado na conexão: " . $connection);
-            return null;
-        }
-    
-        return $this->getOrCreateLocalUser($ldapUser, $credentials);
+public function retrieveByCredentials(array $credentials)
+{
+    if (empty($credentials['username']) || empty($credentials['password'])) {
+        return null;
     }
+    
+    // Obtém a conexão selecionada no formulário (padrão: 'adm')
+    $connection = $credentials['connection'] ?? 'adm';
+        
+    Log::debug("Tentando autenticar na conexão: " . $connection);
+    
+    // Busca o usuário na conexão especificada
+    $ldapUser = $this->findLdapUser($credentials['username'], $connection);
+        
+    if (!$ldapUser) {
+        Log::debug("Usuário não encontrado na conexão: " . $connection);
+        return null;
+    }
+    
+    return $this->getOrCreateLocalUser($ldapUser, $credentials);
+}
 
-    public function validateCredentials(Authenticatable $user, array $credentials)
-    {
-        if (!$user instanceof LdapAuthenticatable) {
-            return false;
-        }
-    
-        // Usa a conexão especificada no formulário
-        $connection = $credentials['connection'] ?? 'adm';
-        
-        return $this->authenticateInLdap($user, $credentials, $connection);
+public function validateCredentials(Authenticatable $user, array $credentials)
+{
+    if (!$user instanceof LdapAuthenticatable) {
+        return false;
     }
-protected function findLdapUser($username, $connection)
+    
+    // Usa a conexão especificada no formulário
+    $connection = $credentials['connection'] ?? 'adm';
+        
+    return $this->authenticateInLdap($user, $credentials, $connection);
+}protected function findLdapUser($username, $connection)
 {
     Log::info("Iniciando busca LDAP", [
         'username' => $username,
@@ -134,6 +144,7 @@ Log::info("Iniciando autenticação LDAP", [
     Log::info("Resultado da autenticação", ['sucesso' => $result]);
     return $result;
 }
+
 protected function getOrCreateLocalUser($ldapUser, $credentials)
 {
     Log::info("Processando usuário local", [
@@ -183,21 +194,30 @@ protected function getOrCreateLocalUser($ldapUser, $credentials)
     $newUser->email = $ldapUser->getFirstAttribute('mail') ?? $credentials['username'] . '@garanhuns.ifpe';
     $newUser->username = $credentials['username'];
     $newUser->password = bcrypt(Str::random(16));
+     
     $newUser->save();
 
-    
-    //   //  if (preg_match('/[a-zA-Z]/', $credentials['username'])) {
-    //         DB::table('model_has_roles')->insert([
-    //             'role_id' => 2,
-    //             'model_type' => 'App\Models\User',
-    //             'model_id' => $newUser->id
-    //         ]);
-    //         Log::info("Atribuído role_id 2 ao usuário", ['id' => $newUser->id]);
-    //  //   }
-    
-
-    
+    if (preg_match('/[a-zA-Z]/', $credentials['username'])) {
+            try {   // Verifica se o trait HasRoles está no modelo User
+                        if (method_exists($newUser, 'assignRole')) {                                                   
+                            $newUser->assignRole(2);                            
+                            Log::info("Role 'Discente' atribuída ao usuário {$newUser->username}");
+                        } else {
+                            Log::error("Trait HasRoles não está presente no modelo User");
+                            throw new \Exception("Trait HasRoles não está presente no modelo User");
+                        }
+                    } catch (\Exception $e) {
+                        Log::error("Erro ao atribuir role: " . $e->getMessage(), [
+                            'username' => $newUser->username,
+                            'error' => $e
+                        ]);
+                        $errors = 1;
+                    }
+        }
+    else{
+         $newUser->assignRole(3);
+    }
+        
     Log::info("Novo usuário criado com sucesso", ['id' => $newUser->id]);
     return $newUser;
-}
-}
+}}
