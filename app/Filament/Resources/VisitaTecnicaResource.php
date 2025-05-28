@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\ControlerImpressoes;
 use App\Http\Controllers\ControllerImpressoes;
 use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 
@@ -827,7 +828,12 @@ class VisitaTecnicaResource extends Resource
                 Filter::make('sem_custos')
                     ->label('Sem Custos')
                     ->query(fn(Builder $query): Builder => $query->where('custo', false)),
-              //  Filter::make('hospedagem')
+                Filter::make('hospedagem')
+                    ->label('Com Hóspede')
+                    ->query(fn(Builder $query): Builder => $query->where('hospedagem', true)),
+                Filter::make('sem_hospedagem')
+                    ->label('Sem Hóspede')
+                    ->query(fn(Builder $query): Builder => $query->where('hospedagem', false)),
 
 
                 SelectFilter::class::make('status')
@@ -885,7 +891,7 @@ class VisitaTecnicaResource extends Resource
                                 fn($query) => $query->whereDate('data_hora_retorno', '<=', $data['data_retorno_ate'])
                             );
                     })
-            ])
+                ], layout: FiltersLayout::Modal)->filtersFormColumns(3)
 
             ->actions([
                 Tables\Actions\Action::make('imprimirVisitaTecnica')
