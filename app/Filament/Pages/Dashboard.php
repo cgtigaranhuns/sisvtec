@@ -36,7 +36,7 @@ class Dashboard extends \Filament\Pages\Dashboard
             $attributes = $discente->getAttributes();
 
             // Exclui o campo 'nome_social' da verificação
-            unset($attributes['nome_social']);
+            unset($attributes['nome_social'], $attributes['foto']);
 
             // Verifica se algum campo obrigatório está vazio
             $hasEmpty = collect($attributes)
