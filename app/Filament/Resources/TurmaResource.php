@@ -40,6 +40,7 @@ class TurmaResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nome')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

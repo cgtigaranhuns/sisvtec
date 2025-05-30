@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Mail;
 use App\Traits\RecalculaFinanceiro;
+use Filament\Forms\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Model;
 
 class DiscenteVisitasRelationManager extends RelationManager
@@ -77,7 +78,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                         }
                     }),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
+                    ->label('Status SISVTEC')
                     ->badge()
                     ->alignCenter()
                     ->color(fn(string $state): string => match ($state) {
@@ -91,7 +92,24 @@ class DiscenteVisitasRelationManager extends RelationManager
                         '1' => 'Cadastro Incompleto',
                         '2' => 'Desativado',
                         '3' => 'OK',
+                    }),
+                Tables\Columns\TextColumn::make('discente.status_qa')
+                    ->label('Status Q-Academico')
+                    ->badge()
+                    ->alignCenter()
+                    ->color(fn(string $state): string => match ($state) {
+                        'Matriculado' => 'success',
+                        'Trancado' => 'warning',
+                        'Desligado' => 'danger',
+                        default => 'secondary',
                     })
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        'Matriculado' => 'Matriculado',
+                        'Trancado' => 'Trancado',
+                        'Desligado' => 'Desligado',
+                        default => 'Indefinido',
+                    }),
+                
 
             ])
             ->filters([
