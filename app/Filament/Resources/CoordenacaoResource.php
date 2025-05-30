@@ -34,11 +34,14 @@ class CoordenacaoResource extends Resource
                 Forms\Components\TextInput::make('nome')
                     ->required()
                     ->maxLength(50),
-
+                Forms\Components\TextInput::make('descricao')
+                    ->label('Descrição')
+                    ->required()
+                    ->maxLength(150),
                 Forms\Components\Select::make('user_id')
-                    ->label('coordenador')
+                    ->label('Coordenador')
                     ->relationship('user', 'name')
-                    //  ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->username} - {$record->name} - {$record->cargo->nome}")
+                    
                     ->searchable(['username', 'name'])
                     ->preload()
                     ->required(true),
@@ -55,6 +58,8 @@ class CoordenacaoResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('nome')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('descricao')
+                    ->label('Descrição'),                    
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Coordenador'),
                 Tables\Columns\TextColumn::make('email')

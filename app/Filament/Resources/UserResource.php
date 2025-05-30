@@ -151,6 +151,9 @@ class UserResource extends Resource
                     })
 
                     ->searchable(),
+                Tables\Columns\TextColumn::make('coordenacao.nome')
+                    ->label('Coordenação')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

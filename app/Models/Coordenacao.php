@@ -9,7 +9,7 @@ class Coordenacao extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nome', 'user_id','email'];
+    protected $fillable = ['nome', 'user_id','email','descricao'];
 
     public function user()
     {

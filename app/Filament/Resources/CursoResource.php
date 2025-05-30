@@ -29,7 +29,11 @@ class CursoResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('nome')
                     ->required()
-                    ->maxLength(50),
+                    ->label('Nome do Curso')  
+                    ->placeholder('Digite o nome do curso')
+                    ->helperText('O nome do curso deve ser único e descritivo.')
+                    ->columnSpanFull()
+                    ->maxLength(80),
             ]);
     }
 
@@ -38,6 +42,8 @@ class CursoResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nome')
+                    ->label('Nome do Curso')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
