@@ -31,7 +31,7 @@ trait UpdateStatusDiscentes
             'data_nascimento',
             'curso_id',
             'turma_id',
-            'foto', // Para campos de upload de arquivo, certifique-se de que o $data['foto'] contenha o caminho ou nome do arquivo após o upload.
+           // 'foto', // Para campos de upload de arquivo, certifique-se de que o $data['foto'] contenha o caminho ou nome do arquivo após o upload.
             'cpf',
             'rg',
             'orgao_exp_rg',

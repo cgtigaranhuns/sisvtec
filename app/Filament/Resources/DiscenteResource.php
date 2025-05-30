@@ -97,8 +97,6 @@ class DiscenteResource extends Resource
                             Forms\Components\Textarea::make('endereco')
                                 ->label('Endereço')
                                 ->columnSpanFull(),
-
-
                             Forms\Components\Select::make('estado_id')
                                 ->relationship('estado', 'nome')
                                 ->label('Estado')
@@ -118,6 +116,14 @@ class DiscenteResource extends Resource
 
                             Forms\Components\TextInput::make('email')
                                 ->email()
+                                ->readOnly(function () {
+
+                                    /** @var \App\Models\User */
+                                    $authUser =  auth()->user();
+                                    if ($authUser->hasRole('Estudantes')) {
+                                        return true;
+                                    }
+                                })
                                 ->required()
                                 ->maxLength(50),
                             Forms\Components\DatePicker::make('data_nascimento')
