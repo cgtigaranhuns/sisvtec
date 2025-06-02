@@ -1,57 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Proposta da Atividade Extraclasse</title>
+    <meta charset="utf-8">
+    <title>Termo de Compromisso</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
+            color: #333;
+            max-width: 600px;
             margin: 0 auto;
-            background-color: #f8fff8;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
         }
         .header {
+            background-color: #2e7d32;
+            color: white;
+            padding: 20px;
             text-align: center;
-            margin-bottom: 30px;
-            color: #2e7d32;
+            border-radius: 5px;
         }
         .content {
-            background-color: #ffffff;
             padding: 20px;
+            background-color: #f9f9f9;
             border-radius: 5px;
-            border: 1px solid #e0f2e0;
+            margin-top: 20px;
         }
-        .field-row {
-            display: flex;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #e0f2e0;
-            padding: 10px 0;
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 12px;
+            color: #666;
         }
-        .field-label {
-            width: 150px;
-            font-weight: bold;
-            color: #2e7d32;
-        }
-        .field-value {
-            flex: 1;
-            color: #333;
-        }
+       
     </style>
 </head>
 <body>
-    <div style="text-align: center; margin-bottom: 20px;">
+    <div class="header">
         <img src="{{ asset('https://extensao.garanhuns.ifpe.edu.br/img/Logo-Garanhuns.png') }}" alt="Logo" style="max-width: 200px;">
+        <h1>Termo de Compromisso</h1>
     </div>
-    <div class="container">
-        <div class="header">
-           <h3>Segue anexo o termo de compromisso para a Atividade Extraclasse - {{$local}}, em: {{$dataSaida}} </h3>
-                
-        </div>
+
+    <div class="content">
+        <p>Prezado(a) Estudante,</p>
+
+        <h3>Segue anexo o termo de compromisso para a Atividade Extraclasse - {{$local}}, em: {{$dataSaida}} </h3>  
+
+        <p>Caso tenha alguma dúvida, não hesite em nos contatar.</p>
+
+        <p>Atenciosamente,<br>
+        Equipe de Coordenação</p>
+    </div>
+
+    <div class="footer">
+        <p>Este é um e-mail automático. Por favor, não responda.</p>
+    </div>
+</body>
 </html>
+
+
+

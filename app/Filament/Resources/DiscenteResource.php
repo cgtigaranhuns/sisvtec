@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\DiscenteResource\Pages;
 use App\Filament\Resources\DiscenteResource\RelationManagers;
+use App\Mail\RecadastramentoMail;
 use App\Models\Cidade;
 use App\Models\Discente;
 use App\Traits\UpdateStatusDiscentes;
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Mail;
 use PhpParser\Node\Stmt\Nop;
 
 class DiscenteResource extends Resource
@@ -322,6 +324,21 @@ class DiscenteResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('enviarEmailRecadastramento')
+                                            ->label('Enviar E-mail Recadastramento')
+                                            ->icon('heroicon-o-envelope')
+                                            ->requiresConfirmation()
+                                            ->action(function (Collection $records) {
+                                                $records->each(function ($record) {
+                                                    Mail::to($record->email)
+                                                        ->send(new RecadastramentoMail($record));
+                                                });                                                
+                                                Notification::make()
+                                                    ->title('E-mails enviados com sucesso!')
+                                                    ->success()
+                                                    ->send();
+                                            }),
+                    
                 ]),
             ]);
     }
