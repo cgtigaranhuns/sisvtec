@@ -124,6 +124,7 @@ class UserResource extends Resource
                     })
                     ->icon('heroicon-o-user-group')
                     ->label('Perfil')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
