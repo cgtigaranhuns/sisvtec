@@ -14,9 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
 Route::get('/', function () {
-    return view('welcome');
-});
+    //view('welcome');
+    return  redirect('/admin'); })->name('login');
 
 Route::get('imprimir/visitaTecnica/{id}',[ControllerImpressoes::class, 'imprimirVisitaTecnica'])->name('imprimirVisitaTecnica');
 Route::get('imprimir/relatorioFinal/{id}',[ControllerImpressoes::class, 'imprimirRelatorioFinal'])->name('imprimirRelatorioFinal');
