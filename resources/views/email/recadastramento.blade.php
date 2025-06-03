@@ -80,7 +80,7 @@
 
         <center>
             <p><strong>Link para recadastramento:</strong></p>
-           <a href="https://www.exemplo.com" class="btn-link">Realizar recadastramento</a>
+           <a href="https://sisvtec.garanhuns.ifpe.edu.br/admin/discentes" class="btn-link">Realizar recadastramento</a>
         </center>
 
         <p>Caso tenha alguma dúvida, não hesite em nos contatar.</p>
