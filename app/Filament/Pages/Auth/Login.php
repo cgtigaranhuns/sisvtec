@@ -20,7 +20,7 @@ class Login extends BaseLogin
 
     public function getSubheading(): string|\Illuminate\Support\HtmlString
     {
-        return 'Sistema de Visitas Técnicas';
+        return 'Sistema de Atividades Extraclasse';
     }
 
     public function form(Form $form): Form
