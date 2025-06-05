@@ -27,7 +27,7 @@ class DiscenteVisitasRelationManager extends RelationManager
 
     protected static string $relationship = 'discenteVisitas';
 
-    protected static ?string $title = 'Discentes da Visita';
+    protected static ?string $title = 'Discentes da Atividade';
 
     public function form(Form $form): Form
     {
@@ -164,7 +164,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                             } else {
                                 Notification::make()
                                     ->title('Estudante já incluído')
-                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' já está incluído na visita.')
+                                    ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' já está incluído na atividade.')
                                     ->warning()
                                     ->persistent()
                                     ->send();
@@ -209,7 +209,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                                 } else {
                                     Notification::make()
                                         ->title('Estudante já incluído')
-                                        ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' já está incluído na visita.')
+                                        ->body('O estudante ' . $discente->nome . ' - ' . $discente->matricula . ' já está incluído na atividade.')
                                         ->warning()
                                         ->persistent()
                                         ->send();

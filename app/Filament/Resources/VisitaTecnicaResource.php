@@ -76,7 +76,7 @@ class VisitaTecnicaResource extends Resource
             ->columns(null)
             ->schema([
                 Wizard::make([
-                    Wizard\Step::make('Tipo de Visita')
+                    Wizard\Step::make('Tipo de Atividade')
                         ->completedIcon('heroicon-m-hand-thumb-up')
                         ->schema([
                             Grid::make([
@@ -426,7 +426,7 @@ class VisitaTecnicaResource extends Resource
                                     ->label('Carga Horária Total da Viagem')
                                     ->required(),
                                 Forms\Components\TextInput::make('carga_horaria_visita')
-                                    ->label('Carga Horária Total da Visita')
+                                    ->label('Carga Horária Total da Atividade')
                                     ->mask('99:99')
                                     ->disabled(function ($context, Get  $get) {
                                         if (($get('status') != 0) && $context == 'edit') {
@@ -610,7 +610,7 @@ class VisitaTecnicaResource extends Resource
                                                 ->numeric()
                                                 ->required(),
                                             Forms\Components\TextInput::make('custo_total')
-                                                ->label('Custo Total da Visita')
+                                                ->label('Custo Total da Atividade')
                                                 ->hidden(fn(Get $get): bool => $get('custo') == false)
                                                 ->prefix('R$')
                                                 ->numeric()

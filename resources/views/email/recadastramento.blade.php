@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Recadastramento para Visitas Técnicas</title>
+    <title>Recadastramento para Atividades Extraclasse</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -66,7 +66,7 @@
     <div class="content">
         <p>Prezado(a) Estudante,</p>
 
-        <p>Esperamos que esta mensagem o(a) encontre bem. Gostaríamos de informar que é necessário realizar seu recadastramento para continuar participando das visitas técnicas oferecidas pela instituição.</p>
+        <p>Esperamos que esta mensagem o(a) encontre bem. Gostaríamos de informar que é necessário realizar seu recadastramento para continuar participando das atividades extraclasse oferecidas pela instituição.</p>
 
         <p>O recadastramento é um processo importante que nos ajuda a:</p>
         <ul>
