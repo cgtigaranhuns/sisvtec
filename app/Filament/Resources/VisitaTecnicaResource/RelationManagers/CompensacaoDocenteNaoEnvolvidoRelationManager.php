@@ -121,7 +121,7 @@ class CompensacaoDocenteNaoEnvolvidoRelationManager extends RelationManager
                                 ->send();
                             Notification::make()
                                 ->title('ATENÇÃO: Inconsistência de dados')
-                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta, foi de <b>' . $totalDiscentes . '</b>, porém há' . $discentesStatusPendentes . '</b>estudantes que estão com status de pendência. Por favor, pedimos que informe aos estudantes para regularizar a situação..</p>')
+                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta, foi de <b>' . $totalDiscentes . '</b>, porém há <b>' . $discentesStatusPendentes . '</b> estudantes que estão com status de pendência. Por favor, pedimos que informe aos estudantes para regularizar a situação..</p>')
                                 ->danger()
                                 ->icon('heroicon-o-exclamation-triangle')
                                 ->color('danger')
@@ -135,7 +135,7 @@ class CompensacaoDocenteNaoEnvolvidoRelationManager extends RelationManager
                                 ->send();
                             Notification::make()
                                 ->title('ATENÇÃO: Inconsistência de dados')
-                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta, foi de <b>' . $totalDiscentes . ',</b> porém após a inclusão dos nomes verificou-se que ha<b> ' .$discentesStatusTodos. ' </b>estudantes incluídos. Favor corrigir a diferença e tentar novamente.</p>')
+                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta, foi de <b>' . $totalDiscentes . ',</b> porém após a inclusão dos nomes verificou-se que há <b> ' .$discentesStatusTodos. ' </b>estudantes incluídos. Favor corrigir a diferença e tentar novamente.</p>')
                                 ->danger()
                                 ->icon('heroicon-o-exclamation-triangle')
                                 ->color('danger')

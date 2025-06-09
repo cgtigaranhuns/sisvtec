@@ -83,7 +83,7 @@ class CompensacaoTurmaNaoEnvolvidoRelationManager extends RelationManager
                         return $this->ownerRecord->status != 0;
                     })
                     ->label('Adicionar Compensação'),
-                    Tables\Actions\Action::make('submeter')
+                Tables\Actions\Action::make('submeter')
                     ->label(function () {
                         if ($this->ownerRecord->status > 0) {
                             return 'Proposta enviada';
@@ -110,7 +110,7 @@ class CompensacaoTurmaNaoEnvolvidoRelationManager extends RelationManager
                                 ->send();
                             Notification::make()
                                 ->title('ATENÇÃO: Inconsistência de dados')
-                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta, foi de <b>' . $totalDiscentes . '</b>, porém há' . $discentesStatusPendentes . '</b>estudantes que estão com status de pendência. Por favor, pedimos que informe aos estudantes para regularizar a situação..</p>')
+                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta, foi de <b>' . $totalDiscentes . '</b>, porém há <b>' . $discentesStatusPendentes . '</b> estudantes que estão com status de pendência. Por favor, pedimos que informe aos estudantes para regularizar a situação..</p>')
                                 ->danger()
                                 ->icon('heroicon-o-exclamation-triangle')
                                 ->color('danger')
@@ -124,14 +124,13 @@ class CompensacaoTurmaNaoEnvolvidoRelationManager extends RelationManager
                                 ->send();
                             Notification::make()
                                 ->title('ATENÇÃO: Inconsistência de dados')
-                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta, foi de <b>' . $totalDiscentes . ',</b> porém após a inclusão dos nomes verificou-se que ha<b> ' .$discentesStatusTodos. ' </b>estudantes incluídos. Favor corrigir a diferença e tentar novamente.</p>')
+                                ->body('<p style="text-align: justify;"> A quantidade de estudantes informada na proposta, foi de <b>' . $totalDiscentes . ',</b> porém após a inclusão dos nomes verificou-se que há <b>' . $discentesStatusTodos . ' </b> estudantes incluídos. Favor corrigir a diferença e tentar novamente.</p>')
                                 ->danger()
                                 ->icon('heroicon-o-exclamation-triangle')
                                 ->color('danger')
                                 ->persistent()
                                 ->send();
-                        }
-                        else {
+                        } else {
                             $livewire->ownerRecord->status = 1;
                             $livewire->ownerRecord->save();
                             Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));

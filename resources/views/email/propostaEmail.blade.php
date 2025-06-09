@@ -51,7 +51,7 @@
     </div>
     <div class="container">
         <div class="header">
-            <h2>Projeto de {{$categoria.' - '.$subCategoria}} cadastrado com sucesso.<br>
+            <h2>Projeto de "{{$categoria.' - '.$subCategoria}}" cadastrado com sucesso.<br>
                 Pendente de análise e pronunciamento.</h2>
                 Acesse: <a href="{{ route('filament.admin.resources.visita-tecnicas.index') }}">Clique aqui</a> para visualizar o projeto.
                 <br><br>
