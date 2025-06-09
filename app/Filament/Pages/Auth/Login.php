@@ -28,7 +28,7 @@ class Login extends BaseLogin
         return $form
         ->schema([
             TextInput::make('username')
-                ->label('Usuário')
+                ->label('Matrícula')
                 ->required()
                 ->autocomplete()
                 ->autofocus()
@@ -37,7 +37,7 @@ class Login extends BaseLogin
                     $connection = strlen($state) < 11 ? 'adm' : 'labs';
                     $set('ldap_connection', $connection);
                 })->validationMessages([
-                    'required' => 'O campo usuário é obrigatório',
+                    'required' => 'O campo matrícula é obrigatório',
                 ]),
             
             TextInput::make('password')
