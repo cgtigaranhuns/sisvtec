@@ -899,7 +899,8 @@ class VisitaTecnicaResource extends Resource
                     ->disabled(function (VisitaTecnica $record) {
                         /** @var \App\Models\User */
                         $authUser =  auth()->user();
-                        if ($authUser->hasRole('Professores') && ($record->status == 0 || $record->status == 1 || $record->status == 3)) {                            return true;
+                        if ($authUser->hasRole('Professores') && ($record->status == 0 || $record->status == 1 || $record->status == 3)) {                            
+                            return true;
                         } else {
                             return false;
                         }
@@ -910,7 +911,15 @@ class VisitaTecnicaResource extends Resource
                     ->openUrlInNewTab(),
                 Tables\Actions\Action::make('imprimirAta')
                     ->icon('heroicon-o-printer')
-                    ->disabled(fn(VisitaTecnica $record): bool => $record->status == 0)
+                    ->disabled(function (VisitaTecnica $record) {
+                        /** @var \App\Models\User */
+                        $authUser =  auth()->user();
+                        if ($authUser->hasRole('Professores') && ($record->status == 0 || $record->status == 1 || $record->status == 3)) {                            
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    })
                     ->label('Ata de Presença')
                     ->url(fn(VisitaTecnica $record): string => route('imprimirAtaVisitaTecnica', $record))
                     ->openUrlInNewTab(),
