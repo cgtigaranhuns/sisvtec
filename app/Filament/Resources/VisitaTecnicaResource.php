@@ -690,6 +690,13 @@ class VisitaTecnicaResource extends Resource
                                 Section::make([
                                     ToggleButtons::make('status')
                                         ->label('Status')
+                                        ->disabled(function ($context, Get  $get) {
+                                            if (($get('status') != 0) && $context == 'edit') {
+                                                return true;
+                                            } else {
+                                                return false;
+                                            }
+                                        })
                                         ->required()
                                         ->hidden(function ($context, Get  $get) {
 
