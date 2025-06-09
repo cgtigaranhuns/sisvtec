@@ -899,8 +899,7 @@ class VisitaTecnicaResource extends Resource
                     ->disabled(function (VisitaTecnica $record) {
                         /** @var \App\Models\User */
                         $authUser =  auth()->user();
-                        if ($authUser->hasRole('Professores') && $record->status == 0) {
-                            return true;
+                        if ($authUser->hasRole('Professores') && ($record->status == 0 || $record->status == 1 || $record->status == 3)) {                            return true;
                         } else {
                             return false;
                         }
