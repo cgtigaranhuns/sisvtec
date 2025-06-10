@@ -179,7 +179,7 @@ class DiscenteResource extends Resource
                                     Forms\Components\TextInput::make('conta')
                                         ->label('Conta')
                                         ->required()
-                                        ->maxLength(10),
+                                        ->maxLength(20),
                                     Forms\Components\Radio::make('tipo_conta')
                                         ->options([
                                             '1' => 'Conta Corrente',
