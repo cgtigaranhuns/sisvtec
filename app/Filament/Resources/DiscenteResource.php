@@ -18,6 +18,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
+use Filament\Tables\Columns\Summarizers\Count;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -237,9 +238,11 @@ class DiscenteResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true),                    
                 Tables\Columns\TextColumn::make('nome')
-                    ->searchable(),
+                    ->summarize(Count::make())
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('matricula')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('curso.nome')
