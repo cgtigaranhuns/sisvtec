@@ -85,7 +85,9 @@ class VisitaTecnicaResource extends Resource
                             ])->schema([
                                 Forms\Components\Select::make('categoria_id')
                                     ->label('Categoria')
-                                    ->default(2)
+                                    ->default(function ($context) {
+                                        return $context === 'create' ? 2 : null;
+                                    })
                                     ->disabled(function ($context, Get  $get) {
                                         if (($get('status') != 0) && $context == 'edit') {
                                             return true;
@@ -99,7 +101,9 @@ class VisitaTecnicaResource extends Resource
 
                                 Forms\Components\Select::make('sub_categoria_id')
                                     ->label('Sub Categoria')
-                                    ->default(1)
+                                    ->default(function ($context) {
+                                        return $context === 'create' ? 1 : null;
+                                    })
                                     ->disabled(function ($context, Get  $get) {
                                         if (($get('status') != 0) && $context == 'edit') {
                                             return true;
