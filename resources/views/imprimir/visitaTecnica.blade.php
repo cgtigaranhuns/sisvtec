@@ -115,9 +115,15 @@
             
         </tr>
         <tr>
+            <td><label>Haverá Passagens?:</label> {{$visitaTecnica->passagens == 1 ? 'Sim' : 'Não'}}</td>
+            <td><label>Justificativa das Passagens:</label> {{$visitaTecnica->justificativa_passagens}}</td>    
+        <tr>
             <td><label>Valor da Diária por Estudante R$:</label> {{ number_format(($visitaTecnica->valor_total_diarias / $visitaTecnica->qtd_estudantes), 2, ',', '.') }}</td> 
             <td><label>Valor da Hospedagem por Estudante R$:</label> {{number_format(($visitaTecnica->menor_valor_hospedagem / $visitaTecnica->qtd_estudantes), 2, ',', '.') }}</td> 
         </tr>
+        <tr>
+            <td><label>Valor Total das Passagens R$:</label> {{number_format(($visitaTecnica->menor_valor_passagens), 2, ',', '.')}}</td>
+            <td><label>Valor da Passagens por Estudante R$:</label> {{number_format(($visitaTecnica->menor_valor_passagens / $visitaTecnica->qtd_estudantes), 2, ',', '.')}}</td>
         <tr>
             <td><label>Valor Total das Diárias R$:</label> {{number_format(($visitaTecnica->valor_total_diarias), 2, ',', '.')}}</td>
             <td><label>Valor Total das Hospedagens R$:</label> {{number_format(($visitaTecnica->menor_valor_hospedagem), 2, ',', '.')}}</td>
