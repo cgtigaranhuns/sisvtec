@@ -467,6 +467,9 @@ class VisitaTecnicaResource extends Resource
                                     })
                                     ->numeric()
                                     ->required(),
+
+                                    ##### Hospedagem #####
+
                                 Forms\Components\ToggleButtons::make('hospedagem')
                                     ->label('Haverá Hospedagem?')
                                     ->hidden(fn(Get $get): bool => $get('custo') == false)
@@ -506,7 +509,7 @@ class VisitaTecnicaResource extends Resource
                                     })
                                     ->afterStateUpdated(function (callable $set, $state, $get) {
                                         $set('menor_valor_hospedagem', 0);
-                                        $set('custo_total', ($get('valor_total_diarias') + 0));
+                                        $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_passagens') + 0));
                                         $set('cotacoes_hospedagem', []);
                                     })
                                     ->required(fn(Get $get): bool => $get('custo') == true)
@@ -552,7 +555,7 @@ class VisitaTecnicaResource extends Resource
                                         }, $state));
 
                                         $set('menor_valor_hospedagem', $minValue);
-                                        $set('custo_total', ($get('valor_total_diarias') + $minValue));
+                                        $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_passagens') + $minValue));
                                     })
                                     ->schema([
                                         Forms\Components\TextInput::make('valor1')
@@ -593,11 +596,115 @@ class VisitaTecnicaResource extends Resource
                                             ->numeric(),
                                     ]),
 
+                                    ######### Passagens #########
+
+                                Forms\Components\ToggleButtons::make('passagens')
+                                    ->label('Haverá Passagens?')
+                                    ->hidden(fn(Get $get): bool => $get('custo') == false)
+                                    ->default(false)
+                                    ->live()
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
+                                    ->afterStateUpdated(function (callable $set, $state, $get) {
+                                        $set('menor_valor_passagens', 0);
+                                        $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_hospedagem') + 0));
+                                        $set('cotacoes_passagens', []);
+                                    })
+                                    ->required(fn(Get $get): bool => $get('custo') == true)
+                                    ->boolean()
+                                    ->grouped(),
+                                Forms\Components\Textarea::make('justificativa_passagens')
+                                    ->label('Justificar Passagens')
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
+                                    ->hidden(fn(Get $get) => !$get('passagens'))
+                                    ->required(fn(Get $get) => $get('passagens'))
+                                    ->autosize()
+                                    ->maxLength(255),
+
+                                Forms\Components\Repeater::make('cotacao_passagens')
+                                    ->columnSpan(
+                                        [
+                                            'xl' => 3,
+                                            '2xl' => 3,
+                                        ]
+                                    )
+                                    ->live(onBlur: true)
+                                    ->minItems(1)
+                                    ->maxItems(1)
+                                    ->columns(3)
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
+                                    ->label('Cotações de Passagens')
+                                    ->hidden(fn(Get $get) => !$get('passagens'))
+                                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                                        $minValue = min(array_map(function ($item) {
+                                            return min($item['valor1_passagens'] ?? PHP_INT_MAX, $item['valor2_passagens'] ?? PHP_INT_MAX, $item['valor3_passagens'] ?? PHP_INT_MAX);
+                                        }, $state));
+
+                                        $set('menor_valor_passagens', $minValue);
+                                        $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_hospedagem') + $minValue));
+                                    })
+                                    ->schema([
+                                        Forms\Components\TextInput::make('valor1_passagens')
+                                            ->label('Valor 1')
+                                            ->prefix('R$')
+                                            ->disabled(function ($context, Get  $get) {
+                                                if (($get('status') != 0) && $context == 'edit') {
+                                                    return true;
+                                                } else {
+                                                    return false;
+                                                }
+                                            })
+                                            ->required()
+                                            ->numeric(),
+                                        Forms\Components\TextInput::make('valor2_passagens')
+                                            ->label('Valor 2')
+                                            ->prefix('R$')
+                                            ->disabled(function ($context, Get  $get) {
+                                                if (($get('status') != 0) && $context == 'edit') {
+                                                    return true;
+                                                } else {
+                                                    return false;
+                                                }
+                                            })
+                                            ->required()
+                                            ->numeric(),
+                                        Forms\Components\TextInput::make('valor3_passagens')
+                                            ->label('Valor 3')
+                                            ->prefix('R$')
+                                            ->disabled(function ($context, Get  $get) {
+                                                if (($get('status') != 0) && $context == 'edit') {
+                                                    return true;
+                                                } else {
+                                                    return false;
+                                                }
+                                            })
+                                            ->required()
+                                            ->numeric(),
+                                        ]),
+
+
                                 Forms\Components\Fieldset::make('Custos')
                                     ->schema([
                                         Grid::make([
-                                            'xl' => 3,
-                                            '2xl' => 3,
+                                            'xl' => 4,
+                                            '2xl' => 4,
                                         ])->schema([
                                             Forms\Components\TextInput::make('valor_total_diarias')
                                                 ->label('Valor Total das Diárias')
@@ -609,6 +716,13 @@ class VisitaTecnicaResource extends Resource
                                             Forms\Components\TextInput::make('menor_valor_hospedagem')
                                                 ->label('Menor Valor de Hospedagem')
                                                 ->hidden(fn(Get $get) => !$get('hospedagem') || !$get('custo'))
+                                                ->prefix('R$')
+                                                ->readOnly()
+                                                ->numeric()
+                                                ->required(),
+                                            Forms\Components\TextInput::make('menor_valor_passagens')
+                                                ->label('Menor Valor de Passagens')
+                                                ->hidden(fn(Get $get) => !$get('passagens') || !$get('custo'))  
                                                 ->prefix('R$')
                                                 ->readOnly()
                                                 ->numeric()
