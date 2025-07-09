@@ -510,7 +510,7 @@ class VisitaTecnicaResource extends Resource
                                     ->afterStateUpdated(function (callable $set, $state, $get) {
                                         $set('menor_valor_hospedagem', 0);
                                         $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_passagens') + 0));
-                                        $set('cotacoes_hospedagem', []);
+                                        $set('cotacao_hospedagem', []);
                                     })
                                     ->required(fn(Get $get): bool => $get('custo') == true)
                                     ->boolean()
@@ -613,7 +613,7 @@ class VisitaTecnicaResource extends Resource
                                     ->afterStateUpdated(function (callable $set, $state, $get) {
                                         $set('menor_valor_passagens', 0);
                                         $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_hospedagem') + 0));
-                                        $set('cotacoes_passagens', []);
+                                        $set('cotacao_passagens', []);
                                     })
                                     ->required(fn(Get $get): bool => $get('custo') == true)
                                     ->boolean()
