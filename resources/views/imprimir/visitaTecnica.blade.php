@@ -258,7 +258,23 @@
     @endforeach
     
 
-
+<br>
+<table style="margin: 40px auto 0 auto; border: none; width: 50%;">
+    <tr>
+        <td style="border: none; text-align: center;">
+            <hr style="width: 60%; border-top: 1px solid #888;">
+            <div style="font-size: 12px; font-weight: bold;">
+                {{$visitaTecnica->professor->name}}
+            </div>
+            <div style="font-size: 11px;">
+                SIAPE: {{$visitaTecnica->professor->username ?? '__________'}}
+            </div>
+            <div style="font-size: 11px; margin-top: 5px;">
+                Professor Responsável
+            </div>
+        </td>
+    </tr>
+</table>
 
 </body>
 </html>
