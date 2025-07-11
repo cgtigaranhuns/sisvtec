@@ -82,7 +82,12 @@
             <td><label>Professor/Servidor Responsável:</label> {{$visitaTecnica->professor->name}}</td>
         </tr>
         <tr>
-            <td><label>Servidor Participante:</label> {{$visitaTecnica->servidor_participante}}</td>
+            <td><label>Servidores Participantes:</label>
+                @foreach($nomeParticipantes as $participante)
+                    {{$participante}}@if(!$loop->last), @endif
+                    
+                @endforeach
+            </td>
             <td><label>Justificativa Servidores:</label> {{$visitaTecnica->justificativa_servidores}}</td>
         </tr>
         <tr>

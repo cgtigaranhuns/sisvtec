@@ -19,6 +19,14 @@ class ControllerImpressoes extends Controller
             }
         }
 
+        $nomeParticipantes = [];
+        foreach ($visitaTecnica->srv_participante_id as $participanteId) {
+            $participante = \App\Models\User::find($participanteId);
+            if ($participante) {
+            $nomeParticipantes[] = $participante->name;
+            }
+        }
+
         $nomeTurmas = [];
         foreach ($visitaTecnica->turma_id as $turmaId) {
             $turma = \App\Models\Turma::find($turmaId);
