@@ -45,7 +45,7 @@ class ControllerImpressoes extends Controller
 
         //  dd($nomeDisciplinas);
 
-        return view('imprimir.visitaTecnica', compact('visitaTecnica', 'nomeDisciplinas', 'nomeTurmas', 'nomeCursos'));
+        return view('imprimir.visitaTecnica', compact('visitaTecnica', 'nomeDisciplinas', 'nomeTurmas', 'nomeCursos', 'nomeParticipantes'));
     }
 
     public function imprimirRelatorioFinal($id)
