@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Mail;
 use App\Traits\RecalculaFinanceiro;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Tables\Columns\Summarizers\Count;
 use Illuminate\Database\Eloquent\Model;
 
 class DiscenteVisitasRelationManager extends RelationManager
@@ -54,6 +55,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('discente.matricula')
                     ->label('Matrícula')
+                    ->summarize(Count::make())
                     ->searchable(),
                 // Tables\Columns\TextColumn::make('discente.turma.nome')
                 //     ->sortable()
