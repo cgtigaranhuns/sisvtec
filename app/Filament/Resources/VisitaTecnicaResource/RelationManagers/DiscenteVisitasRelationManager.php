@@ -55,7 +55,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('discente.matricula')
                     ->label('Matrícula')
-                    ->summarize(Count::make())
+                   // ->summarize(Count::make())
                     ->searchable(),
                 // Tables\Columns\TextColumn::make('discente.turma.nome')
                 //     ->sortable()
