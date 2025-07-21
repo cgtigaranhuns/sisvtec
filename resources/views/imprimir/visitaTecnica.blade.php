@@ -104,7 +104,8 @@
         </tr>
         <tr>
             
-            <td><label>Quantidade de Estudantes:</label> {{$visitaTecnica->qtd_estudantes}}</td>
+            <td><label>Quantidade de Estudantes Informado:</label> {{$visitaTecnica->qtd_estudantes}}</td>
+            <td><label>Quantidade de Estudantes Adicionados:</label> {{$visitaTecnica->discenteVisitas->count()}}</td>
         </tr>
         <tr>
     </table>
