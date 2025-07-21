@@ -28,7 +28,15 @@ class DiscenteVisitasRelationManager extends RelationManager
 
     protected static string $relationship = 'discenteVisitas';
 
-    protected static ?string $title = 'Discentes da Atividade';
+   // protected static ?string $title = null;
+
+    public function getTableHeading(): string
+{
+    $count = $this->ownerRecord->discenteVisitas()->count();
+    $discenteProposta = $this->ownerRecord->qtd_estudantes;
+   // dd($this->ownerRecord);
+    return "Discentes: Informado: {$discenteProposta} - Adicionados: {$count}";
+}
 
     public function form(Form $form): Form
     {
@@ -36,7 +44,7 @@ class DiscenteVisitasRelationManager extends RelationManager
             ->schema([
                 Forms\Components\Select::make('discente_id')
                     ->label('Discente')
-                    ->relationship('discente', 'nome', fn (Builder $query) => $query->where('status_qa', 'Matriculado'))
+                    ->relationship('discente', 'nome', fn(Builder $query) => $query->where('status_qa', 'Matriculado'))
                     ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->nome} - {$record->matricula}")
                     ->searchable(['nome', 'matricula'])
                     ->required(),
@@ -55,7 +63,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('discente.matricula')
                     ->label('Matrícula')
-                   // ->summarize(Count::make())
+                    // ->summarize(Count::make())
                     ->searchable(),
                 // Tables\Columns\TextColumn::make('discente.turma.nome')
                 //     ->sortable()
@@ -111,7 +119,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                         'Desligado' => 'Desligado',
                         default => 'Indefinido',
                     }),
-                
+
 
             ])
             ->filters([
@@ -296,7 +304,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                         $discentesStatusPendentes = $livewire->ownerRecord->discenteVisitas()->where('status', '!=', 3)->count();
 
                         if ($totalDiscentes != $discentesStatusOk && $discentesStatusTodos == $totalDiscentes) {
-                          //  dd('totalDiscente: ' . $totalDiscentes . ' - statusOk: ' . $discentesStatusOk . ' - statusTodos: ' . $discentesStatusTodos . ' - statusPendentes: ' . $discentesStatusPendentes);
+                            //  dd('totalDiscente: ' . $totalDiscentes . ' - statusOk: ' . $discentesStatusOk . ' - statusTodos: ' . $discentesStatusTodos . ' - statusPendentes: ' . $discentesStatusPendentes);
                             $livewire->ownerRecord->status = 1;
                             $livewire->ownerRecord->save();
                             Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
@@ -315,7 +323,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                                 ->persistent()
                                 ->send();
                         } elseif ($discentesStatusTodos != $totalDiscentes) {
-                         //   dd('teste2');
+                            //   dd('teste2');
                             Notification::make()
                                 ->title('Proposta NÃO enviada!')
                                 ->success()
@@ -330,7 +338,7 @@ class DiscenteVisitasRelationManager extends RelationManager
                                 ->persistent()
                                 ->send();
                         } else {
-                         //   dd('teste3');
+                            //   dd('teste3');
                             $livewire->ownerRecord->status = 1;
                             $livewire->ownerRecord->save();
                             Mail::to($livewire->ownerRecord->professor->email)->cc($livewire->ownerRecord->coordenacao->email)->send(new PropostaEmail($livewire->ownerRecord));
