@@ -119,14 +119,14 @@ class DiscenteResource extends Resource
 
                             Forms\Components\TextInput::make('email')
                                 ->email()
-                                ->readOnly(function () {
+                                // ->readOnly(function () {
 
-                                    /** @var \App\Models\User */
-                                    $authUser =  auth()->user();
-                                    if ($authUser->hasRole('Estudantes')) {
-                                        return true;
-                                    }
-                                })
+                                //     /** @var \App\Models\User */
+                                //     $authUser =  auth()->user();
+                                //     if ($authUser->hasRole('Estudantes')) {
+                                //         return true;
+                                //     }
+                                // })
                                 ->required()
                                 ->maxLength(50),
                             Forms\Components\DatePicker::make('data_nascimento')
