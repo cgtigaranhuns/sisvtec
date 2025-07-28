@@ -21,7 +21,7 @@ class DiscenteVisitaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Meus Dados';
+    protected static ?string $navigationGroup = 'Cadastros';
 
     protected static ?string $navigationLabel = 'Minhas Atividades Extraclasse';
 

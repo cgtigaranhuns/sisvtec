@@ -34,7 +34,7 @@ class DiscenteResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-users';
 
-    protected static ?string $navigationGroup = 'Meus Dados';
+    protected static ?string $navigationGroup = 'Cadastros';
 
     protected static ?string $navigationLabel = 'Discente';
 
