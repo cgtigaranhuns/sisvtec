@@ -25,10 +25,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // Agende o comando SyncIfpeStudents para ser executado todos os dias à 1:00 AM
-        $schedule->command('sync:ifpe-students')->everyFiveMinutes();
-        // ou $schedule->command(SyncIfpeStudents::class)->dailyAt('01:00');
-        // Você pode usar 'daily()' para meia-noite, ou 'dailyAt('HH:MM')' para um horário específico.
+        
+       $schedule->command('sync:ifpe-students')
+             ->everyFiveMinutes()
+            // ->sendOutputTo(storage_path('logs/sync_ifpe_students.log')); // Cria um novo arquivo a cada execução
+             ->appendOutputTo(storage_path('logs/sync_ifpe_students.log')); // Adiciona ao final do arquivo
+       
     }
     protected function commands(): void
     {
