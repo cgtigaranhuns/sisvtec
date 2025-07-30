@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Discente;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -63,7 +64,7 @@ class SyncIfpeStudents extends Command
         $size = (int)$this->option('size');
         $syncAll = $this->option('all');
 
-        $this->info("Iniciando sincronização...");
+        $this->info("Iniciando sincronização...:  ".Carbon::now()->format('d-m-Y H:i:s'));
 
         $totalCreated = 0;
         $totalUpdated = 0;
@@ -139,7 +140,7 @@ class SyncIfpeStudents extends Command
             $page++;
         } while (true);
 
-        $this->info("\n🎉 Sincronização concluída!");
+        $this->info("\n🎉 Sincronização concluída! " . Carbon::now()->format('d-m-Y H:i:s'));
         $this->line("👉 Novos registros: {$totalCreated}");
         $this->line("🔄 Registros atualizados: {$totalUpdated}");
         $this->line("⏭️ Registros ignorados: {$totalSkipped}");
