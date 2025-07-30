@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
        $schedule->command('ifpe:sync-students')
-             ->everyFiveMinutes()
+             ->everyFourHours() // Define a frequência de execução do comando
             // ->sendOutputTo(storage_path('logs/sync_ifpe_students.log')); // Cria um novo arquivo a cada execução
              ->appendOutputTo(storage_path('logs/sync_ifpe_students.log')); // Adiciona ao final do arquivo
         // $schedule->command('discentes:atualizar-status')
