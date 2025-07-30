@@ -109,9 +109,9 @@ class SyncIfpeStudents extends Command
                 try {
                     $result = $this->processStudent($student);
                     
-                    if ($result === 'created') $totalCreated++;
-                    elseif ($result === 'updated') $totalUpdated++;
-                    else $totalSkipped++;
+                    if ($result === 'created') { $totalCreated++; } 
+                    elseif ($result === 'updated') { $totalUpdated++; } 
+                    elseif ($result === 'skipped') { $totalSkipped++; }
                     
                 } catch (\Exception $e) {
                     Log::error("Erro ao processar estudante: ".$e->getMessage(), [
@@ -161,31 +161,40 @@ class SyncIfpeStudents extends Command
         // } 
 
         // Mapeamento seguro dos campos
-        $data = [
+        $apiData = [
             'nome' => $studentData['fullName'] ?? null,
             'email' => $studentData['email'] ?? null,
             'telefone' => $studentData['cellphone'] ?? null,
             'data_nascimento' => isset($studentData['birthday']) ? $this->parseDate($studentData['birthday']) : null,
             'cpf' => $studentData['brCPF'] ?? null,
             'rg' => $studentData['brRG'] ?? null,
-           // 'campus' => $studentData['campusName'] ?? null,
-           // 'curso' => $studentData['courseName'] ?? null,
             'status_qa' => $studentData['enrollmentStatus'] ?? null,
-           // 'periodo' => $studentData['currentPeriod'] ?? null,
-           // 'turno' => $studentData['shift'] ?? null,
         ];
 
-        // Remove valores nulos
-        $data = array_filter($data, function($value) {
+        // Remove valores nulos para não sobrescrever campos existentes com null
+        $apiData = array_filter($apiData, function ($value) {
             return $value !== null;
         });
 
-        $discente = Discente::updateOrCreate(
-            ['matricula' => $studentData['enrollment']],
-            $data
-        );
+        $discente = Discente::where('matricula', $studentData['enrollment'])->first();
 
-        return $discente->wasRecentlyCreated ? 'created' : 'updated';
+        if (!$discente) {
+            // Novo registro, combina a matrícula com os dados da API
+            Discente::create(array_merge(['matricula' => $studentData['enrollment']], $apiData));
+            return 'created';
+        }
+
+        // Registro existente, preenche com os novos dados para comparação
+        $discente->fill($apiData);
+
+        // Verifica se houve alguma alteração nos campos mapeados
+        if ($discente->isDirty()) {
+            $discente->save();
+            return 'updated';
+        }
+
+        // Nenhum dado foi alterado, então o registro é ignorado (não precisa de update)
+        return 'skipped';
     }
 
     protected function makeApiRequest($endpoint, $params = [])
