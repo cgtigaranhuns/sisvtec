@@ -118,6 +118,7 @@ class SyncIfpeStudents extends Command
                         'student_data' => $student ?? null,
                         'error' => $e
                     ]);
+                    $this->error("Erro ao processar estudante: ".$e->getMessage());
                     $totalErrors++;
                 }
 
