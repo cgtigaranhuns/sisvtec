@@ -30,9 +30,9 @@ class Kernel extends ConsoleKernel
              ->everyFiveMinutes()
             // ->sendOutputTo(storage_path('logs/sync_ifpe_students.log')); // Cria um novo arquivo a cada execução
              ->appendOutputTo(storage_path('logs/sync_ifpe_students.log')); // Adiciona ao final do arquivo
-        $schedule->command('discentes:atualizar-status')
-            ->everyFiveMinutes() // Define a frequência de execução do comando
-            ->appendOutputTo(storage_path('logs/atualizar_status_discentes.log')); //
+        // $schedule->command('discentes:atualizar-status')
+        //     ->everyFiveMinutes() // Define a frequência de execução do comando
+        //     ->appendOutputTo(storage_path('logs/atualizar_status_discentes.log')); //
        
     }
     protected function commands(): void
