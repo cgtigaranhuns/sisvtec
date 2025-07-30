@@ -181,6 +181,7 @@ class SyncIfpeStudents extends Command
         if (!$discente) {
             // Novo registro, combina a matrícula com os dados da API
             Discente::create(array_merge(['matricula' => $studentData['enrollment']], $apiData));
+            Log::info("Novo discente criado: {$studentData['enrollment']}");
             return 'created';
         }
 
@@ -188,8 +189,10 @@ class SyncIfpeStudents extends Command
         $discente->fill($apiData);
 
         // Verifica se houve alguma alteração nos campos mapeados
-        if ($discente->isDirty()) {
+        $changed = $discente->getDirty();
+        if ($discente->$changed) {
             $discente->save();
+            Log::info("Dados do discente atualizado", $changed);
             return 'updated';
         }
 
