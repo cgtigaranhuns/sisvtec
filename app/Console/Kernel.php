@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // Agende o comando SyncIfpeStudents para ser executado todos os dias à 1:00 AM
-        $schedule->command('sync:ifpe-students')->dailyAt('01:00');
+        $schedule->command('sync:ifpe-students')->everyFiveMinutes();
         // ou $schedule->command(SyncIfpeStudents::class)->dailyAt('01:00');
         // Você pode usar 'daily()' para meia-noite, ou 'dailyAt('HH:MM')' para um horário específico.
     }
