@@ -37,7 +37,7 @@ class AtualizarStatusDiscentes extends Command
                 $temCampoVazio = false;
                 
                 foreach ($atributos as $atributo => $valor) {
-                    if ($atributo !== 'nome_social' || $atributo !== 'foto' && empty($valor) && $discente->status != 0 ) { // Ignora o campo 'nome_social'
+                    if (($atributo !== 'nome_social' || $atributo !== 'foto') && empty($valor) && $discente->status != 0 ) { // Ignora o campo 'nome_social'
                         $temCampoVazio = true;
                         try {
                             // Inicia uma transação para garantir que a atualização seja feita de forma atômica.
