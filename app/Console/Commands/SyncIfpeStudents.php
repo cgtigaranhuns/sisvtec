@@ -191,6 +191,7 @@ class SyncIfpeStudents extends Command
 
         // Verifica se houve alguma alteração nos campos mapeados
         if ($discente->isDirty()) {
+            $discente->idDirty();
             $changes = $discente->getDirty();
             $this->info("Discente atualizado: {$studentData['enrollment']}. Campos: " . implode(', ', array_keys($changes)));
             $discente->save();
