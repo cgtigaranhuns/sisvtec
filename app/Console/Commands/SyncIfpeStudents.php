@@ -165,7 +165,7 @@ class SyncIfpeStudents extends Command
         $apiData = [
             'nome' => $studentData['fullName'] ?? null,
             'email' => $studentData['email'] ?? null,
-            'telefone' => $studentData['cellphone'] ?? null,
+            'contato' => $studentData['cellphone'] ?? null,
             'data_nascimento' => isset($studentData['birthday']) ? $this->parseDate($studentData['birthday']) : null,
             'cpf' => $studentData['brCPF'] ?? null,
             'rg' => $studentData['brRG'] ?? null,
@@ -190,10 +190,10 @@ class SyncIfpeStudents extends Command
         $discente->fill($apiData);
 
         // Verifica se houve alguma alteração nos campos mapeados
-        
         if ($discente->isDirty()) {
+            $changes = $discente->getDirty();
+            $this->info("Discente atualizado: {$studentData['enrollment']}. Campos: " . implode(', ', array_keys($changes)));
             $discente->save();
-            $this->info("Discente atualizado: {$studentData['enrollment']}");            
             return 'updated';
         }
 
