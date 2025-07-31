@@ -161,7 +161,7 @@ class SyncIfpeStudents extends Command
         //     throw new \Exception("Aluno não matriculado - Status: " . ($studentData['enrollmentStatus'] ?? 'N/A'));
         // } 
 
-        // Mapeamento seguro dos campos
+        // Mapeamento dos campos
         $apiData = [
             'nome' => $studentData['fullName'] ?? null,
             'email' => $studentData['email'] ?? null,
@@ -172,33 +172,22 @@ class SyncIfpeStudents extends Command
             'status_qa' => $studentData['enrollmentStatus'] ?? null,
         ];
 
-        // Remove valores nulos para não sobrescrever campos existentes com null
-        $apiData = array_filter($apiData, function ($value) {
-            return $value !== null;
-        });
+        // Usando updateOrCreate para simplificar a lógica de criação e atualização.
+        $discente = Discente::updateOrCreate(
+            ['matricula' => $studentData['enrollment']], // Atributos para encontrar o registro
+            $apiData // Valores para atualizar ou criar
+        );
 
-        $discente = Discente::where('matricula', $studentData['enrollment'])->first();
-
-        if (!$discente) {
-            // Novo registro, combina a matrícula com os dados da API
-            Discente::create(array_merge(['matricula' => $studentData['enrollment']], $apiData));
-            $this->info("Novo discente criado: {$studentData['enrollment']}");
+        if ($discente->wasRecentlyCreated) {
             return 'created';
         }
 
-        // Registro existente, preenche com os novos dados para comparação
-        $discente->fill($apiData);
-
-        // Verifica se houve alguma alteração nos campos mapeados
-        if ($discente->isDirty()) {
-            $discente->idDirty();
-            $changes = $discente->getDirty();
+        if ($discente->wasChanged()) {
+            $changes = $discente->getChanges();
             $this->info("Discente atualizado: {$studentData['enrollment']}. Campos: " . implode(', ', array_keys($changes)));
-            $discente->save();
             return 'updated';
         }
 
-        // Nenhum dado foi alterado, então o registro é ignorado (não precisa de update)
         return 'skipped';
     }
 
