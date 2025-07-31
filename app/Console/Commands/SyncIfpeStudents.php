@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Discente;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -17,9 +18,13 @@ class SyncIfpeStudents extends Command
                             {--test : Testar conexão com a API}';
 
     protected $description = 'Sincroniza discentes com a API do IFPE (Spring Data format)';
-
     protected $apiBaseUrl = 'https://api.ifpe.edu.br/qacademico/';
     protected $apiToken = 'faBj4kkwVoJLsAnZOfAbwFvflyL5omG5';
+
+    protected $totalCreated = 0;
+    protected $totalUpdated = 0;
+    protected $totalSkipped = 0;
+    protected $totalErrors = 0;
 
     public function handle()
     {
@@ -27,141 +32,92 @@ class SyncIfpeStudents extends Command
             return $this->testConnection();
         }
 
-        return $this->syncData();
+        $size = (int)$this->option('size');
+
+        $this->info("🕒 Iniciando sincronização: " . Carbon::now()->format('d-m-Y H:i:s'));
+
+        if ($this->option('all')) {
+            $this->syncAllPages($size);
+        } else {
+            $page = (int)$this->option('page');
+            $this->syncSinglePage($page, $size);
+        }
+
+        $this->info("\n🎉 Sincronização concluída!");
+        $this->line("👉 Novos registros: {$this->totalCreated}");
+        $this->line("🔄 Atualizados: {$this->totalUpdated}");
+        $this->line("⏭️ Ignorados: {$this->totalSkipped}");
+        $this->line("❌ Erros: {$this->totalErrors}");
+
+        return $this->totalErrors > 0 ? 1 : 0;
     }
 
-    protected function testConnection()
+    protected function syncAllPages($size)
     {
-        $this->info('Testando conexão com a API...');
+        $page = 0;
+        do {
+            $hasMore = $this->syncSinglePage($page, $size);
+            $page++;
+        } while ($hasMore);
+    }
 
-        $response = $this->makeApiRequest('students', ['page' => 0, 'size' => 1]);
+    protected function syncSinglePage($page, $size)
+    {
+        $this->info("📄 Página {$page} - Buscando {$size} registros...");
 
-        if ($response === null) {
-            return 1;
+        $response = $this->makeApiRequest('students', ['page' => $page, 'size' => $size]);
+        if (!$response) {
+            $this->error("❌ Falha ao obter dados da página {$page}");
+            return false;
         }
 
         $data = $response->json();
-        
-        $this->info('✅ Conexão bem-sucedida!');
-        $this->line("Status: {$response->status()}");
-        $this->line("Estrutura da resposta:");
-        $this->line(json_encode(array_keys($data), JSON_PRETTY_PRINT));
-        
-        if (isset($data['content'])) {
-            $this->line("\n📊 Estatísticas de paginação:");
-            $this->line("- Página atual: ".($data['number'] ?? 'N/A'));
-            $this->line("- Tamanho da página: ".($data['size'] ?? 'N/A'));
-            $this->line("- Total de elementos: ".($data['totalElements'] ?? 'N/A'));
-            $this->line("- Total de páginas: ".($data['totalPages'] ?? 'N/A'));
+        $students = $data['content'] ?? [];
+
+        if (empty($students)) {
+            $this->info("ℹ️ Nenhum dado encontrado na página {$page}");
+            return false;
         }
 
-        return 0;
-    }
+        $this->info("🔄 Processando " . count($students) . " registros...");
+        $bar = $this->output->createProgressBar(count($students));
+        $bar->start();
 
-    protected function syncData()
-    {
-        $page = (int)$this->option('page');
-        $size = (int)$this->option('size');
-        $syncAll = $this->option('all');
+        foreach ($students as $student) {
+            try {
+                $result = $this->processStudent($student);
 
-        $this->info("Iniciando sincronização...:  ".Carbon::now()->format('d-m-Y H:i:s'));
-
-        $totalCreated = 0;
-        $totalUpdated = 0;
-        $totalErrors = 0;
-        $totalSkipped = 0;
-
-        do {
-            $this->info("📄 Página {$page} - Buscando {$size} registros...");
-
-            $response = $this->makeApiRequest('students', [
-                'page' => $page,
-                'size' => $size
-               // 'filter' => 'enrollmentStatus:Matriculado'
-            ]);
-
-            if ($response === null) {
-                $this->error("Falha ao obter dados da página {$page}");
-                break;
-            }
-
-            $responseData = $response->json();
-
-            // Verifica se temos a estrutura Spring Data com content
-            if (!isset($responseData['content']) || !is_array($responseData['content'])) {
-                $this->error("Estrutura de dados inesperada na página {$page}");
-                $this->line("Resposta completa: ".json_encode($responseData, JSON_PRETTY_PRINT));
-                break;
-            }
-
-            $students = $responseData['content'];
-
-            if (empty($students)) {
-                $this->info("ℹ️ Nenhum dado encontrado na página {$page} - Fim dos dados");
-                break;
-            }
-
-            $this->info("🔄 Processando ".count($students)." registros...");
-            $bar = $this->output->createProgressBar(count($students));
-            $bar->start();
-
-            foreach ($students as $student) {
-                try {
-                    $result = $this->processStudent($student);
-                    
-                    if ($result === 'created') { $totalCreated++; } 
-                    elseif ($result === 'updated') { $totalUpdated++; } 
-                    elseif ($result === 'skipped') { $totalSkipped++; }
-                    
-                } catch (\Exception $e) {
-                    Log::error("Erro ao processar estudante: ".$e->getMessage(), [
-                        'student_data' => $student ?? null,
-                        'error' => $e
-                    ]);
-                    $this->error("Erro ao processar estudante: ".$e->getMessage());
-                    $totalErrors++;
+                if ($result === 'created') {
+                    $this->totalCreated++;
+                } elseif ($result === 'updated') {
+                    $this->totalUpdated++;
+                } elseif ($result === 'skipped') {
+                    $this->totalSkipped++;
                 }
-
-                $bar->advance();
+            } catch (\Exception $e) {
+                Log::error("Erro ao processar estudante: " . $e->getMessage(), [
+                    'student_data' => $student,
+                    'error' => $e
+                ]);
+                $this->error("⚠️ Erro: " . $e->getMessage());
+                $this->totalErrors++;
             }
 
-            $bar->finish();
-            $this->newLine();
+            $bar->advance();
+        }
 
-            // Mostra estatísticas de paginação
-            $this->line("📊 Estatísticas da página:");
-            $this->line("- Total de elementos: ".($responseData['totalElements'] ?? 'N/A'));
-            $this->line("- Páginas totais: ".($responseData['totalPages'] ?? 'N/A'));
-            $this->line("- Última página: ".($responseData['last'] ? 'Sim' : 'Não'));
+        $bar->finish();
+        $this->newLine();
 
-            if (!$syncAll || ($responseData['last'] ?? true)) {
-                break;
-            }
-
-            $page++;
-        } while (true);
-
-        $this->info("\n🎉 Sincronização concluída! " . Carbon::now()->format('d-m-Y H:i:s'));
-        $this->line("👉 Novos registros: {$totalCreated}");
-        $this->line("🔄 Registros atualizados: {$totalUpdated}");
-        $this->line("⏭️ Registros ignorados: {$totalSkipped}");
-        $this->line("❌ Erros: {$totalErrors}");
-
-        return $totalErrors > 0 ? 1 : 0;
+        return !($data['last'] ?? true);
     }
 
     protected function processStudent(array $studentData)
     {
-        // Validação dos campos obrigatórios
-        if (!isset($studentData['enrollment']) || empty($studentData['enrollment'])) {
+        if (empty($studentData['enrollment'])) {
             throw new \Exception("Matrícula não informada");
         }
 
-        // if (($studentData['enrollmentStatus'] ?? null) !== 'Matriculado') {
-        //     throw new \Exception("Aluno não matriculado - Status: " . ($studentData['enrollmentStatus'] ?? 'N/A'));
-        // } 
-
-        // Mapeamento dos campos
         $apiData = [
             'nome' => $studentData['fullName'] ?? null,
             'email' => $studentData['email'] ?? null,
@@ -172,10 +128,9 @@ class SyncIfpeStudents extends Command
             'status_qa' => $studentData['enrollmentStatus'] ?? null,
         ];
 
-        // Usando updateOrCreate para simplificar a lógica de criação e atualização.
         $discente = Discente::updateOrCreate(
-            ['matricula' => $studentData['enrollment']], // Atributos para encontrar o registro
-            $apiData // Valores para atualizar ou criar
+            ['matricula' => $studentData['enrollment']],
+            $apiData
         );
 
         if ($discente->wasRecentlyCreated) {
@@ -184,23 +139,46 @@ class SyncIfpeStudents extends Command
 
         if ($discente->wasChanged()) {
             $changes = $discente->getChanges();
-            $this->info("Discente atualizado: {$studentData['enrollment']}. Campos: " . implode(', ', array_keys($changes)));
+            $this->info("🔧 Atualizado: {$studentData['enrollment']} (Campos: " . implode(', ', array_keys($changes)) . ")");
             return 'updated';
         }
 
         return 'skipped';
     }
 
+    protected function testConnection()
+    {
+        $this->info('🔌 Testando conexão com a API...');
+
+        $response = $this->makeApiRequest('students', ['page' => 0, 'size' => 1]);
+        if (!$response) return 1;
+
+        $data = $response->json();
+
+        $this->info('✅ Conexão bem-sucedida!');
+        $this->line("🔁 Status: {$response->status()}");
+        $this->line("📦 Estrutura: " . json_encode(array_keys($data), JSON_PRETTY_PRINT));
+
+        if (isset($data['content'])) {
+            $this->line("- Página atual: " . ($data['number'] ?? 'N/A'));
+            $this->line("- Tamanho: " . ($data['size'] ?? 'N/A'));
+            $this->line("- Total de elementos: " . ($data['totalElements'] ?? 'N/A'));
+            $this->line("- Total de páginas: " . ($data['totalPages'] ?? 'N/A'));
+        }
+
+        return 0;
+    }
+
     protected function makeApiRequest($endpoint, $params = [])
     {
         try {
             $response = Http::withOptions([
-                'verify' => false, // SSL apenas para desenvolvimento
+                'verify' => false,
                 'timeout' => 30,
             ])->withHeaders([
                 'Authorization' => $this->apiToken,
                 'Accept' => 'application/json',
-            ])->get($this->apiBaseUrl.$endpoint, $params);
+            ])->get($this->apiBaseUrl . $endpoint, $params);
 
             if (!$response->successful()) {
                 $this->handleApiError($response);
@@ -209,26 +187,24 @@ class SyncIfpeStudents extends Command
 
             return $response;
         } catch (\Exception $e) {
-            $this->error("Erro na requisição: ".$e->getMessage());
+            $this->error("❌ Erro na requisição: " . $e->getMessage());
             return null;
         }
     }
 
     protected function handleApiError($response)
     {
-        $status = $response->status();
-        $this->error("Erro na API: {$status}");
-
+        $this->error("Erro na API: " . $response->status());
         $body = $response->body();
-        $this->line("Resposta: ".(strlen($body) > 200 ? substr($body, 0, 200).'...' : $body));
+        $this->line("📨 Resposta: " . (strlen($body) > 200 ? substr($body, 0, 200) . '...' : $body));
     }
 
     protected function parseDate($dateString)
     {
         try {
-            return \Carbon\Carbon::parse($dateString)->format('Y-m-d');
+            return Carbon::parse($dateString)->format('Y-m-d');
         } catch (\Exception $e) {
-            Log::warning("Erro ao analisar data: {$dateString}");
+            Log::warning("⚠️ Erro ao analisar data: {$dateString}");
             return null;
         }
     }
