@@ -10,7 +10,7 @@ class ListDiscenteVisitas extends ListRecords
 {
     protected static string $resource = DiscenteVisitaResource::class;
 
-    protected static ?string $title = 'Minhas Atividades Extraclasses';
+    protected static ?string $title = 'Minhas Atividades Extraclasse';
 
     protected function getHeaderActions(): array
     {
