@@ -31,7 +31,7 @@ class DiscenteVisitaResource extends Resource
     {
         /** @var \App\Models\User */
         $user = auth()->user();
-        return $user->hasRole(['Estudantes', 'TI']);
+        return $user->hasRole(['Estudantes']);
     }
 
 
