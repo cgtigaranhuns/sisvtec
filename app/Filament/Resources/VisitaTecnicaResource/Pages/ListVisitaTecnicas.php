@@ -13,7 +13,7 @@ class ListVisitaTecnicas extends ListRecords
 {
     protected static string $resource = VisitaTecnicaResource::class;
 
-    protected static ?string $title = 'Atividades Extraclasses';
+    protected static ?string $title = 'Atividades Extraclasse';
 
 
 
