@@ -128,16 +128,16 @@ class RelatorioFinalVisitaTecnicaRelationManager extends RelationManager
                     ->modalIcon('heroicon-o-paper-airplane'),
 
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                    // ->disabled(function () {
-                    //     return $this->ownerRecord->status != 0;
-                    // }),
-                Tables\Actions\DeleteAction::make(),
-                    // ->disabled(function () {
-                    //     return $this->ownerRecord->status != 0;
-                    // }),
-            ])
+            // ->actions([
+            //     Tables\Actions\EditAction::make()
+            //         ->disabled(function () {
+            //             return $this->ownerRecord->status != 0;
+            //         }),
+            //     Tables\Actions\DeleteAction::make()
+            //         ->disabled(function () {
+            //             return $this->ownerRecord->status != 0;
+            //         }),
+            // ])
 
 
 
