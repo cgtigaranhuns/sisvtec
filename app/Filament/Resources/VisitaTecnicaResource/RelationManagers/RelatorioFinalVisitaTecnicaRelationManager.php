@@ -129,14 +129,14 @@ class RelatorioFinalVisitaTecnicaRelationManager extends RelationManager
 
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->disabled(function () {
-                        return $this->ownerRecord->status != 0;
-                    }),
-                Tables\Actions\DeleteAction::make()
-                    ->disabled(function () {
-                        return $this->ownerRecord->status != 0;
-                    }),
+                Tables\Actions\EditAction::make(),
+                    // ->disabled(function () {
+                    //     return $this->ownerRecord->status != 0;
+                    // }),
+                Tables\Actions\DeleteAction::make(),
+                    // ->disabled(function () {
+                    //     return $this->ownerRecord->status != 0;
+                    // }),
             ])
 
 
