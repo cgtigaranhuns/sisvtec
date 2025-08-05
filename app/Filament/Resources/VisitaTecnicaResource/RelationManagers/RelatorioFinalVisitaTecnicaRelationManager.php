@@ -57,7 +57,7 @@ class RelatorioFinalVisitaTecnicaRelationManager extends RelationManager
                     ->image()
                     ->maxFiles(5)
                    // ->minSize(512)
-                    ->maxSize(1024)
+                    ->maxSize(2048)
                     ->openable()
                     ->columnSpanFull()
                     ->panelLayout('grid')
