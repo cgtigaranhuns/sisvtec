@@ -145,18 +145,18 @@ class RelatorioFinalVisitaTecnicaRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->disabled(function () {
-                        return $this->ownerRecord->status == 2;
+                        return $this->ownerRecord->status >= 4;
                     }),
                 Tables\Actions\DeleteAction::make()
                     ->disabled(function () {
-                        return $this->ownerRecord->status == 2;
+                        return $this->ownerRecord->status >= 4;
                     }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
                         ->disabled(function () {
-                            return $this->ownerRecord->status == 2;
+                            return $this->ownerRecord->status >= 4;
                         }),
                 ]),
             ]);
