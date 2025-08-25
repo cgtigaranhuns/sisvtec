@@ -805,55 +805,55 @@ class VisitaTecnicaResource extends Resource
                                         ->required(fn(Get $get): bool => $get('categoria_id') != 1)
                                         ->columnSpanFull(),
                                 ]),
-                                Section::make([
-                                    ToggleButtons::make('status')
-                                        ->label('Status')
-                                        ->disabled(function ($context, Get  $get) {
-                                            if (($get('status') != 0) && $context == 'edit') {
-                                                return true;
-                                            } else {
-                                                return false;
-                                            }
-                                        })
-                                        ->required()
-                                        ->hidden(function ($context, Get  $get) {
+                                // Section::make([
+                                //     ToggleButtons::make('status')
+                                //         ->label('Status')
+                                //         ->disabled(function ($context, Get  $get) {
+                                //             if (($get('status') != 0) && $context == 'edit') {
+                                //                 return true;
+                                //             } else {
+                                //                 return false;
+                                //             }
+                                //         })
+                                //         ->required()
+                                //         ->hidden(function ($context, Get  $get) {
 
-                                            /** @var \App\Models\User */
-                                            $authUser =  auth()->user();
-                                            // dd($authUser->hasRole('Professor'));
-                                            if ($authUser->hasRole('Professores')) {
-                                                return true;
-                                            } else {
-                                                return false;
-                                            }
-                                        })
-                                        ->default('0')
-                                        ->inline(false)
-                                        ->options([
-                                            '0' => 'Cadastrada',
-                                            '1' => 'Submetida',
-                                            '2' => 'Aprovada',
-                                            '3' => 'Reprovada',
-                                            '4' => 'Financeiro',
-                                            '5' => 'Finalizada',
-                                        ])
-                                        ->colors([
-                                            '0' => 'warning',
-                                            '1' => 'info',
-                                            '2' => 'success',
-                                            '3' => 'danger',
-                                            '4' => 'warning',
-                                            '5' => 'success',
-                                        ])
-                                        ->icons([
-                                            '0' => 'heroicon-o-pencil',
-                                            '1' => 'heroicon-o-clock',
-                                            '2' => 'heroicon-o-check-circle',
-                                            '3' => 'heroicon-o-x-circle',
-                                            '4' => 'heroicon-o-currency-dollar',
-                                            '5' => 'heroicon-o-check-circle',
-                                        ])
-                                ])->grow(false),
+                                //             /** @var \App\Models\User */
+                                //             $authUser =  auth()->user();
+                                //             // dd($authUser->hasRole('Professor'));
+                                //             if ($authUser->hasRole('Professores')) {
+                                //                 return true;
+                                //             } else {
+                                //                 return false;
+                                //             }
+                                //         })
+                                //         ->default('0')
+                                //         ->inline(false)
+                                //         ->options([
+                                //             '0' => 'Cadastrada',
+                                //             '1' => 'Submetida',
+                                //             '2' => 'Aprovada',
+                                //             '3' => 'Reprovada',
+                                //             '4' => 'Financeiro',
+                                //             '5' => 'Finalizada',
+                                //         ])
+                                //         ->colors([
+                                //             '0' => 'warning',
+                                //             '1' => 'info',
+                                //             '2' => 'success',
+                                //             '3' => 'danger',
+                                //             '4' => 'warning',
+                                //             '5' => 'success',
+                                //         ])
+                                //         ->icons([
+                                //             '0' => 'heroicon-o-pencil',
+                                //             '1' => 'heroicon-o-clock',
+                                //             '2' => 'heroicon-o-check-circle',
+                                //             '3' => 'heroicon-o-x-circle',
+                                //             '4' => 'heroicon-o-currency-dollar',
+                                //             '5' => 'heroicon-o-check-circle',
+                                //         ])
+                                // ])->grow(false),
                             ])->from('md')
 
                         ]),
