@@ -216,15 +216,20 @@ class MultiLdapUserProvider implements UserProvider
         //     $newUser->assignRole(3);
         // }
        // dd($credentials['username']);
+        // Atribui role ao usuário, seja novo ou existente
         if (preg_match('/[a-zA-Z]/', $credentials['username'])) {
-            $newUser->assignRole(2);
-            Log::info("Role 'Discente' atribuída ao usuário {$newUser->username}");
-        } elseif($credentials['username'] == '1958669') {
-            $newUser->assignRole(3);
-            Log::info("Role 'Professor' atribuída ao usuário {$newUser->username}");
+            $user->assignRole(2);
+            Log::info("Role 'Discente' atribuída ao usuário {$user->username}");
+        } else {
+            $user->assignRole(3);
+            Log::info("Role 'Professor' atribuída ao usuário {$user->username}");
         }
 
-        Log::info("Novo usuário criado com sucesso", ['id' => $newUser->id]);
-        return $newUser;
+        Log::info("Usuário processado com sucesso", ['id' => $user->id]);
+        return $user;
     }
+
+    
+    
+
 }
