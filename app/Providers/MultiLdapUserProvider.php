@@ -217,26 +217,30 @@ class MultiLdapUserProvider implements UserProvider
         // } else {
         //     $newUser->assignRole(3);
         // }
-       // dd($credentials['username']);
+        // dd($credentials['username']);
         // Atribui role ao usuário, seja novo ou existente
-        if (preg_match('/[a-zA-Z]/', $credentials['username'])) {
-            $newUser->assignRole(2);
-            Log::info("Role 'Discente' atribuída ao usuário {$newUser->username}");
-        } else {
-            $newUser->assignRole(3);
-            Log::info("Role 'Professor' atribuída ao usuário {$newUser->username}");
-        }
+        // if (preg_match('/[a-zA-Z]/', $credentials['username'])) {
+        //     $newUser->assignRole(2);
+        //     Log::info("Role 'Discente' atribuída ao usuário {$newUser->username}");
+        // } else {
+        //     $newUser->assignRole(3);
+        //     Log::info("Role 'Professor' atribuída ao usuário {$newUser->username}");
+        // }
 
-        Log::info("Usuário processado com sucesso", ['id' => $newUser->id]);
-        return $newUser;
+        // Log::info("Usuário processado com sucesso", ['id' => $newUser->id]);
+        // return $newUser;
     }
 
     protected function assignDefaultRoleIfMissing(User $user, array $credentials)
     {
         if ($user->roles()->count() == 0) {
-            Log::info("Usuário {$user->username} não possui roles. Atribuindo role padrão.");
-            $user->assignRole(3);
-            Log::info("Role 'Professor' atribuída ao usuário {$user->username}");
+            if (preg_match('/[a-zA-Z]/', $credentials['username'])) {
+                $user->assignRole(2);
+                Log::info("Role 'Discente' atribuída ao usuário {$user->username}");
+            } else {
+                $user->assignRole(3);
+                Log::info("Role 'Professor' atribuída ao usuário {$user->username}");
+            }
         } else {
             Log::debug("Usuário {$user->username} já possui roles. Nenhuma ação necessária.");
         }
