@@ -184,6 +184,8 @@ class MultiLdapUserProvider implements UserProvider
                 Log::debug("Nenhuma alteração necessária nos dados do usuário", ['id' => $user->id]);
             }
 
+            $this->assignDefaultRoleIfMissing($user, $credentials);
+
             return $user;
         }
 
@@ -229,7 +231,14 @@ class MultiLdapUserProvider implements UserProvider
         return $newUser;
     }
 
-    
-    
-
+    protected function assignDefaultRoleIfMissing(User $user, array $credentials)
+    {
+        if ($user->roles()->count() == 0) {
+            Log::info("Usuário {$user->username} não possui roles. Atribuindo role padrão.");
+            $user->assignRole(3);
+            Log::info("Role 'Professor' atribuída ao usuário {$user->username}");
+        } else {
+            Log::debug("Usuário {$user->username} já possui roles. Nenhuma ação necessária.");
+        }
+    }
 }
