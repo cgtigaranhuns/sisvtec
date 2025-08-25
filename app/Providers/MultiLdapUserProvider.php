@@ -219,7 +219,7 @@ class MultiLdapUserProvider implements UserProvider
         if (preg_match('/[a-zA-Z]/', $credentials['username'])) {
             $newUser->assignRole(2);
             Log::info("Role 'Discente' atribuída ao usuário {$newUser->username}");
-        } elseif($credentials['username'] == 'admin') {
+        } elseif($credentials['username'] == '1958669') {
             $newUser->assignRole(3);
             Log::info("Role 'Professor' atribuída ao usuário {$newUser->username}");
         }
