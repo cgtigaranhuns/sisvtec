@@ -14,6 +14,8 @@ class CreateVisitaTecnica extends CreateRecord
 {
     protected static string $resource = VisitaTecnicaResource::class;
 
+    protected static ?string $title = 'Criar Atividade Extraclasse';
+
     // protected function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
     // {
               
