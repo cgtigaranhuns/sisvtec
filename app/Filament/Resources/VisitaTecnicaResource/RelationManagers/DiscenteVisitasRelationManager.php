@@ -135,7 +135,8 @@ class DiscenteVisitasRelationManager extends RelationManager
                     ->icon('heroicon-o-user')
                     ->modalHeading('Adicionar Discente')
                     ->action(function ($livewire, array $data) {
-                        $discente = Discente::find($data['discente_id']);
+                        $discente = Discente::find($data['discente_id'])
+                            ->where('status_qa', 'Matriculado');
                         $exists = DiscenteVisita::where('discente_id', $data['discente_id'])
                             ->where('visita_tecnica_id', $livewire->ownerRecord->id)
                             ->exists();
