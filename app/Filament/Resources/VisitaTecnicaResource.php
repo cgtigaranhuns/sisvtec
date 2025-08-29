@@ -724,6 +724,7 @@ class VisitaTecnicaResource extends Resource
                                 Forms\Components\TextInput::make('valor_inscricao')
                                     ->label('Valor da Inscrição por Estudante')
                                     ->prefix('R$')
+                                    ->live(onBlur: true)
                                     ->disabled(function ($context, Get  $get) {
                                         if (($get('status') != 0) && $context == 'edit') {
                                             return true;
