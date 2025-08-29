@@ -721,6 +721,19 @@ class VisitaTecnicaResource extends Resource
                                     ->required(fn(Get $get): bool => $get('custo') == true)
                                     ->boolean()
                                     ->grouped(),
+                                Forms\Components\Textarea::make('justificativa_inscricao')
+                                    ->label('Justificar Inscrição')
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
+                                    ->hidden(fn(Get $get) => !$get('inscricao'))
+                                    ->required(fn(Get $get) => $get('inscricao'))
+                                    ->autosize()
+                                    ->maxLength(255),
                                 Forms\Components\TextInput::make('valor_inscricao')
                                     ->label('Valor Total das Inscrições')
                                     ->prefix('R$')

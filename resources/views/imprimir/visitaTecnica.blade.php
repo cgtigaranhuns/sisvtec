@@ -122,7 +122,11 @@
         </tr>
         <tr>
             <td><label>Haverá Passagens?:</label> {{$visitaTecnica->passagens == 1 ? 'Sim' : 'Não'}}</td>
-            <td><label>Justificativa das Passagens:</label> {{$visitaTecnica->justificativa_passagens}}</td>    
+            <td><label>Justificativa das Passagens:</label> {{$visitaTecnica->justificativa_passagens}}</td>  
+        </tr>
+        <tr>
+            <td><label>Haverá Inscrição?:</label> {{$visitaTecnica->inscricao == 1 ? 'Sim' : 'Não'}}</td>
+            <td><label>Justificativa da Inscrição:</label> {{$visitaTecnica->justificativa_inscricao}}</td>  
         <tr>
             <td><label>Valor da Diária por Estudante R$:</label> {{ number_format(($visitaTecnica->valor_total_diarias / $visitaTecnica->qtd_estudantes), 2, ',', '.') }}</td> 
              <td><label>Valor Total das Diárias R$:</label> {{number_format(($visitaTecnica->valor_total_diarias), 2, ',', '.')}}</td>
@@ -140,7 +144,7 @@
             
         </tr>
         <tr>
-            <td><label>Haverá Inscrições?:</label> {{$visitaTecnica->inscricao == 1 ? 'Sim' : 'Não'}}</td>
+            
             <td><label>Valor da Inscrição por Estudante R$:</label> {{number_format(($visitaTecnica->valor_inscricao / $visitaTecnica->qtd_estudantes), 2, ',', '.')}}</td>
             <td><label>Valor Total das Inscrições R$:</label> {{number_format(($visitaTecnica->valor_inscricao), 2, ',', '.')}}</td>
            
