@@ -32,6 +32,8 @@ class VisitaTecnica extends Model
         'conteudo_programatico',
         'qtd_estudantes',
         'hospedagem',
+        'inscricao',
+        'valor_inscricao',
         'passagens',
         'cotacao_passagens',
         'cotacao_hospedagem',

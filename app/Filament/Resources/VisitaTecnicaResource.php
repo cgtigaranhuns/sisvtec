@@ -699,6 +699,45 @@ class VisitaTecnicaResource extends Resource
                                             ->numeric(),
                                         ]),
 
+                                        ##### Inscrição #####
+                                Forms\Components\ToggleButtons::make('inscricao')
+                                    ->label('Haverá Inscrição?')
+                                    ->hidden(fn(Get $get): bool => $get('custo') == false)
+                                    ->default(false)
+                                    ->live()
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
+                                    ->afterStateUpdated(function (callable $set, $state, $get) {
+                                        if (!$state) {
+                                            $set('valor_inscricao', 0);
+                                        }
+                                        $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_hospedagem') + $get('menor_valor_passagens') + ($state ? $get('valor_inscricao') : 0)));
+                                    })
+                                    ->required(fn(Get $get): bool => $get('custo') == true)
+                                    ->boolean()
+                                    ->grouped(),
+                                Forms\Components\TextInput::make('valor_inscricao')
+                                    ->label('Valor da Inscrição por Estudante')
+                                    ->prefix('R$')
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
+                                    ->hidden(fn(Get $get) => !$get('inscricao'))
+                                    ->afterStateUpdated(function (callable $set, $state, $get) {
+                                        $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_hospedagem') + $get('menor_valor_passagens') + ($get('inscricao') ? $state : 0)));
+                                    })
+                                    ->numeric()
+                                    ->required(fn(Get $get) => $get('inscricao')),  
+
 
                                 Forms\Components\Fieldset::make('Custos')
                                     ->schema([
