@@ -452,7 +452,8 @@ class VisitaTecnicaResource extends Resource
                                 'xl' => 3,
                                 '2xl' => 3,
                             ])->schema([
-                               
+                                Section::make('Estudantes')
+                                    ->schema([
                                         Forms\Components\TextInput::make('qtd_estudantes')
                                             ->label('Quantidade de Estudantes')
                                             ->live(onBlur: true)
@@ -474,7 +475,7 @@ class VisitaTecnicaResource extends Resource
                                                 '2xl' => 1,
                                             ])
                                             ->extraAttributes(['style' => 'width: 30%;']),
-                                    
+                                    ]),
 
                                     ##### Hospedagem #####
 
