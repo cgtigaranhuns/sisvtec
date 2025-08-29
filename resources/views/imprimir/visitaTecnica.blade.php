@@ -141,7 +141,7 @@
         </tr>
         <tr>
             <td><label>Haverá Inscrições?:</label> {{$visitaTecnica->inscricao == 1 ? 'Sim' : 'Não'}}</td>
-            <td><label>Valor da Inscrição por Estudante R$:</label> {{number_format(($visitaTecnica->valor_inscricao) / $visitaTecnica->qtd_estudantes), 2, ',', '.')}}</td>
+            <td><label>Valor da Inscrição por Estudante R$:</label> {{number_format(($visitaTecnica->valor_inscricao / $visitaTecnica->qtd_estudantes), 2, ',', '.')}}</td>
             <td><label>Valor Total das Inscrições R$:</label> {{number_format(($visitaTecnica->valor_inscricao), 2, ',', '.')}}</td>
            
         </tr>
