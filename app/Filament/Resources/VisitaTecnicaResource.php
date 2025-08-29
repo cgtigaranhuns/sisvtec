@@ -509,7 +509,7 @@ class VisitaTecnicaResource extends Resource
                                     })
                                     ->afterStateUpdated(function (callable $set, $state, $get) {
                                         $set('menor_valor_hospedagem', 0);
-                                        $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_passagens') + 0));
+                                        $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_passagens') + $get('valor_inscricao') + 0));
                                         $set('cotacao_hospedagem', []);
                                     })
                                     ->required(fn(Get $get): bool => $get('custo') == true)
@@ -555,7 +555,7 @@ class VisitaTecnicaResource extends Resource
                                         }, $state));
 
                                         $set('menor_valor_hospedagem', $minValue);
-                                        $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_passagens') + $minValue));
+                                        $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_passagens') + $get('valor_inscricao') + $minValue));
                                     })
                                     ->schema([
                                         Forms\Components\TextInput::make('valor1')
@@ -612,7 +612,7 @@ class VisitaTecnicaResource extends Resource
                                     })
                                     ->afterStateUpdated(function (callable $set, $state, $get) {
                                         $set('menor_valor_passagens', 0);
-                                        $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_hospedagem') + 0));
+                                        $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_hospedagem') + $get('valor_inscricao') + 0));
                                         $set('cotacao_passagens', []);
                                     })
                                     ->required(fn(Get $get): bool => $get('custo') == true)
@@ -658,7 +658,7 @@ class VisitaTecnicaResource extends Resource
                                         }, $state));
 
                                         $set('menor_valor_passagens', $minValue);
-                                        $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_hospedagem') + $minValue));
+                                        $set('custo_total', ($get('valor_total_diarias') + $get('menor_valor_hospedagem') + $get('valor_inscricao') + $minValue));
                                     })
                                     ->schema([
                                         Forms\Components\TextInput::make('valor1_passagens')
@@ -769,6 +769,7 @@ class VisitaTecnicaResource extends Resource
                                                 ->required(),
                                             Forms\Components\TextInput::make('custo_total')
                                                 ->label('Custo Total da Atividade')
+                                                ->hint('Inclui diárias, hospedagem, passagens e inscrições')
                                                 ->hidden(fn(Get $get): bool => $get('custo') == false)
                                                 ->prefix('R$')
                                                 ->numeric()
