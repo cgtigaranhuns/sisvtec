@@ -111,12 +111,14 @@ class DiscenteVisitasRelationManager extends RelationManager
                         'Matriculado' => 'success',
                         'Trancado' => 'warning',
                         'Desligado' => 'danger',
+                        'Concludente' => 'info',
                         default => 'secondary',
                     })
                     ->formatStateUsing(fn(string $state): string => match ($state) {
                         'Matriculado' => 'Matriculado',
                         'Trancado' => 'Trancado',
                         'Desligado' => 'Desligado',
+                        'Concludente' => 'Concludente',
                         default => 'Indefinido',
                     }),
 
