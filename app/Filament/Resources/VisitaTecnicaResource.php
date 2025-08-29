@@ -467,8 +467,14 @@ class VisitaTecnicaResource extends Resource
                                             ->afterStateUpdated(function (callable $set, $state, $get) {
                                                 Self::calculaValorDiarias($state, $get, $set);
                                             })
-                                            ->numeric()                                    
-                                            ->required(),
+                                            ->numeric()
+                                            ->required()
+                                            ->columnSpan([
+                                                'default' => 1,
+                                                'xl' => 1,
+                                                '2xl' => 1,
+                                            ])
+                                            ->extraAttributes(['style' => 'width: 30%;']),
                                     ]),
 
                                     ##### Hospedagem #####
