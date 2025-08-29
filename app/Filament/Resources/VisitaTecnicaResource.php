@@ -753,7 +753,7 @@ class VisitaTecnicaResource extends Resource
                                     ->required(fn(Get $get) => $get('inscricao')),  
 
 
-                                Forms\Components\Fieldset::make('Custos')
+                                Forms\Components\Fieldset::make('Custos - Apenas informativo')
                                     ->schema([
                                         Grid::make([
                                             'xl' => 4,
