@@ -746,6 +746,7 @@ class VisitaTecnicaResource extends Resource
                                 Forms\Components\TextInput::make('valor_inscricao')
                                     ->label('Valor Total das Inscrições')
                                     ->prefix('R$')
+                                    ->extraInputAttributes(['style' => 'color: #ad0505ff;'])
                                     ->live(onBlur: true)
                                     ->disabled(function ($context, Get  $get) {
                                         if (($get('status') != 0) && $context == 'edit') {
@@ -774,7 +775,7 @@ class VisitaTecnicaResource extends Resource
                                                 ->readOnly()
                                                 ->prefix('R$')
                                                 ->numeric()
-                                                ->extraInputAttributes(['style' => 'font-weight: bolder; font-size: 2rem; color: #ad0505ff;'])
+                                                ->extraInputAttributes(['style' => 'font-weight: bolder; color: #ad0505ff;'])
                                                 ->required(),
                                             Forms\Components\TextInput::make('menor_valor_hospedagem')
                                                 ->label('Menor Valor de Hospedagem')
@@ -782,6 +783,7 @@ class VisitaTecnicaResource extends Resource
                                                 ->prefix('R$')
                                                 ->readOnly()
                                                 ->numeric()
+                                                ->extraInputAttributes(['style' => 'font-weight: bolder; color: #ad0505ff;'])
                                                 ->required(),
                                             Forms\Components\TextInput::make('menor_valor_passagens')
                                                 ->label('Menor Valor de Passagens')
@@ -789,12 +791,14 @@ class VisitaTecnicaResource extends Resource
                                                 ->prefix('R$')
                                                 ->readOnly()
                                                 ->numeric()
+                                                ->extraInputAttributes(['style' => 'font-weight: bolder; color: #ad0505ff;'])
                                                 ->required(),
                                             Forms\Components\TextInput::make('custo_total')
                                                 ->label('Total Geral')                                                
                                                 ->hidden(fn(Get $get): bool => $get('custo') == false)
                                                 ->prefix('R$')
                                                 ->numeric()
+                                                ->extraInputAttributes(['style' => 'font-weight: bolder; color: #ad0505ff;'])
                                                 ->readOnly()
                                                 ->required(),
                                         ]),
