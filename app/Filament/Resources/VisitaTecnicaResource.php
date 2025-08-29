@@ -722,7 +722,7 @@ class VisitaTecnicaResource extends Resource
                                     ->boolean()
                                     ->grouped(),
                                 Forms\Components\TextInput::make('valor_inscricao')
-                                    ->label('Valor Total as Inscrições')
+                                    ->label('Valor Total das Inscrições')
                                     ->prefix('R$')
                                     ->live(onBlur: true)
                                     ->disabled(function ($context, Get  $get) {
