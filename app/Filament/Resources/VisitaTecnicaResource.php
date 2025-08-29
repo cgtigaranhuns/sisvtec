@@ -446,35 +446,29 @@ class VisitaTecnicaResource extends Resource
                         ]),
                     Wizard\Step::make('Custos e Estudantes')
                         ->completedIcon('heroicon-m-hand-thumb-up')
+
                         ->schema([
                             Grid::make([
                                 'xl' => 3,
                                 '2xl' => 3,
                             ])->schema([
-                                Grid::make([
-                                    'xl' => 3,
-                                    '2xl' => 3,
-                                ])->schema([
-                                    Forms\Components\TextInput::make('qtd_estudantes')
-                                        ->label('Quantidade de Estudantes')
-                                        ->live(onBlur: true)
-                                        ->disabled(function ($context, Get  $get) {
-                                            if (($get('status') != 0) && $context == 'edit') {
-                                                return true;
-                                            } else {
-                                                return false;
-                                            }
-                                        })
-                                        ->afterStateUpdated(function (callable $set, $state, $get) {
-                                            Self::calculaValorDiarias($state, $get, $set);
-                                        })
-                                        ->numeric()
-                                        ->required()
-                                        ->columnSpan([
-                                            'xl' => 3,
-                                            '2xl' => 3,
-                                        ]),
-                                    ]),
+                                Forms\Components\TextInput::make('qtd_estudantes')
+                                    ->label('Quantidade de Estudantes')
+                                    ->live(onBlur: true)
+                                    ->disabled(function ($context, Get  $get) {
+                                        if (($get('status') != 0) && $context == 'edit') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })
+                                    ->afterStateUpdated(function (callable $set, $state, $get) {
+
+                                        Self::calculaValorDiarias($state, $get, $set);
+                                    })
+                                    ->numeric()
+                                    ->columnSpan(2)
+                                    ->required(),
 
                                     ##### Hospedagem #####
 
