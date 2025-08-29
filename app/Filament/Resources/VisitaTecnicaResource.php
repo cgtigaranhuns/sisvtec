@@ -452,23 +452,24 @@ class VisitaTecnicaResource extends Resource
                                 'xl' => 3,
                                 '2xl' => 3,
                             ])->schema([
-                                Forms\Components\TextInput::make('qtd_estudantes')
-                                    ->label('Quantidade de Estudantes')
-                                    ->live(onBlur: true)
-                                    ->disabled(function ($context, Get  $get) {
-                                        if (($get('status') != 0) && $context == 'edit') {
-                                            return true;
-                                        } else {
-                                            return false;
-                                        }
-                                    })
-                                    ->afterStateUpdated(function (callable $set, $state, $get) {
-
-                                        Self::calculaValorDiarias($state, $get, $set);
-                                    })
-                                    ->numeric()
-                                    ->columnSpan(2)
-                                    ->required(),
+                                Section::make('Estudantes')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('qtd_estudantes')
+                                            ->label('Quantidade de Estudantes')
+                                            ->live(onBlur: true)
+                                            ->disabled(function ($context, Get  $get) {
+                                                if (($get('status') != 0) && $context == 'edit') {
+                                                    return true;
+                                                } else {
+                                                    return false;
+                                                }
+                                            })
+                                            ->afterStateUpdated(function (callable $set, $state, $get) {
+                                                Self::calculaValorDiarias($state, $get, $set);
+                                            })
+                                            ->numeric()                                    
+                                            ->required(),
+                                    ]),
 
                                     ##### Hospedagem #####
 
