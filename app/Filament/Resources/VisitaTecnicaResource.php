@@ -753,7 +753,7 @@ class VisitaTecnicaResource extends Resource
                                     ->required(fn(Get $get) => $get('inscricao')),  
 
 
-                                Forms\Components\Fieldset::make('Custos - Apenas informativo')
+                                Forms\Components\Fieldset::make('Custos - Apenas informativo (Diarias + Hospedagens + Passagens + Inscrições)')
                                     ->schema([
                                         Grid::make([
                                             'xl' => 4,
@@ -781,7 +781,7 @@ class VisitaTecnicaResource extends Resource
                                                 ->numeric()
                                                 ->required(),
                                             Forms\Components\TextInput::make('custo_total')
-                                                ->label('Total: (Diarias + Hospedagens + Passagens + Inscrições)')                                                
+                                                ->label('Total Geral')                                                
                                                 ->hidden(fn(Get $get): bool => $get('custo') == false)
                                                 ->prefix('R$')
                                                 ->numeric()
