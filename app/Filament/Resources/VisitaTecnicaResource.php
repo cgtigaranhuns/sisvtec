@@ -768,7 +768,7 @@ class VisitaTecnicaResource extends Resource
                                                 ->numeric()
                                                 ->required(),
                                             Forms\Components\TextInput::make('custo_total')
-                                                ->label('Total: (Diarias + Hospedagem + Passagens + Inscrição)')                                                
+                                                ->label('Total: (Diarias + Hospedagens + Passagens + Inscrições)')                                                
                                                 ->hidden(fn(Get $get): bool => $get('custo') == false)
                                                 ->prefix('R$')
                                                 ->numeric()

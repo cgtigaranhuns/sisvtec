@@ -32,6 +32,6 @@ trait CalculaValorDiarias
         }
 
         $set('valor_total_diarias', $valorDiarias);
-        $set('custo_total', ($valorDiarias + $get('menor_valor_hospedagem') + $get('menor_valor_passagens')));
+        $set('custo_total', ($valorDiarias + $get('menor_valor_hospedagem') + $get('menor_valor_passagens') + $get('valor_inscricao')));
     }
 }
