@@ -130,6 +130,7 @@ class VisitaTecnicaResource extends Resource
                                     ->grouped(),
                                 Forms\Components\ToggleButtons::make('compensacao')
                                     ->label('Haverá Compensação?')
+                                    ->hint('Refere-se à ao plano de compensação de aulas da/as turma/as e/ou docentes afetados pela atividade.')
                                     ->required()
                                     ->disabled(function ($context, Get  $get) {
                                         if (($get('status') != 0) && $context == 'edit') {
