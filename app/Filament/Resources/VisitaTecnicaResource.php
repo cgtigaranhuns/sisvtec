@@ -467,6 +467,7 @@ class VisitaTecnicaResource extends Resource
                                         Self::calculaValorDiarias($state, $get, $set);
                                     })
                                     ->numeric()
+                                    ->columnSpanFull()
                                     ->required(),
 
                                     ##### Hospedagem #####
