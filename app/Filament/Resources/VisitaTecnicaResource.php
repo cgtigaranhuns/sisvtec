@@ -774,6 +774,7 @@ class VisitaTecnicaResource extends Resource
                                                 ->readOnly()
                                                 ->prefix('R$')
                                                 ->numeric()
+                                                ->extraAttributes(['style' => 'color: red;'])
                                                 ->required(),
                                             Forms\Components\TextInput::make('menor_valor_hospedagem')
                                                 ->label('Menor Valor de Hospedagem')
