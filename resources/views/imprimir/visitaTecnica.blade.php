@@ -135,10 +135,15 @@
             
         <tr>
             <td><label>Valor da Passagens por Estudante R$:</label> {{number_format(($visitaTecnica->menor_valor_passagens / $visitaTecnica->qtd_estudantes), 2, ',', '.')}}</td>
-            <td><label>Valor Total das Passagens R$:</label> {{number_format(($visitaTecnica->menor_valor_passagens), 2, ',', '.')}}</td>
+            <td><label>Valor Total das Passagens R$:</label> {{number_format(($visitaTecnica->menor_valor_passagens), 2, ',', '.')}}</td>          
+            
+            
+        </tr>
+        <tr>
+            <td><label>Haverá Inscrições?:</label> {{$visitaTecnica->inscricao == 1 ? 'Sim' : 'Não'}}</td>
+            <td><label>Valor da Inscrição por Estudante R$:</label> {{number_format(($visitaTecnica->valor_inscricao) / $visitaTecnica->qtd_estudantes), 2, ',', '.')}}</td>
+            <td><label>Valor Total das Inscrições R$:</label> {{number_format(($visitaTecnica->valor_inscricao), 2, ',', '.')}}</td>
            
-            
-            
         </tr>
         <tr>
             <td><label>Valor Total da Ajuda de Custo Por Estudante R$:</label> <span style="color: brown; font-weight: bold">{{number_format(($visitaTecnica->custo_total / $visitaTecnica->qtd_estudantes), 2, ',', '.')}}</span></td>
